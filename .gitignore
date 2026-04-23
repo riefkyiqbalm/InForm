@@ -165,4 +165,6 @@ public_key_base64.txt
 init.sh
 update.sh
 
+#CI/CD Deployment
 aws/*
+.github/*
