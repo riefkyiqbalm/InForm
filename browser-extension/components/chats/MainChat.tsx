@@ -1,3 +1,4 @@
+// browser-extension/components/chats/MainChat.tsx
 import React, { useEffect, useRef, useState } from "react"
 import type { InputMode } from "~types/index"
 import type { StoredDoc } from "~components/SettingsModal"
@@ -50,7 +51,7 @@ function buildBar(score: number): string {
 export default function MainChat() {
   const {
     activeSession, activeSessionId,
-    loadingSessionId, sendMessage,
+    loadingSessionId, sendMessage, setLoadingSessionId,
     createSession, addMessage,
     abortedMessage, clearAborted, retryMessage,
   } = useChat()
@@ -92,7 +93,7 @@ export default function MainChat() {
   // ── handleSend ────────────────────────────────────────────────────────────
   const handleSend = async () => {
     const text = input.trim(); // Ubah nama variabel agar tidak bingung
-    
+
     if ((!text && pendingFiles.length === 0) || isCurrentLoading || isFilling) return;
 
     const filesToSend = [...pendingFiles];
@@ -111,11 +112,11 @@ export default function MainChat() {
     // ── INJEKSI FILE KE DALAM TEKS UNTUK AI ─────────────────────────────────
     let finalPrompt = text;
     if (filesToSend.length > 0) {
-      // Buat string berisi informasi file. 
+      // Buat string berisi informasi file.
       // Jika StoredDoc Anda memiliki properti konten teks (misal: f.content atau f.text),
       // Anda BISA menambahkannya di sini agar AI langsung bisa membacanya.
      const fileInfo = filesToSend.map(f => "[Nama File: " + f.name + "]\nIsi File:\n" + f.type).join("\n\n");
-      
+
       if (text) {
         finalPrompt = `${text}\n\n---\nCatatan untuk AI: Pengguna melampirkan file berikut:\n${fileInfo}`;
       } else {
@@ -127,14 +128,21 @@ export default function MainChat() {
     if (isFillIntent(finalPrompt)) {
       clearAborted()
 
+      // FIX Bug 3: Set loading state before starting fill operation
+      setLoadingSessionId(targetSessionId)
+
       // 1. Add user message to chat history via normal sendMessage (fire-and-forget)
       //    We don't await it — fill runs in parallel
       const controller = new AbortController()
       abortControllerRef.current = controller
-      sendMessage({ text, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend }).catch(() => {})
+      // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
+      sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend }).catch(() => {})
 
       // 2. Execute fill
       const result = await fillAllNow()
+
+      // Clear loading state after fill completes
+      setLoadingSessionId(null)
 
       if (result === null) {
         // Page is being analyzed — tell user to wait and try again
@@ -170,7 +178,8 @@ export default function MainChat() {
     abortControllerRef.current = controller
 
     try {
-      await sendMessage({ text, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend })
+      // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
+      await sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend })
     } catch {
       toast("Gagal terhubung ke AI. Pastikan Backend aktif.", "error")
     }

@@ -26,13 +26,13 @@ export interface AuthContextType {
   login:    (email: string, password: string) => Promise<void>;
   register: ( email: string, password: string, name: string) => Promise<void>;
   logout:   () => void;
- 
+
   // ── Password reset flow (unauthenticated) ──────────────────────────────────
   /** Step 1 — sends reset link to email. Silent on unknown address. */
   forgotPassword: (email: string) => Promise<void>;
   /** Step 2 — sets new password using token from the reset email link. */
   resetPassword:  (token: string, newPassword: string) => Promise<void>;
- 
+
   // ── Profile settings (authenticated) ──────────────────────────────────────
   /** Change password from profile — requires current password. Sends security alert email. */
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
@@ -70,7 +70,7 @@ export interface SendMessageArgs {
   text: string;
   signal?: AbortSignal;
   sessionId?: string; // Jika sewaktu-waktu butuh override ID
-  attachments?: any []
+  attachments?: any[];
 }
 
 
@@ -83,7 +83,7 @@ export interface ChatContextType {
   isLoading:        boolean;        // true while any async operation is in-flight
   error:            string | null;  // last error message, null when clear
   abortedMessage:   InterruptedMessage | null;
-  
+
   // ── Actions ────────────────────────────────────────────────────────────────
   // createSession:    () => Promise<void>;
   setActiveSession: (sessionId: string) => void;
@@ -100,6 +100,7 @@ export interface ChatContextType {
   clearError:       () => void;
   clearAborted:     () => void;
   retryMessage:     (text: string) => Promise<void>;
+  setLoadingSessionId: (sessionId: string | null) => void;
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────────
@@ -122,6 +123,3 @@ export interface VerifyStateProps {
   message?: string;
   email?: string;
 }
-
-
-
