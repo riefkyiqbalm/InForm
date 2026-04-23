@@ -161,4 +161,7 @@ package.json
 package-lock.json
 public_key_base64.txt
 
+#Shell Command
+init.sh
+update.sh
 
