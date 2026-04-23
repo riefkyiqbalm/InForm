@@ -22,6 +22,6 @@
         "@sharedUI/types/*": ["./src/types/index.ts"]
     }
   },
-  "include": ["src/**/*", "src/context/ToastContext.tsx", "src/components/SettingsModal.tsx", "src/components/buttons/AttachButton.tsx", "src/components/buttons/LogOutButton.tsx", "src/context/AuthContext.tsx", "src/components/buttons/NavigationButton.tsx", "src/components/buttons/NewButton.tsx", "src/lib/constants/suggestions.ts", "src/components/chats/DefaultPrompt.tsx", "../browser-extension/hooks", "../browser-extension/emails",],
+  "include": ["src/**/*", "src/context/ToastContext.tsx", "src/components/SettingsModal.tsx", "src/components/buttons/AttachButton.tsx", "src/components/buttons/LogOutButton.tsx", "src/context/AuthContext.tsx", "src/components/buttons/NavigationButton.tsx", "src/components/buttons/NewButton.tsx", "src/lib/constants/suggestions.ts", "src/components/chats/DefaultPrompt.tsx", "../browser-extension/hooks", "src/emails",],
   "exclude": ["node_modules", "dist"]
 }

@@ -47,6 +47,18 @@ function buildBar(score: number): string {
   return "█".repeat(filled) + "░".repeat(10 - filled)
 }
 
+// Add this helper function inside MainChat.tsx (before the component definition or inside it)
+const convertStoredDocsToAttachments = (docs: StoredDoc[]): AttachmentInfo[] => {
+  return docs.map((doc) => ({
+    id: doc.documentId,
+    name: doc.name,
+    type: doc.type || 'application/octet-stream', // Fallback if type is missing
+    // Convert size: if it's a number string, parse it; otherwise default to 0 or extract bytes if formatted
+    size: typeof doc.size === 'string' ? parseFloat(doc.size) || 0 : (doc.size as number), 
+    // url: doc.url,
+    // Ensure any other required AttachmentInfo fields are mapped here
+  }));
+};
 
 export default function MainChat() {
   const {
@@ -89,6 +101,7 @@ export default function MainChat() {
     abortControllerRef.current?.abort()
     abortControllerRef.current = null
   }
+  
 
   // ── handleSend ────────────────────────────────────────────────────────────
   const handleSend = async () => {
@@ -97,6 +110,7 @@ export default function MainChat() {
     if ((!text && pendingFiles.length === 0) || isCurrentLoading || isFilling) return;
 
     const filesToSend = [...pendingFiles];
+    const attachments = convertStoredDocsToAttachments(filesToSend);
     setInput("");
     setPendingFiles([]); // Kosongkan preview setelah tombol kirim ditekan
 
@@ -137,7 +151,7 @@ export default function MainChat() {
       const controller = new AbortController()
       abortControllerRef.current = controller
       // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
-      sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend }).catch(() => {})
+      sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments }).catch(() => {})
 
       // 2. Execute fill
       const result = await fillAllNow()
@@ -180,7 +194,7 @@ export default function MainChat() {
 
     try {
       // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
-      await sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend })
+      await sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments })
     } catch {
       toast("Gagal terhubung ke AI. Pastikan Backend aktif.", "error")
     }

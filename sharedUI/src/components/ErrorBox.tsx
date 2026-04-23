@@ -1,5 +1,5 @@
 import React from "react";
-import Icon  from "~components/IconStyles";
+import Icon  from "@sharedUI/components/IconStyles";
 
 interface ErrorBoxProps {
   message: string;
