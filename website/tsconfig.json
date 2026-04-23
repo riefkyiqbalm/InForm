@@ -24,7 +24,9 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@inform/ui/*": ["../shared-ui/src/*"],
+      "@inform/types": ["../shared-ui/src/types/index.ts"]
     },
     "allowJs": true,
     "plugins": [

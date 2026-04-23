@@ -1,5 +1,5 @@
 import { textStyles as T } from "~lib/styles/text";
-import BigLogo from "./logo/BigLogo";
+import BigLogo from "@inform/ui/components/logo/BigLogo";
 
 export default function Welcome() {
   return (

@@ -5,7 +5,9 @@
     "verbatimModuleSyntax": true, 
     "types": ["chrome", "node"],
     "paths": {
-      "~*": ["./*"]
+      "~*": ["./*"],
+      "@inform/ui/*": ["../shared-ui/src/*"],
+      "@inform/types": ["../shared-ui/src/types/index.ts"]
     }
   },
   "include": [
