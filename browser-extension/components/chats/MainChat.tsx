@@ -133,6 +133,7 @@ export default function MainChat() {
 
       // 1. Add user message to chat history via normal sendMessage (fire-and-forget)
       //    We don't await it — fill runs in parallel
+      
       const controller = new AbortController()
       abortControllerRef.current = controller
       // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
