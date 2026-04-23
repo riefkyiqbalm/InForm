@@ -159,6 +159,6 @@ key.pem
 .public_key_base64.txt.swp
 package.json
 package-lock.json
-
+public_key_base64.txt
 
 
