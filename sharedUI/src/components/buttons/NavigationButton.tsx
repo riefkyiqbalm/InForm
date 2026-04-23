@@ -7,9 +7,9 @@
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import Icon from "~components/IconStyles"
-import SettingsModal from "~components/SettingsModal"
-import { useAuth } from "~features/AuthContext"
+import Icon from "@sharedUI/components/IconStyles"
+import SettingsModal from "@sharedUI/components/SettingsModal"
+import { useAuth } from "@sharedUI/context/AuthContext"
 
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000"
 

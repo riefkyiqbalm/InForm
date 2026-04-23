@@ -1,6 +1,6 @@
 // components/chats/FileMetadataPreview.tsx
 import React from "react"
-import Icon from "~components/IconStyles"
+import Icon from "@sharedUI/components/IconStyles"
 
 interface Props {
   files: { name: string; type: string; size?: string }[]

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { DEFAULT_SUGGESTIONS, type Suggestion } from "~lib/constants/suggestions";
+import { DEFAULT_SUGGESTIONS, type Suggestion } from "@sharedUI/lib/constants/suggestions";
 import Icon from "../IconStyles";
 
 interface SuggestionsListProps {

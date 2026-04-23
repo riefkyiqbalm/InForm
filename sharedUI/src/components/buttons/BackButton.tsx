@@ -1,8 +1,8 @@
 import React from 'react';
 // import Link from 'next/link';
 // import Image from 'next/image';
-import ICONS from '~components/IconStyles';
-import Icon from '~components/IconStyles';
+import ICONS from '@sharedUI/components/IconStyles';
+import Icon from '@sharedUI/components/IconStyles';
 
 interface BackButtonProps {
   href: string;

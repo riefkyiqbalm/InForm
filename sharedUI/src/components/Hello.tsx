@@ -1,5 +1,5 @@
 import { textStyles as T } from "@sharedUI/lib/styles/text";
-import { useAuth } from "~features/AuthContext";
+import { useAuth } from "@sharedUI/context/AuthContext";
 import Logo from "./logo/BigLogo";
 
 export default function Welcome() {

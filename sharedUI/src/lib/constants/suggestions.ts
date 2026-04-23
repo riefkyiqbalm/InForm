@@ -2,7 +2,7 @@
  * Shared suggestion prompts and default chat suggestions
  * Used in DefaultPrompt component and other suggestion displays
  */
-import {ICONS, type IconType} from "~lib/constants/icon";
+import {ICONS, type IconType} from "./icon";
 
 export interface Suggestion {
   id?: string; // Optional, karena beberapa suggestion mungkin tidak butuh ID unik
@@ -20,28 +20,28 @@ export const DEFAULT_SUGGESTIONS: Suggestion[] = [
     id: "1",
     title: "Foto Makanan",
     subtitle: "Analisis Dokumen atau Makanan lewat foto dan dokumen.",
-    icon: ICONS['whiteCamera'],
+    icon: 'white-camera',
     prompt: "Tolong bantu saya menganalisis menu makanan saya dan hasil pengecekan hegenitas dapur saya.",
   },
   {
     id: "2",
     title: "Draft Pengajuan",
     subtitle: "Pembuatan Template Surat Pengajuan.",
-    icon: ICONS['whiteDocument'],
+    icon:'white-camera',
     prompt: "Buatkan draft surat pengajuan pengecekan dapur ke dinas dan buatkan draft laporan keuangan untuk pengajuan modal dapur.",
   },
   {
     id: "3",
     title: "Analisis AKG",
     subtitle: "Pembuatan Menu.",
-    icon: ICONS['whiteBowl'],
+    icon: 'white-camera',
     prompt: "Buatkan menu dan resep yang memenuhi standard Kemenkes RI",
   },
   {
     id: "4",
     title: "Pengecekan Dokumen",
     subtitle: "Pengecekan Dokumen Untuk Verifikasi Vendor.",
-    icon: ICONS['whiteBuilding'],
+    icon: 'white-building',
     prompt: "Cek dokumen yang telah diupload apakah telah mememnuhi persayaratan perizinan.",
   },
 ];
@@ -51,17 +51,17 @@ export const DEFAULT_SUGGESTIONS: Suggestion[] = [
  */
 export const AUTH_SUGGESTIONS: Suggestion[] = [
   {
-    icon: ICONS['whiteNewChat'],
+    icon: 'white-new-chat',
     title: "Start New Chat",
     prompt: "Buat sesi chat baru",
   },
   {
-    icon: ICONS['whiteSearch'],
+    icon: 'white-search',
     title: "View History",
     prompt: "Tampilkan riwayat chat",
   },
   {
-    icon: ICONS['whiteGear'],
+    icon: 'white-gear',
     title: "Settings",
     prompt: "Buka pengaturan",
   },
@@ -72,22 +72,22 @@ export const AUTH_SUGGESTIONS: Suggestion[] = [
  */
 export const QUICK_ACTIONS: Suggestion[] = [
   {
-    icon: ICONS['whiteSearch'],
+    icon: 'white-search',
     title: "Search",
     prompt: "Cari dalam chat history",
   },
   {
-    icon: ICONS['whitePencil'],
+    icon: 'white-pencil',
     title: "Edit",
     prompt: "Edit pesan terakhir",
   },
   {
-    icon: ICONS['whitePin'],
+    icon: 'white-pin',
     title: "Pin",
     prompt: "Pin pesan penting",
   },
   {
-    icon: ICONS['whiteShare'],
+    icon: 'white-share',
     title: "Share",
     prompt: "Bagikan chat",
   },
@@ -128,17 +128,17 @@ export const EXAMPLE_PROMPTS = {
  */
 export const ERROR_SUGGESTIONS: Suggestion[] = [
   {
-    icon: ICONS['whiteRefresh'],
+    icon: 'white-refresh',
     title: "Retry",
     prompt: "Coba lagi",
   },
   {
-    icon: ICONS['whiteHome'],
+    icon: 'white-home',
     title: "Start Over",
     prompt: "Mulai dari awal",
   },
   {
-    icon: ICONS['whiteHelp'],
+    icon: 'white-help',
     title: "Get Help",
     prompt: "Dapatkan bantuan",
   },
@@ -149,17 +149,17 @@ export const ERROR_SUGGESTIONS: Suggestion[] = [
  */
 export const ONBOARDING_SUGGESTIONS: Suggestion[] = [
   {
-    icon: ICONS['whiteHandShake'],
+    icon: 'white-hand-shake',
     title: "Berkenalan",
     prompt: "Halo, saya pengguna baru",
   },
   {
-    icon: ICONS['whiteHelp'],
+    icon: 'white-help',
     title: "Bantuan",
     prompt: "Bagaimana cara menggunakan BG-AI?",
   },
   {
-    icon: ICONS['whiteDocument'],
+    icon: 'white-document',
     title: "Tutorial",
     prompt: "Tunjukkan tutorial lengkap",
   },

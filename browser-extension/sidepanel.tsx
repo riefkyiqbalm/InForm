@@ -3,10 +3,10 @@ import globalStyles                   from "data-text:~styles/globals.css"
 import MainChat                       from "~components/chats/MainChat"
 import NetworkGuard                   from "~components/NetworkGuard"
 
-import { AuthProvider, useAuth }      from "~features/AuthContext"
-import { ChatProvider}                from "~features/ChatContext"
+import { AuthProvider, useAuth }      from "@sharedUI/context/AuthContext"
+import { ChatProvider}                from "@sharedUI/context/ChatContext"
 import { FormProvider }               from "~features/FormContext"
-import { ToastProvider }              from "~features/ToastContext"
+import { ToastProvider }              from "@sharedUI/context/ToastContext"
 
 
 const FALLBACK_CSS = `

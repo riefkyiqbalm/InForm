@@ -1,5 +1,5 @@
 // components/ui/Icon.tsx
-import { ICONS, type IconType } from '~lib/constants/icon';
+import { ICONS, type IconType } from '@sharedUI/lib/constants/icon';
 
 interface IconProps {
   name: IconType | string;
@@ -13,7 +13,7 @@ export default function Icon({
   invert = true ,// Default ke false agar warna asli muncul
 }: IconProps) {
 
-  const src = ICONS[name];
+  const src = ICONS[name as IconType];
 
   if (!src) {
     console.warn(`Icon ${name} tidak ditemukan`);

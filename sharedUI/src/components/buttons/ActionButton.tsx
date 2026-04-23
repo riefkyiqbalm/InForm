@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import Icon from "../IconStyles";
-import {type ActionType } from "~types";
+import {type ActionType } from "@sharedUI/types";
 
 interface DropDownProps {
   onAction: (type: ActionType) => void;

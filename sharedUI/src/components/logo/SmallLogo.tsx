@@ -1,4 +1,4 @@
-import { textStyles as T } from "~lib/styles/text";
+import { textStyles as T } from "@sharedUI/lib/styles/text";
 
 export default function SmallLogo() {
   return (

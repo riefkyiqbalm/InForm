@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { LMStatus } from "../types";
-import { getStatus, getConfig } from "../../sharedUI/src/lib/api";
+import { LMStatus } from "@sharedUI/types";
+import { getStatus, getConfig } from "~lib/api";
 
 export function useLMStatus() {
   const [status, setStatus] = useState<LMStatus>({

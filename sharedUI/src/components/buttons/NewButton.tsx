@@ -1,4 +1,4 @@
-import { useChat } from "~features/ChatContext";
+import { useChat } from "@sharedUI/context/ChatContext";
 import React, { useState } from "react";
 import Icon from "../IconStyles";
 

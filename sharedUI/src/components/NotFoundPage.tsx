@@ -1,5 +1,5 @@
 import React from 'react';
-import BackButton from '~components/buttons/BackButton';
+import BackButton from '@sharedUI/components/buttons/BackButton';
 
 export default function NotFoundPage({ errorcode, type }: { errorcode: string, type?: string }) {
   return (

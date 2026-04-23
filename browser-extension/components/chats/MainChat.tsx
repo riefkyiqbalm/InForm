@@ -1,15 +1,15 @@
 // browser-extension/components/chats/MainChat.tsx
 import React, { useEffect, useRef, useState } from "react"
-import type { InputMode } from "@sharedUI/types"
-import type { StoredDoc } from "~components/SettingsModal"
-import { useChat }                from "~features/ChatContext"
+import type { InputMode, AttachmentInfo }     from "@sharedUI/types"
+import type { StoredDoc }         from "@sharedUI/components/SettingsModal"
+import { useChat }                from "@sharedUI/context/ChatContext"
 import { useForm, isFillIntent }  from "~features/FormContext"
-import { useToast }              from "~features/ToastContext"
+import { useToast }               from "@sharedUI/context/ToastContext"
 
-import ChatArea          from "~components/chats/ChatArea"
-import ChatInputPanel    from "~components/chats/ChatInputPanel"
-import LeftPanel         from "~components/chats/LeftPanel"
-import TopPanel          from "~components/chats/TopPanel"
+import ChatArea          from "@sharedUI/components/chats/ChatArea"
+import ChatInputPanel    from "@sharedUI/components/chats/ChatInputPanel"
+import LeftPanel         from "@sharedUI/components/chats/LeftPanel"
+import TopPanel          from "@sharedUI/components/chats/TopPanel"
 import FirstOpenHint     from "~components/FirstOpenHint"
 
 // ── Build a human-readable fill reply for MessageBubble ───────────────────────

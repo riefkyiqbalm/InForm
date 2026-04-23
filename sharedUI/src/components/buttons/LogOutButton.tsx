@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '~features/AuthContext';
+import { useAuth } from '@sharedUI/context/AuthContext';
 import Modal from '../Modal';
 import Icon from '../IconStyles';
 

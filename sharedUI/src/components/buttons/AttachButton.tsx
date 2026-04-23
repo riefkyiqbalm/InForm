@@ -9,11 +9,11 @@
 "use client"
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { createPortal } from "react-dom"
-import Icon from "~components/IconStyles"
-import { useToast } from "~features/ToastContext"
-import { loadDocs, saveDocs } from "~components/SettingsModal"
-import type { StoredDoc } from "~components/SettingsModal"
-import type { InputMode } from "~types"
+import Icon from "@sharedUI/components/IconStyles"
+import { useToast } from "@sharedUI/context/ToastContext"
+import { loadDocs, saveDocs } from "@sharedUI/components/SettingsModal"
+import type { StoredDoc } from "../SettingsModal"
+import type { InputMode } from "@sharedUI/types"
 
 interface AttachFileProps {
   onAction:      (type: InputMode, docs?: StoredDoc[]) => void
