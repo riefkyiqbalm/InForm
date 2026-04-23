@@ -1,3 +1,4 @@
+// +++ browser-extension/features/ChatContext.tsx
 // features/ChatContext.tsx — Plasmo sidepanel
 
 import React, {
@@ -264,6 +265,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         if (hasAttachments) {
           body.attachments = attachments;
         }
+        // FIX Bug 4: Use finalPrompt instead of text when available (passed via attachments context)
+        // Note: MainChat now passes finalPrompt as the text argument, so this is handled upstream
 
         const res = await fetch(messagesUrl(targetSession), {
           method:  "POST",

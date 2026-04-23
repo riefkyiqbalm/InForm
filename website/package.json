@@ -1,5 +1,5 @@
 {
-  "name": "bg-ai-ui",
+  "name": "inform-website",
   "version": "1.0.0",
   "main": "app/chats/page.tsx",
   "scripts": {

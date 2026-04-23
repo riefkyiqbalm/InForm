@@ -1,8 +1,8 @@
 // components/chats/TopPanel.tsx
 import React from "react"
 import { useChat } from "~features/ChatContext"
-import HamburgerIcon from "~components/chats/HamburgerIcon"
-import NavDropDown from "~components/buttons/NavigationButton"
+import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon"
+import NavDropDown from "@sharedUI/components/buttons/NavigationButton"
 // import StatusDot from "~components/StatusDot"
 
 interface TopPanelProps {

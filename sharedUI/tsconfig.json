@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@sharedUI/*": ["./src/*"],
+      "@sharedUI/types/*": ["./src/types/index.ts"]
+    }
+  }
+}

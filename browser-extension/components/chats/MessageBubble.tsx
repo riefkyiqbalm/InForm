@@ -1,9 +1,9 @@
 
 // src/components/MessageBubble.tsx
 
-import { type UIMessage } from "~types";
+import { type UIMessage } from "@sharedUI/types";
 import { useState } from "react";
-import ActionMenu from "~components/buttons/ActionButton";
+import ActionMenu from "@sharedUI/components/buttons/ActionButton";
 import { formatText, formatTimeFromISO } from "~lib/formatters";
 import { useCopyToClipboard } from "~lib/hooks";
 

@@ -24,7 +24,9 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+     "@sharedUI/*": ["../sharedUI/src/*"],
+      "@sharedUI/types/": ["../sharedUI/src/types/index.ts"]
     },
     "allowJs": true,
     "plugins": [

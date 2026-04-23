@@ -8,7 +8,7 @@
 
 import React, { useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import Icon from "~components/IconStyles"
+import Icon from "../../sharedUI/src/components/IconStyles"
 import { useToast } from "~features/ToastContext"
 
 type SettingsPage = "root" | "ai-model" | "privacy" | "memory"

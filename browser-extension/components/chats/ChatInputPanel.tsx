@@ -1,12 +1,11 @@
 // components/chats/ChatInputPanel.tsx
 import React, { useState } from "react"
-import type { InputMode } from "~types"
-import AttachFile from "~components/buttons/AttachButton"
-import SendButton from "~components/buttons/SendButton"
-import StopButton from "~components/buttons/StopButton"
-import InterruptedNotif from "~components/chats/interruptedNotif"
-import type { InterruptedMessage } from "~components/chats/interruptedNotif"
-import FileMetadataPreview from "~components/FileMetadataPreview"
+import type { InputMode } from "@sharedUI/types"
+import AttachFile from "@sharedUI/components/buttons/AttachButton"
+import SendButton from "@sharedUI/components/buttons/SendButton"
+import StopButton from "@sharedUI/components/buttons/StopButton"
+import InterruptedNotif, { type InterruptedMessage } from "@sharedUI/components/chats/interruptedNotif"
+import FileMetadataPreview from "@sharedUI/components/FileMetadataPreview"
 import type { StoredDoc } from "~components/SettingsModal"
 
 interface ChatInputPanelProps {

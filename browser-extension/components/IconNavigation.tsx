@@ -1,5 +1,5 @@
-import Icon from "./IconStyles";
-import { buttonStyles as S } from "~lib/styles/buttons";
+import Icon from "../../sharedUI/src/components/IconStyles";
+import { buttonStyles as S } from "@sharedUI/lib/styles/buttons";
 
 interface IconNavProps {
   onToggleLeftPanel: () => void; // Fungsi untuk membuka/tutup panel

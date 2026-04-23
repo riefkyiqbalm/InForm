@@ -4,8 +4,8 @@
 //   - Online  → Login button → opens localhost:3000/login in browser tab
 
 import React, { useCallback, useEffect, useState } from "react"
-import Icon from "~components/IconStyles"
-import StatusDot from "./StatusDot"
+import Icon from "../../sharedUI/src/components/IconStyles"
+import StatusDot from "../../sharedUI/src/components/StatusDot"
 
 type Status = "checking" | "online" | "offline"
 

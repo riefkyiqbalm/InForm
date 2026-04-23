@@ -1,6 +1,6 @@
 // browser-extension/components/chats/MainChat.tsx
 import React, { useEffect, useRef, useState } from "react"
-import type { InputMode } from "~types/index"
+import type { InputMode } from "@sharedUI/types"
 import type { StoredDoc } from "~components/SettingsModal"
 import { useChat }                from "~features/ChatContext"
 import { useForm, isFillIntent }  from "~features/FormContext"

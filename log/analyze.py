@@ -1,13 +1,3 @@
-# analyze.py — Flask routes for /analyze and /extract
-# Registered into main.py via: register_analyze_routes(app, app_graph, llm, SYSTEM_PROMPT)
-#
-# FIX vs original:
-#   - /analyze now uses app_graph (LangGraph with Postgres checkpointer) instead of
-#     raw llm.invoke — so each analyze call has memory tied to a session thread.
-#   - Multiple documents supported (document_text can be a combined string).
-#   - /extract supports pdf, docx, txt, code files.
-#   - Better JSON extraction with fallback parsing.
-
 from flask import request, jsonify
 from langchain_core.messages import HumanMessage, SystemMessage
 import json, re
@@ -20,12 +10,16 @@ Aturan:
 - Untuk field tanggal gunakan format ISO (YYYY-MM-DD).
 - Untuk field select, nilai harus persis sama dengan salah satu opsi yang tersedia.
 - Confidence: 0.0-1.0 (seberapa yakin Anda).
-- Source: singkat, dari mana nilai ini berasal di dokumen."""
+- Source: singkat, dari mana nilai ini berasal di dokumen.
+- KEAMANAN DATA SENSITIF:
+  * JANGAN PERNAH membaca, menampilkan, atau menyimpan: password, one-time token (OTP), kode verifikasi, CVV kartu kredit, PIN, secret key, API key.
+  * Jika field meminta data sensitif tersebut, lewati (skip) dan beri catatan bahwa data tidak boleh diproses demi keamanan.
+  * Jika user bertanya tentang data sensitif, tolak dengan sopan dan jelaskan alasan keamanan."""
 
 def register_analyze_routes(app, app_graph, llm, SYSTEM_PROMPT):
     """
     Register /analyze and /extract routes.
-    
+
     Parameters:
         app        — Flask app instance
         app_graph  — compiled LangGraph agent (with Postgres checkpointer)

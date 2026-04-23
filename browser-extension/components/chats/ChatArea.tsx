@@ -1,8 +1,8 @@
 import React from 'react';
 import MessageBubble from './MessageBubble';
-import SuggestionsList from './DefaultPrompt';
+import SuggestionsList from '../../../sharedUI/src/components/chats/DefaultPrompt';
 import TypingIndicator from './TypeIndicator';
-import Hello from '../Hello';
+import Hello from '../../../sharedUI/src/components/Hello';
 import { type UIMessage } from '~types';
 
 interface ChatAreaProps {

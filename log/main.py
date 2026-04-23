@@ -1,3 +1,6 @@
+
+
+# +++ log/main.py
 """
 InForm — Flask Backend (LangGraph Powered)
 ==========================================
@@ -43,11 +46,12 @@ load_dotenv()
 # ── Config ─────────────────────────────────────────────────────────────────────
 LM_STUDIO_BASE = os.getenv("LM_STUDIO_BASE", "http://localhost:1234/v1")
 MODEL_NAME     = os.getenv("MODEL_NAME",     "qwen3-4b")
-MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "2048"))     # increased for multimodal context
+MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "4096"))     # increased for large documents
 TEMPERATURE    = float(os.getenv("TEMPERATURE", "0.7"))
 FLASK_PORT     = int(os.getenv("FLASK_PORT", "5000"))
 FLASK_DEBUG    = os.getenv("FLASK_DEBUG", "true").lower() == "true"
 DATABASE_URL   = os.getenv("DATABASE_URL")
+REQUEST_TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "120"))  # Timeout in seconds for LLM requests
 
 if not DATABASE_URL:
     print("[ERROR] DATABASE_URL tidak ditemukan di .env!")
@@ -72,7 +76,14 @@ Aturan respons:
 - Jika ada dokumen terlampir dalam pesan, analisis dan gunakan isinya untuk menjawab.
 - Sertakan format dan tipe form yang dibaca jika relevan.
 - Jangan berikan diagnosis medis definitif.
-- Untuk auto-fill: hanya isi field dengan data yang ada di dokumen, jangan mengarang. Kecuali data tidak tersedia berikan suggestion berdasarkan label input"""
+- Untuk auto-fill: hanya isi field dengan data yang ada di dokumen, jangan mengarang. Kecuali data tidak tersedia berikan suggestion berdasarkan label.
+- KEAMANAN DATA: JANGAN pernah membaca, menampilkan, atau menyimpan data sensitif seperti:
+  * Password atau kata sandi
+  * One-time token (OTP), kode verifikasi
+  * Nomor kartu kredit lengkap (CVV, expiry date)
+  * PIN, security code
+  * Kunci API, secret key
+  Jika user meminta data tersebut, tolak dengan sopan dan jelaskan alasan keamanan."""
 
 # ── LangGraph setup ────────────────────────────────────────────────────────────
 class State(TypedDict):
@@ -84,6 +95,8 @@ llm = ChatOpenAI(
     model=MODEL_NAME,
     temperature=TEMPERATURE,
     max_tokens=MAX_TOKENS,
+    # Increase timeout for large document processing
+    request_timeout=REQUEST_TIMEOUT,
 )
 
 def chatbot(state: State):

@@ -1,7 +1,5 @@
-// types/index.ts
+// Shared types for InForm - used by both browser-extension and website
 
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 export type Role = "USER" | "ASSISTANT";
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -22,9 +20,9 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   loading:         boolean;
 
-// ── Core auth ──────────────────────────────────────────────────────────────
+  // ── Core auth ──────────────────────────────────────────────────────────────
   login:    (email: string, password: string) => Promise<void>;
-  register: ( email: string, password: string, name: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout:   () => void;
 
   // ── Password reset flow (unauthenticated) ──────────────────────────────────
@@ -49,7 +47,14 @@ export interface ChatMessage {
   role:      Role;
   text:      string;
   createdAt: string;
+  attachments?: AttachmentInfo[];
+}
 
+export interface AttachmentInfo {
+  name: string;
+  type: string;
+  size?: number;
+  content?: string; // Optional text content for text-based files
 }
 
 export interface ChatSession {
@@ -70,9 +75,8 @@ export interface SendMessageArgs {
   text: string;
   signal?: AbortSignal;
   sessionId?: string; // Jika sewaktu-waktu butuh override ID
-  attachments?: any[];
+  attachments?: AttachmentInfo[];
 }
-
 
 export interface ChatContextType {
   // ── State ──────────────────────────────────────────────────────────────────
@@ -85,15 +89,10 @@ export interface ChatContextType {
   abortedMessage:   InterruptedMessage | null;
 
   // ── Actions ────────────────────────────────────────────────────────────────
-  // createSession:    () => Promise<void>;
   setActiveSession: (sessionId: string) => void;
-  // loadSession fetches a session's messages from the DB and sets it active
   loadSession:      (sessionId: string) => Promise<void>;
   addMessage:       (sessionId: string, payload: Omit<ChatMessage, "id" | "createdAt">) => void;
-  // sendMessage accepts an optional explicit sessionId for components that
-  // manage their own session state (e.g. ChatContainer)
-  // sendMessage:      (text: string, sessionId?: string) => Promise<void>;
-  sendMessage: (args: SendMessageArgs) => Promise<void>;
+  sendMessage:      (args: SendMessageArgs) => Promise<void>;
   deleteSession:    (sessionId: string) => Promise<void>;
   renameSession:    (sessionId: string, newTitle: string) => Promise<void>;
   pinSession:       (sessionId: string) => Promise<void>;
@@ -101,18 +100,18 @@ export interface ChatContextType {
   clearAborted:     () => void;
   retryMessage:     (text: string) => Promise<void>;
   setLoadingSessionId: (sessionId: string | null) => void;
+  createSession:    () => Promise<string>;
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────────
 
 export type InputMode =  'text' | 'foto' | 'video' | 'document';
-export type ActionType = "copy" | "delete" | "pin" | "rename" |'unpin';
-export type PageType ='dashboard'|'conversation' | 'settings' | 'logout';
+export type ActionType = "copy" | "delete" | "pin" | "rename" | 'unpin';
+export type PageType = 'dashboard'|'conversation' | 'settings' | 'logout';
 
 export interface UIMessage extends ChatMessage {
   isOptimistic?: boolean;
   isStreaming?: boolean;
-  isAttachments: any[];
 }
 
 // ── Verify Email ─────────────────────────────────────────────────────────────
@@ -123,3 +122,22 @@ export interface VerifyStateProps {
   message?: string;
   email?: string;
 }
+
+// ── Form Fill ────────────────────────────────────────────────────────────────
+export interface FormField {
+  name?: string;
+  id?: string;
+  type: string;
+  label?: string;
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+}
+
+export interface FillResult {
+  filled: number;
+  skipped: string[];
+  total: number;
+  score: number;
+}
+

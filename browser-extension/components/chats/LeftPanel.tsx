@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "~features/AuthContext";
-import HamburgerIcon from "~components/chats/HamburgerIcon";
-import NewChatButton from "~components/buttons/NewButton";
+import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon";
+import NewChatButton from "@sharedUI/components/buttons/NewButton";
 import ChatList from "~components/chats/ChatList"; 
 
 interface LeftPanelProps {

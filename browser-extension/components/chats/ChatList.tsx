@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useChat } from "~features/ChatContext";
 import { useToast } from "~features/ToastContext";
-import DropDown from "~components/buttons/ActionButton";
-import Modal, { RenameModal } from "~components/Modal";
-import Icon from "../IconStyles";
+import DropDown from "@sharedUI/components/buttons/ActionButton";
+import Modal, { RenameModal } from "@sharedUI/components/Modal";
+import Icon from "../../../sharedUI/src/components/IconStyles";
 
 interface ChatListProps {
   isOpen: boolean;

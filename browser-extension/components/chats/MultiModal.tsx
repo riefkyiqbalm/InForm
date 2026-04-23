@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { type InputMode } from '~types';
-import Icon from '../IconStyles';
+import Icon from '../../../sharedUI/src/components/IconStyles';
 
 
 
