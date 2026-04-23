@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "@types/chrome": "^0.1.40",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "prisma": "^6.19.3",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^3.0.53",
+    "@plasmohq/storage": "^1.15.0",
+    "@prisma/client": "^7.7.0",
+    "ai": "^6.0.168",
+    "js-cookie": "^3.0.5",
+    "npm": "^11.12.1"
+  }
+}

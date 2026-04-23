@@ -1,0 +1,109 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# --- AWS Specific ---
+.aws/
+credentials
+config
+*.pem
+*.pub
+*.key
+
+# --- AWS CDK (Cloud Development Kit) ---
+.cdk.staging/
+cdk.out/
+.parcel-cache/
+
+# --- AWS SAM (Serverless Application Model) ---
+.aws-sam/
+
+# --- AWS Amplify ---
+amplify/.config/local-*
+amplify/mock-data/
+amplify/backend/amplify-meta.json
+amplify/backend/.temp/
+build/
+dist/
+node_modules/
+aws-exports.js
+awsconfiguration.json
+
+# --- Environment Variables (Sangat Penting!) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.stackery
+
+# --- Terraform (Jika menggunakan Terraform untuk AWS) ---
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# --- Serverless Framework ---
+.serverless/
+
+# --- Python/Lambda (Jika backend menggunakan Python) ---
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.env/
+
+# --- Node.js (Jika menggunakan Lambda/CDK dengan JS/TS) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.next/
+
+out/
+
+#--- Prisma ---
+prisma
+.env
+generated/
+
+
+depcryted/

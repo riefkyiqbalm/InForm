@@ -1,0 +1,10 @@
+"use-client";
+import { textStyles as T } from "@/lib/styles/text";
+
+export default function SmallLogo() {
+  return (
+    <>
+    <div style={T.SmallLogo}>I•F</div>
+    </>
+  );
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Masuk — BG-AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+ 
+<div class="login-wrap">
+  <div class="brand">
+    <div class="brand-icon">BG</div>
+    <h1>BG-AI</h1>
+    <p>Platform AI Multimodal Pengawasan Gizi & Vendor MBG</p>
+  </div>
+ 
+  <div class="card">
+    <div class="card-tabs">
+      <button class="tab active" onclick="showPanel('login',this)">Masuk</button>
+      <button class="tab" onclick="showPanel('register',this)">Daftar</button>
+    </div>
+ 
+    <!-- LOGIN PANEL -->
+    <div class="panel active" id="panel-login">
+      <div class="error-msg" id="loginError">⚠ Email atau kata sandi salah. Coba lagi.</div>
+ 
+      <div class="form-group">
+        <label class="form-label">Email / ID Institusi</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">✉</span>
+          <input class="form-input" id="loginEmail" type="email" placeholder="nama@institusi.go.id"/>
+        </div>
+      </div>
+ 
+      <div class="form-group">
+        <label class="form-label">Kata Sandi</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">🔒</span>
+          <input class="form-input" id="loginPass" type="password" placeholder="Masukkan kata sandi"/>
+          <span class="input-eye" onclick="togglePwd('loginPass',this)">👁</span>
+        </div>
+      </div>
+ 
+      <div class="form-row">
+        <label class="remember">
+          <input type="checkbox"/>
+          <span>Ingat saya</span>
+        </label>
+        <a href="#" class="forgot">Lupa kata sandi?</a>
+      </div>
+ 
+      <button class="btn-primary" onclick="doLogin()">
+        <span>→</span> Masuk ke SATU-AI
+      </button>
+ 
+      <div class="divider">atau masuk dengan</div>
+ 
+      <button class="btn-sso" onclick="alert('SSO Pemerintah: Fitur segera hadir')">
+        🏛 SSO Pemerintah (SIMAN)
+      </button>
+      <button class="btn-sso" onclick="alert('Google SSO: Coming soon')">
+        ◉ Google Workspace
+      </button>
+    </div>
+ 
+    <!-- REGISTER PANEL -->
+    <div class="panel" id="panel-register">
+      <div class="form-group">
+        <label class="form-label">Nama Lengkap</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">👤</span>
+          <input class="form-input" type="text" placeholder="Nama sesuai KTP"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Institusi</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">✉</span>
+          <input class="form-input" type="email" placeholder="nama@institusi.go.id"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kata Sandi</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">🔒</span>
+          <input class="form-input" id="regPass" type="password" placeholder="Min. 8 karakter" oninput="checkStrength(this.value)"/>
+          <span class="input-eye" onclick="togglePwd('regPass',this)">👁</span>
+        </div>
+        <div class="strength-wrap">
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Konfirmasi Kata Sandi</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">🔒</span>
+          <input class="form-input" type="password" placeholder="Ulangi kata sandi"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peran / Instansi</label>
+        <select class="form-input" style="appearance:none">
+          <option value="">Pilih peran Anda</option>
+          <option>Petugas Pengawas Vendor MBG</option>
+          <option>Ahli Gizi / Tenaga Kesehatan</option>
+          <option>Admin Dinas Pendidikan</option>
+          <option>Vendor MBG</option>
+          <option>Peneliti / Akademisi</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="doRegister()">
+        ✦ Buat Akun
+      </button>
+    </div>
+ 
+    <div class="card-footer">
+      Dengan melanjutkan, Anda menyetujui <a href="/terms">Ketentuan Layanan</a> dan <a href="/terms">Kebijakan Privasi</a> kami.
+    </div>
+  </div>
+</div>
+
+<script src="login.js">
+</script>
+</body>
+</html>

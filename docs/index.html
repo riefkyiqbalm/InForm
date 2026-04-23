@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BG-AI - Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link href="index.css"rel="stylesheet">
+</head>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo-icon">B•G</div>
+    <div class="logo-text">BG-AI <span>|</span> NG</div>
+  </div>
+
+  <button class="new-chat-btn" onclick="startNewChat()">
+    <span>✦</span> Chat Baru
+  </button>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchMode('nutri',this)">🥦 Gizi</button>
+    <button class="mode-tab" onclick="switchMode('vendor',this)">🏢 Vendor</button>
+    <button class="mode-tab" onclick="switchMode('fraud',this)">🔍 Fraud</button>
+  </div>
+
+  <div class="section-label">Riwayat</div>
+
+  <div class="chat-item active"><span class="ci-dot"></span>Analisis foto nasi goreng</div>
+  <div class="chat-item">Verifikasi vendor MBG #B-023</div>
+  <div class="chat-item">Cek menu makan siang SD</div>
+  <div class="chat-item">Laporan anomali anggaran</div>
+  <div class="chat-item">Video sajian balita</div>
+
+  <div style="margin-top:auto; border-top:1px solid var(--border); padding-top:10px;"></div>
+  <a href="/terms" style="text-decoration:none; color:var(--muted); font-size:11px; padding:4px 8px; display:block; transition:.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='var(--muted)'">⚖ Ketentuan Layanan</a>
+
+  <div class="sidebar-footer" onclick="location.href='https://riefkyiqbalm.github.io/BG-AI/auth.html'">
+    <div class="avatar">RP</div>
+    <div class="avatar-info">
+      <div class="avatar-name">Riefky P.</div>
+      <div class="avatar-role">Admin · LLMGuardians</div>
+    </div>
+    <span style="margin-left:auto;color:var(--muted);font-size:12px">⚙</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">BG-AI <span>Analyzer</span></div>
+    <span class="topbar-badge">● LIVE</span>
+    <div class="topbar-actions">
+      <button class="tb-btn" title="Ekspor Laporan">↓</button>
+      <button class="tb-btn" title="Riwayat">☰</button>
+      <button class="tb-btn" title="Pengaturan">⚙</button>
+    </div>
+  </div>
+
+  <div class="chat-area" id="chatArea">
+    <!-- Welcome state -->
+    <div class="welcome" id="welcomeState">
+      <div class="welcome-icon">🥗</div>
+      <h2>Selamat datang di <span>BG-AI</span></h2>
+      <p>Kirimkan foto, video, atau deskripsi teks menu makanan untuk analisis kandungan gizi otomatis. Atau unggah dokumen vendor MBG untuk verifikasi perizinan.</p>
+      <div class="suggestion-grid">
+        <div class="suggestion-card" onclick="fillPrompt('Analisis kandungan gizi foto nasi goreng dengan telur dan sayuran')">
+          <div class="sc-icon">📸</div>
+          <div class="sc-title">Foto Makanan</div>
+          <div class="sc-desc">Upload foto piring untuk estimasi gizi otomatis</div>
+        </div>
+        <div class="suggestion-card" onclick="fillPrompt('Hitung gizi menu: nasi 200g, ayam goreng 100g, tumis kangkung 80g, jeruk')">
+          <div class="sc-icon">📝</div>
+          <div class="sc-title">Deskripsi Menu</div>
+          <div class="sc-desc">Ketik nama bahan dan porsi untuk analisis</div>
+        </div>
+        <div class="suggestion-card" onclick="fillPrompt('Cek apakah menu ini memenuhi standar AKG Kemenkes untuk anak SD usia 7-9 tahun')">
+          <div class="sc-icon">📊</div>
+          <div class="sc-title">Standar AKG</div>
+          <div class="sc-desc">Bandingkan menu dengan standar Kemenkes RI</div>
+        </div>
+        <div class="suggestion-card" onclick="fillPrompt('Verifikasi dokumen perizinan vendor MBG, cek kelengkapan dan deteksi anomali')">
+          <div class="sc-icon">🏢</div>
+          <div class="sc-title">Verifikasi Vendor</div>
+          <div class="sc-desc">Upload dokumen untuk cek fraud & izin MBG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT BAR -->
+  <div class="input-area">
+    <div class="input-modes">
+      <button class="input-mode-btn active" id="modeText" onclick="setInputMode('text',this)">✏ Teks</button>
+      <button class="input-mode-btn" id="modeFoto" onclick="setInputMode('foto',this)">📸 Foto</button>
+      <button class="input-mode-btn" id="modeVideo" onclick="setInputMode('video',this)">🎬 Video</button>
+      <button class="input-mode-btn" id="modeDok" onclick="setInputMode('dok',this)">📄 Dokumen</button>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="dz-icon">☁</div>
+      <div>Seret & lepas file di sini, atau <u>klik untuk pilih</u></div>
+      <div style="font-size:11px;margin-top:4px">Foto: JPG/PNG • Video: MP4/MOV • Dokumen: PDF/DOCX</div>
+      <input type="file" id="fileInput" style="display:none" onchange="handleFile(this)"/>
+    </div>
+
+    <div class="input-box">
+      <textarea class="input-textarea" id="msgInput" placeholder="Deskripsikan makanan atau tanyakan tentang gizi…" rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <div class="input-actions">
+        <button class="inp-btn" title="Lampirkan file" onclick="document.getElementById('fileInput').click()">📎</button>
+        <button class="inp-btn" title="Rekam suara">🎤</button>
+        <button class="send-btn" onclick="sendMessage()" title="Kirim">➤</button>
+      </div>
+    </div>
+    <div class="input-hint">
+      Dengan mengirim, Anda menyetujui <a href="/terms">Ketentuan Layanan</a> kami. Model: Qwen3-4B via LM Studio.
+    </div>
+  </div>
+</main>
+
+<!-- RIGHT PANEL -->
+<aside class="right-panel">
+  <div>
+    <div class="rp-section-title">Status Sistem</div>
+    <div class="status-card">
+      <div class="status-row">
+        <span class="status-label">BG-AI</span>
+        <span class="status-val"><span class="dot-green" id="statusDot"></span><span id="statusLabel">Online</span></span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">DB TKPI-BPOM</span>
+        <span class="status-val"><span class="dot-gold"></span>Sinkron</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Latensi API</span>
+        <span class="status-val" style="color:var(--green)">128ms</span>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="rp-section-title">Model Aktif</div>
+    <div class="model-chip active">⬡ Qwen3-4B</div>
+    <div class="model-chip">◈ Sahabat-AI</div>
+    <div class="model-chip">◇ XGBoost</div>
+  </div>
+
+  <div>
+    <div class="rp-section-title">Kuota Hari Ini</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Analisis Gizi</span><span>34/100</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:34%"></div></div>
+    </div>
+    <div class="progress-wrap" style="margin-top:10px">
+      <div class="progress-label"><span>Verifikasi Vendor</span><span>8/50</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="rp-section-title">Sesi Ini</div>
+    <div class="status-card">
+      <div class="status-row"><span class="status-label">Pesan</span><span class="status-val" id="msgCount">3</span></div>
+      <div class="status-row"><span class="status-label">Analisis</span><span class="status-val">1</span></div>
+      <div class="status-row"><span class="status-label">Token</span><span class="status-val" id="tokenCount">0</span></div>
+    </div>
+  </div>
+</aside>
+
+<script src="statics/index.js">
+</script>
+</body>
+</html>

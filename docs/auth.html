@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Akun — BG-AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/" class="topnav-logo">
+    <div class="logo-icon">B•G</div>
+    <div class="logo-name">BG-AI <span>|</span> NG</div>
+  </a>
+  <div class="topnav-spacer"></div>
+  <a href="/" class="back-btn">← Kembali ke Chat</a>
+</nav>
+ 
+<div class="page-body">
+  <aside class="sidebar">
+    <div class="nav-section">Akun</div>
+    <a class="nav-item active"><span class="ni-icon">👤</span> Profil Saya</a>
+    <a class="nav-item"><span class="ni-icon">🔒</span> Keamanan</a>
+    <a class="nav-item"><span class="ni-icon">🔔</span> Notifikasi</a>
+    <div class="nav-section">Platform</div>
+    <a class="nav-item"><span class="ni-icon">⬡</span> Model AI</a>
+    <a class="nav-item"><span class="ni-icon">📊</span> Penggunaan & Kuota</a>
+    <a class="nav-item"><span class="ni-icon">🔑</span> API Key</a>
+    <a class="nav-item"><span class="ni-icon">👥</span> Tim & Anggota</a>
+    <div class="nav-section">Lainnya</div>
+    <a href="/terms" class="nav-item"><span class="ni-icon">⚖</span> Ketentuan Layanan</a>
+    <a class="nav-item" style="color:var(--red)" onclick="if(confirm('Keluar dari SATU-AI?'))location.href='/login'"><span class="ni-icon">⏏</span> Keluar</a>
+  </aside>
+ 
+  <div class="content">
+    <div class="section-title">Pengaturan Akun</div>
+    <div class="section-subtitle">Kelola profil, keamanan, dan preferensi platform Anda.</div>
+ 
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-avatar">RP</div>
+      <div class="profile-info">
+        <h3>Riefky Pratama</h3>
+        <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2b0aba7a4a9bb82a7baa3afb2aea7eca1adaf">[email&#160;protected]</a> · Universitas Teknologi Nusantara</p>
+        <div class="badge-row">
+          <span class="badge badge-teal">✦ Admin</span>
+          <span class="badge badge-teal">🥦 NutriGuard</span>
+          <span class="badge badge-gold">🏆 LLMGuardians</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Informasi Pribadi -->
+    <div class="settings-card">
+      <div class="settings-card-title">👤 Informasi Pribadi</div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Nama Depan</label>
+          <input class="form-input" value="Riefky"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Belakang</label>
+          <input class="form-input" value="Pratama"/>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" value="email@example.com" type="email"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">No. HP / WA</label>
+          <input class="form-input" value="0812-3456-7890"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Institusi / Instansi</label>
+        <input class="form-input" value="Universitas Teknologi Nusantara"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peran / Jabatan</label>
+        <select class="form-input">
+          <option selected>Admin Sistem & AI Engineer</option>
+          <option>Petugas Pengawas Vendor MBG</option>
+          <option>Ahli Gizi / Tenaga Kesehatan</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="showToast('Perubahan berhasil disimpan ✓')">Simpan Perubahan</button>
+        <button class="btn btn-ghost">Batalkan</button>
+      </div>
+    </div>
+ 
+    <!-- Preferensi Platform -->
+    <div class="settings-card">
+      <div class="settings-card-title">⬡ Preferensi Platform</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <h4>Analisis Gizi Otomatis</h4>
+          <p>Jalankan BG-AI otomatis saat foto makanan terdeteksi</p>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <h4>Notifikasi Smart Ticket</h4>
+          <p>Beritahu saat tiket perbaikan vendor diterbitkan</p>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <h4>Simpan Riwayat Chat</h4>
+          <p>Simpan percakapan untuk referensi dan audit</p>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <h4>Mode Peneliti</h4>
+          <p>Tampilkan data teknis dan confidence score model</p>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+ 
+    <!-- Aktivitas -->
+    <div class="settings-card">
+      <div class="settings-card-title">📋 Aktivitas Terakhir</div>
+      <table class="activity-table">
+        <thead><tr><th>Aktivitas</th><th>Waktu</th><th>IP</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Analisis gizi foto makanan</td><td>26 Mar 2026, 09:14</td><td>103.88.xx.xx</td><td><span class="status-pill sp-ok">Sukses</span></td></tr>
+          <tr><td>Verifikasi vendor #B-023</td><td>25 Mar 2026, 14:30</td><td>103.88.xx.xx</td><td><span class="status-pill sp-ok">Sukses</span></td></tr>
+          <tr><td>Login akun</td><td>25 Mar 2026, 08:00</td><td>180.242.xx.xx</td><td><span class="status-pill sp-ok">Sukses</span></td></tr>
+          <tr><td>Login percobaan gagal</td><td>24 Mar 2026, 22:17</td><td>Unknown</td><td><span class="status-pill sp-warn">Gagal</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+ 
+    <!-- Danger zone -->
+    <div class="danger-card">
+      <div class="danger-card-title">⚠ Zona Berbahaya</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:16px;">Tindakan berikut bersifat permanen dan tidak dapat dibatalkan.</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="alert('Konfirmasi penghapusan data akan dikirim ke email Anda.')">🗑 Hapus Semua Data Chat</button>
+        <button class="btn btn-danger" onclick="if(confirm('Yakin ingin menghapus akun?'))location.href='/login'">✕ Hapus Akun Saya</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:28px;right:28px;background:var(--card);border:1px solid var(--teal-dim);color:var(--teal);padding:12px 20px;border-radius:12px;font-size:13px;display:none;animation:fadeUp .3s ease;box-shadow:var(--glow);z-index:999;"></div>
+ 
+
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2800);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true, 
+    "types": ["chrome", "node"],
+    "paths": {
+      "~*": ["./*"]
+    }
+  },
+  "include": [
+    ".plasmo/index.d.ts",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "../depcryted/component-in-plasmo/TopBarLogo.tsx",
+    "../depcryted/component-in-plasmo/MainChat.tsx",
+    "../depcryted/component-in-plasmo/ChatInput.tsx",
+    "../depcryted/component-in-plasmo/ChatContainer.tsx"
+  ]
+}
