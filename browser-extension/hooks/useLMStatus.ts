@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { LMStatus } from "../types";
-import { getStatus, getConfig } from "../lib/api";
+import { getStatus, getConfig } from "../../sharedUI/src/lib/api";
 
 export function useLMStatus() {
   const [status, setStatus] = useState<LMStatus>({

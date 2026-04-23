@@ -11,10 +11,10 @@
 
 import { Resend } from "resend";
 import { render } from "@react-email/components";
-import VerificationEmail from "~emails/VerificationEmail";
-import PasswordReset          from "~emails/PasswordReset";
-import PasswordChanges        from "~emails/PasswordChanges";
-import EmailChanges from "~emails/EmailChanges";
+import VerificationEmail from "@sharedUI/emails/VerificationEmail";
+import PasswordReset          from "@sharedUI/emails/PasswordReset";
+import PasswordChanges        from "@sharedUI/emails/PasswordChanges";
+import EmailChanges from "@sharedUI/emails/EmailChanges";
 
 // ── Singleton ─────────────────────────────────────────────────────────────────
 // Instantiated once per process — not per request.
