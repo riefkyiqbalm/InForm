@@ -165,3 +165,4 @@ public_key_base64.txt
 init.sh
 update.sh
 
+aws/*
