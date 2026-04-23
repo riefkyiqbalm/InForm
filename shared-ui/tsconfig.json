@@ -14,13 +14,15 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
+    "isolatedModules": false,
+    "noEmit": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "paths": {
       "@inform/ui/*": ["./src/*"],
       "@inform/types": ["./src/types/index.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

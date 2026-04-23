@@ -1,0 +1,1 @@
+{"version":3,"file":"BigLogo.d.ts","sourceRoot":"","sources":["../../../src/components/logo/BigLogo.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAE1B,UAAU,YAAY;IACpB,SAAS,CAAC,EAAE,MAAM,CAAC;IACnB,KAAK,CAAC,EAAE,KAAK,CAAC,aAAa,CAAC;CAC7B;AAED,MAAM,CAAC,OAAO,UAAU,OAAO,CAAC,EAAE,SAAS,EAAE,KAAK,EAAE,EAAE,YAAY,2CAcjE"}

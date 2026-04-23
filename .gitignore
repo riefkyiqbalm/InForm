@@ -2,10 +2,15 @@
 # Dependencies
 node_modules/
 
-# Build outputs
-dist/
+# Build outputs (except shared-ui/dist which needs to be committed)
 build/
 target/
+browser-extension/dist/
+website/.next/
+website/node_modules/.vite/
+
+# Keep shared-ui/dist (required for imports to work)
+!shared-ui/dist/
 
 # TypeScript
 *.tsbuildinfo
