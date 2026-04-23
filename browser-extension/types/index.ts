@@ -70,7 +70,7 @@ export interface SendMessageArgs {
   text: string;
   signal?: AbortSignal;
   sessionId?: string; // Jika sewaktu-waktu butuh override ID
-  attachments?: any []
+  attachments?: any[];
 }
 
 
@@ -100,6 +100,7 @@ export interface ChatContextType {
   clearError:       () => void;
   clearAborted:     () => void;
   retryMessage:     (text: string) => Promise<void>;
+  setLoadingSessionId: (sessionId: string | null) => void;
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────────

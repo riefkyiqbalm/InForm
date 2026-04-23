@@ -1,170 +1,60 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# --- AWS Specific ---
-.aws/
-credentials
-config
-*.pem
-*.pub
-*.key
-
-# --- AWS CDK (Cloud Development Kit) ---
-.cdk.staging/
-cdk.out/
-.parcel-cache/
-
-# --- AWS SAM (Serverless Application Model) ---
-.aws-sam/
-
-# --- AWS Amplify ---
-amplify/.config/local-*
-amplify/mock-data/
-amplify/backend/amplify-meta.json
-amplify/backend/.temp/
-build/
-dist/
+```
+# Dependencies
 node_modules/
-aws-exports.js
-awsconfiguration.json
 
-# --- Environment Variables (Sangat Penting!) ---
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.stackery
+# Build outputs
+dist/
+build/
+target/
 
-# --- Terraform (Jika menggunakan Terraform untuk AWS) ---
-.terraform/
-*.tfstate
-*.tfstate.backup
-.terraform.lock.hcl
-
-# --- Serverless Framework ---
-.serverless/
-
-# --- Python/Lambda (Jika backend menggunakan Python) ---
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
 venv/
 .venv/
-.env/
-
-# --- Node.js (Jika menggunakan Lambda/CDK dengan JS/TS) ---
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.next/
-out/
-
-# Prisma
-.env
-node_modules/
-/prisma/migrations/
-
-# PostgreSQL / Database
-*.sql
-*.dump
-postgresql.log
-/db_data/             # Jika Anda menggunakan Docker dan menyimpan data di folder lokal
-
-# Next.js & Node
-node_modules/
-.next/
-out/
-build/
-dist/
-
-# Environment Files (Paling Krusial)
+.ENV
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+.python-version
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+*.log
 
-# Markdown
-*DATABASE_FORMS.md
-*EXTRACTABLE_FUNCTIONS.md
-*PRISMA.md
-*REFACTORING_COMPLETE.md
-*REFACTORING_SUMMARY.md
-*BACKEND_SETUP.md
-*SPESIFICATION.md
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-#--- Command Line Scripts ---
-start.bat
-stop.bat
-start.ps1
-stop.ps1
-migrate.bat
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# log
+# Environment specific
+.env
+.env.local
+.env.*
 
-log/.env
-log/*.psi
-log/*.bat
+# Coverage
+coverage/
+htmlcov/
+*.coverage
 
-# Document
-Document/*
-
-#Key
-key.pem
-.public_key_base64.txt.swp
-package.json
-package-lock.json
-public_key_base64.txt
-
-#Shell Command
-init.sh
-update.sh
-
-#CI/CD Deployment
-aws/*
-.github/*
+# Temporary files
+*.tmp
+*.temp
+```

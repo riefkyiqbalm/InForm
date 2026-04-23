@@ -50,7 +50,7 @@ function buildBar(score: number): string {
 export default function MainChat() {
   const {
     activeSession, activeSessionId,
-    loadingSessionId, sendMessage,
+    loadingSessionId, sendMessage, setLoadingSessionId,
     createSession, addMessage,
     abortedMessage, clearAborted, retryMessage,
   } = useChat()
@@ -127,14 +127,21 @@ export default function MainChat() {
     if (isFillIntent(finalPrompt)) {
       clearAborted()
 
+      // FIX Bug 3: Set loading state before starting fill operation
+      setLoadingSessionId(targetSessionId)
+
       // 1. Add user message to chat history via normal sendMessage (fire-and-forget)
       //    We don't await it — fill runs in parallel
       const controller = new AbortController()
       abortControllerRef.current = controller
-      sendMessage({ text, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend }).catch(() => {})
+      // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
+      sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend }).catch(() => {})
 
       // 2. Execute fill
       const result = await fillAllNow()
+
+      // Clear loading state after fill completes
+      setLoadingSessionId(null)
 
       if (result === null) {
         // Page is being analyzed — tell user to wait and try again
@@ -170,7 +177,8 @@ export default function MainChat() {
     abortControllerRef.current = controller
 
     try {
-      await sendMessage({ text, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend })
+      // FIX Bug 4: Pass finalPrompt (which includes file info) instead of original text
+      await sendMessage({ text: finalPrompt, signal: controller.signal, sessionId: targetSessionId, attachments: filesToSend })
     } catch {
       toast("Gagal terhubung ke AI. Pastikan Backend aktif.", "error")
     }

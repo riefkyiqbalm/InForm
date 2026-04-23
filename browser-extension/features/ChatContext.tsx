@@ -213,7 +213,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   // ── sendMessage ────────────────────────────────────────────────────────────
   const sendMessage = useCallback(
-    async ({ text, signal, sessionId }: SendMessageArgs) => {
+    async ({ text, signal, sessionId, attachments }: SendMessageArgs) => {
       // FIX: use the explicitly passed sessionId first, then fall back to
       // activeSessionId. This prevents the stale-state 404 bug where
       // a freshly created session's ID hasn't propagated to state yet.
@@ -223,16 +223,30 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         console.error("[ChatContext] sendMessage called with no session ID");
         return;
       }
-      if (!text.trim()) return;
+      
+      // FIX Bug 2: Allow sending when there are attachments even if text is empty
+      const hasAttachments = attachments && attachments.length > 0;
+      if (!text.trim() && !hasAttachments) return;
 
       const token = await getToken();
       setLoadingSessionId(targetSession);
+
+      // FIX Bug 2: Include attachment info in optimistic user message
+      let displayText = text;
+      if (hasAttachments) {
+        const fileNames = attachments.map((f: any) => f.name).join(", ");
+        if (text.trim()) {
+          displayText = `${text}\n\n📎 ${fileNames}`;
+        } else {
+          displayText = `📎 ${fileNames}`;
+        }
+      }
 
       // Optimistic user message shown immediately
       const tempMsg: ChatMessage = {
         id:        `temp-${Date.now()}`,
         role:      "USER",
-        text,
+        text:      displayText,
         sessionId: targetSession,
         createdAt: new Date().toISOString(),
       };
@@ -245,10 +259,16 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       );
 
       try {
+        // FIX Bug 1 & Bug 4: Send attachments and use the full text (which may include file info from finalPrompt)
+        const body: { message: string; attachments?: any[] } = { message: text };
+        if (hasAttachments) {
+          body.attachments = attachments;
+        }
+
         const res = await fetch(messagesUrl(targetSession), {
           method:  "POST",
           headers: authHeaders(token!),
-          body:    JSON.stringify({ message: text }),
+          body:    JSON.stringify(body),
           signal,
         });
 
@@ -304,7 +324,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     loadingSessionId, isLoading, error, abortedMessage,
     createSession, setActiveSession, loadSession, addMessage,
     sendMessage, deleteSession, renameSession, pinSession,
-    clearError, clearAborted, retryMessage,
+    clearError, clearAborted, retryMessage, setLoadingSessionId,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
