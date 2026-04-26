@@ -40,6 +40,7 @@ const messagesUrl = (id: string) => `${NEXTJS_BASE}/api/chat/sessions/${id}/mess
 // without depending on React state updates being synchronous.
 export interface ExtendedChatContextType extends ChatContextType {
   createSession: () => Promise<string>;
+  
 }
 
 const ChatContext = createContext<ExtendedChatContextType | undefined>(undefined);
@@ -327,7 +328,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     loadingSessionId, isLoading, error, abortedMessage,
     createSession, setActiveSession, loadSession, addMessage,
     sendMessage, deleteSession, renameSession, pinSession,
-    clearError, clearAborted, retryMessage, setLoadingSessionId,
+    clearError, clearAborted, retryMessage, setLoadingSessionId
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

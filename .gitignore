@@ -144,6 +144,8 @@ stop.bat
 start.ps1
 stop.ps1
 migrate.bat
+cleanup.bat
+
 
 # log
 
@@ -168,3 +170,6 @@ update.sh
 #CI/CD Deployment
 aws/*
 .github/*
+
+#Keycloak
+keycloak-26.6.1/*

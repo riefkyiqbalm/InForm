@@ -2,12 +2,15 @@
 // Shows fill result as an AI-style chat bubble after form is filled.
 
 import React from "react"
-import { useForm } from "~features/FormContext"
+import { useForm } from "@sharedUI/context/FormContext"
 
 export default function FillResultBubble() {
-  const { fillResult, isFilling, clearResult } = useForm()
+  // Change: Destructure 'resultData' instead of 'fillResult' for reading data
+  // 'fillResult' is the setter function, 'resultData' is the actual data object
+  const { resultData, isFilling, clearResult } = useForm()
 
-  if (!fillResult && !isFilling) return null
+  // Change: Check resultData instead of fillResult
+  if (!resultData && !isFilling) return null
 
   return (
     <div style={S.wrap}>
@@ -20,20 +23,21 @@ export default function FillResultBubble() {
           </div>
         )}
 
-        {fillResult && !isFilling && (
+        {/* Change: Use resultData here */}
+        {resultData && !isFilling && (
           <>
             <div style={S.row}>
               <span style={{ fontSize: 20 }}>
-                {fillResult.score >= 70 ? "🎉" : fillResult.score >= 40 ? "⚠️" : "❌"}
+                {resultData.score >= 70 ? "🎉" : resultData.score >= 40 ? "⚠️" : "❌"}
               </span>
               <div>
                 <div style={S.title}>
-                  {fillResult.score >= 70 ? "Form berhasil diisi!"
-                 : fillResult.score >= 40 ? "Form sebagian terisi"
+                  {resultData.score >= 70 ? "Form berhasil diisi!"
+                 : resultData.score >= 40 ? "Form sebagian terisi"
                  : "Gagal mengisi form"}
                 </div>
                 <div style={S.sub}>
-                  {fillResult.filled} dari {fillResult.total} field · skor {fillResult.score}%
+                  {resultData.filled} dari {resultData.total} field · skor {resultData.score}%
                 </div>
               </div>
             </div>
@@ -42,16 +46,16 @@ export default function FillResultBubble() {
             <div style={S.barTrack}>
               <div style={{
                 ...S.barFill,
-                width:      `${fillResult.score}%`,
-                background: fillResult.score >= 70 ? "#00d4c8"
-                          : fillResult.score >= 40 ? "#f5c842"
+                width:      `${resultData.score}%`,
+                background: resultData.score >= 70 ? "#00d4c8"
+                          : resultData.score >= 40 ? "#f5c842"
                           : "#ff4d6d",
               }} />
             </div>
 
-            {fillResult.skipped.length > 0 && (
+            {resultData.skipped.length > 0 && (
               <div style={S.skipped}>
-                Field dilewati: {fillResult.skipped.join(", ")}
+                Field dilewati: {resultData.skipped.join(", ")}
               </div>
             )}
 

@@ -1,5 +1,6 @@
 
 // src/components/MessageBubble.tsx
+'use-client'
 
 import { type UIMessage } from "@sharedUI/types";
 import { useState } from "react";

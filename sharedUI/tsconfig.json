@@ -1,27 +1,49 @@
 {
- "compilerOptions": {
+  "compilerOptions": {
+    /* Basic Options */
     "target": "ES2020",
     "module": "ESNext",
-    "types" : ["chrome","node"],
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
+    "incremental": true,
+
+    /* Module Resolution */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Strict Checks */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Build Options */
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "strict": true,
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": false,
-    "noEmit": false,
+    "outDir": "./dist",
+    "rootDir": "./src", 
+
+    /* Paths Aliases */
     "paths": {
-        "@sharedUI/*": ["./src/*"],
-        "@sharedUI/types/*": ["./src/types/index.ts"]
-    }
+      "@sharedUI/*": ["./src/*"]
+    },
+
+    /* Types */
+    "types": ["chrome", "node"]
   },
-  "include": ["src/**/*", "src/context/ToastContext.tsx", "src/components/SettingsModal.tsx", "src/components/buttons/AttachButton.tsx", "src/components/buttons/LogOutButton.tsx", "src/context/AuthContext.tsx", "src/components/buttons/NavigationButton.tsx", "src/components/buttons/NewButton.tsx", "src/lib/constants/suggestions.ts", "src/components/chats/DefaultPrompt.tsx", "../browser-extension/hooks", "src/emails",],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",         // Semua file di bawah folder src
+    "next-env.d.ts"     // File env Next.js jika diperlukan
+  ],
+  "exclude": [
+    "node_modules", 
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

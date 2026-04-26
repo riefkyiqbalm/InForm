@@ -198,7 +198,7 @@
 //   5. Expose scrapeForm() and fillForm() on window for executeScript callers
 
 import type { PlasmoCSConfig } from "plasmo"
-import Icon from "~components/IconStyles"
+// import Icon from "~components/IconStyles"
 
 export const config: PlasmoCSConfig = {
   matches:    ["<all_urls>"],

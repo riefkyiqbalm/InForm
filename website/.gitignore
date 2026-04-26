@@ -107,3 +107,10 @@ generated/
 
 
 depcryted/
+
+#Oauth
+gcp_Oauth.json
+
+#Schema-Prisma
+schema.prisma
+prisma.config.ts

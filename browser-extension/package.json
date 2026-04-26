@@ -1,5 +1,5 @@
 {
-  "name": "inform",
+  "name": "inform-extension",
   "displayName": "",
   "version": "0.0.1",
   "description": "An AI-chatbot extension for browser",
@@ -16,9 +16,12 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
     "plasmo": "^0.90.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "resend": "6.12.0"
+    "resend": "6.12.0",
+    "pg": "^8.20.0",
+    "push": "^0.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "@inform/ui": "*"
   },
   "manifest": {
     "externally_connectable": {
@@ -50,6 +53,19 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.1.40",
-    "@types/node": "^25.6.0"
+    "@types/node": "^25.5.0",
+    "@prisma/config": "^7.7.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.27",
+    "cssnano": "^7.1.4",
+    "dotenv": "^17.4.1",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
   }
 }

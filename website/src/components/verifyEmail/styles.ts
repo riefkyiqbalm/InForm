@@ -5,8 +5,8 @@
 // shared style objects from app/lib/styles/ where appropriate.
 
 import type React from "react";
-import { cardStyles } from "@/lib/styles/cards";
-import { buttonStyles } from "@/lib/styles/buttons";
+import { cardStyles } from "@sharedUI/lib/styles/cards";
+import { buttonStyles } from "@sharedUI/lib/styles/buttons";
 
 // ── Background (VerifyBackground) ─────────────────────────────────────────────
 

@@ -1,3 +1,4 @@
+'use-client'
 import { textStyles as T } from "@sharedUI/lib/styles/text";
 import BigLogo from "@sharedUI/components/logo/BigLogo";
 

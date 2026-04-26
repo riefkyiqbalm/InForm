@@ -1,26 +1,32 @@
 "use client";
 import React, { useState } from "react";
-import Icon  from "@/components/IconStyles";
-import { FormInput } from "@/components/FormInput";
-import { ErrorBox } from "@/components/ErrorBox";
-import { ForgotPassword } from "@/components/auth/ForgotPassword";
+import Icon from "@sharedUI/components/IconStyles";
+import { FormInput } from "@sharedUI/components/FormInput";
+import { ErrorBox } from "@sharedUI/components/ErrorBox";
+import { ForgotPassword } from "@sharedUI/components/buttons/ForgotPassword";
+import OauthButton from "@/components/auth/OauthButton";
 import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
-  onSubmit:  (email: string, password: string) => Promise<void>;
-  loading:   boolean;
-  error:     string;
-  onError:   (msg: string) => void;
+  onSubmit: (email: string, password: string) => Promise<void>;
+  loading: boolean;
+  error: string;
+  onError: (msg: string) => void;
 }
 
-export function LoginForm({ onSubmit, loading, error, onError }: LoginFormProps) {
-  const [email,           setEmail]           = useState("");
-  const [password,        setPassword]        = useState("");
-  const [showPass,        setShowPass]        = useState(false);
-  const [animateMail,     setAnimateMail]     = useState(false);
-  const [animatePass,     setAnimatePass]     = useState(false);
-  const [showForgot,      setShowForgot]      = useState(false);
-  const router                                = useRouter()
+export function LoginForm({
+  onSubmit,
+  loading,
+  error,
+  onError,
+}: LoginFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [animateMail, setAnimateMail] = useState(false);
+  const [animatePass, setAnimatePass] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,10 +42,28 @@ export function LoginForm({ onSubmit, loading, error, onError }: LoginFormProps)
     if (e.animationName === "onAutofillStart") setAnimatePass(false);
   };
 
+
   return (
     <>
       <form onSubmit={handleSubmit}>
         <ErrorBox message={error} />
+
+            {/* Google Button */}
+            <OauthButton
+
+            />
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+
 
         {/* Email */}
         <FormInput
@@ -87,22 +111,22 @@ export function LoginForm({ onSubmit, loading, error, onError }: LoginFormProps)
           <button
             type="button"
             style={S.forgotLink}
-            onClick={() => router.push('/forgot-password')}
+            onClick={() => router.push("/forgot-password")}
           >
             Lupa kata sandi?
           </button>
         </div>
-
+        {/* <ForgotPassword/> */}
         <button type="submit" disabled={loading} style={S.mainBtn}>
           {loading ? (
             <>
-              <Icon name="loading" size={18} className="animate-spin" />
+              <Icon name="loading" size={18} />
               <span>Memproses…</span>
             </>
           ) : (
             <>
               <Icon name="forward" size={18} />
-              <span>Masuk ke BG-AI</span>
+              <span>Masuk ke InForm</span>
             </>
           )}
         </button>

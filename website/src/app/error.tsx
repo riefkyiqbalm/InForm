@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect } from "react";
-import NorFoundPage from "@/components/NotFoundPage";
+import NorFoundPage from "@sharedUI/components/NotFoundPage";
 
 interface ErrorProps {
   error: Error;

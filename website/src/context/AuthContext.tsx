@@ -10,29 +10,24 @@ import React, {
 } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import type { AuthContextType, Role, User } from "@/types";
+import { signIn, signOut as nextAuthSignOut, useSession, SessionProvider } from "next-auth/react";
+import type { AuthContextType, Role, User } from "@sharedUI/types";
 
 // ── InForm Extension bridge ───────────────────────────────────────────────────
-// The extension ID from chrome://extensions (load unpacked build first).
-// In production replace with the published store ID.
 const EXTENSION_ID = process.env.NEXT_PUBLIC_INFORM_EXTENSION_ID ?? "";
 
 function notifyExtension(type: "_AUTH_LOGIN" | "_AUTH_LOGOUT", payload?: object) {
-  // Guard 1: must be in a browser with the chrome extension API
   if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
-
-  // Guard 2: EXTENSION_ID must look like a real Chrome extension ID (32 a-p chars)
   if (!EXTENSION_ID || !/^[a-p]{32}$/.test(EXTENSION_ID)) {
     console.debug("[InForm] Extension ID not set or invalid — skipping notify");
     return;
   }
-
   try {
     chrome.runtime.sendMessage(EXTENSION_ID, { type, ...payload }, () => {
-      void chrome.runtime.lastError; // swallow "extension not installed" errors
+      void chrome.runtime.lastError;
     });
   } catch {
-    // sendMessage can throw synchronously if the ID format is wrong — safe to ignore
+    // Ignore
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
@@ -44,18 +39,17 @@ const COOKIE_OPTS: Cookies.CookieAttributes = {
   expires:  7,
   path:     "/",
   sameSite: "Lax",
-  // secure: true  ← uncomment for HTTPS
 };
 
 // ── Cookie helpers ────────────────────────────────────────────────────────────
 function saveAuthCookies(token: string, user: User) {
-  Cookies.set(AUTH_TOKEN_KEY, token,                COOKIE_OPTS);
-  Cookies.set(AUTH_USER_KEY,  JSON.stringify(user), COOKIE_OPTS);
+  Cookies.set(AUTH_TOKEN_KEY, token, COOKIE_OPTS);
+  Cookies.set(AUTH_USER_KEY, JSON.stringify(user), COOKIE_OPTS);
 }
 
 function clearAuthCookies() {
   Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
-  Cookies.remove(AUTH_USER_KEY,  { path: "/" });
+  Cookies.remove(AUTH_USER_KEY, { path: "/" });
 }
 
 function parseUserCookie(): User | null {
@@ -91,38 +85,84 @@ const defaultAuth: AuthContextType = {
   resetPassword:   async () => {},
   changePassword:  async () => {},
   changeEmail:     async () => {},
+  signInWithOIDC:  async () => {}, // Added OIDC method
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuth);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+// ── Internal Provider Component ──────────────────────────────────────────────
+function AuthProviderInternal({ children }: { children: React.ReactNode }) {
   const [user, setUser]       = useState<User | null>(() => parseUserCookie());
   const [loading, setLoading] = useState(true);
   const router                = useRouter();
   
+  // Hook into NextAuth session
+  const { data: session, status: sessionStatus } = useSession();
 
-  // ── Logout ────────────────────────────────────────────────────────────────
-  const logout = useCallback(() => {
-    setUser(null);
-    clearAuthCookies();
-    notifyExtension("_AUTH_LOGOUT"); // ← tell extension: user logged out
-    router.push("/login");
-    // setIsAuthenticated(false);
-  }, [router]);
-  
-
-  // ── Validate session on mount ─────────────────────────────────────────────
+  // ── Sync NextAuth Session to Custom Cookies ───────────────────────────────
   useEffect(() => {
+    if (sessionStatus === "authenticated" && session) {
+      // Extract data from NextAuth session
+      // We assume your NextAuth callback puts the backend JWT in session.accessToken
+      const token = session.accessToken as string; 
+      
+      if (token && !getToken()) { // Only sync if we don't already have a token
+        const userData: User = {
+          id:          session.user?.id || "",
+          name:        session.user?.name || "",
+          email:       session.user?.email || "",
+          image:       session.user?.image || "",
+          contact:     "", // Map from session if available
+          institution: "", // Map from session if available
+          role:        "USER" as Role, // Default or map from session
+          createdAt:   new Date().toISOString(),
+        };
+
+        saveAuthCookies(token, userData);
+        setUser(userData);
+        notifyExtension("_AUTH_LOGIN", { token, user: userData });
+        
+        // Optional: Redirect after successful OIDC login if needed
+        // router.push(`/chat/${userData.id}`); 
+      }
+    } else if (sessionStatus === "unauthenticated") {
+      // If NextAuth says logged out, ensure local state is clean
+      if (user) {
+        setUser(null);
+        clearAuthCookies();
+        notifyExtension("_AUTH_LOGOUT");
+      }
+    }
+    
+    if (sessionStatus !== "loading") {
+      setLoading(false);
+    }
+  }, [session, sessionStatus]);
+
+  // ── Validate existing cookie session on mount (if no NextAuth session) ────
+  useEffect(() => {
+    if (sessionStatus === "authenticated") return; // Skip if NextAuth handled it
+
     const validate = async () => {
       const token = Cookies.get(AUTH_TOKEN_KEY);
-      if (!token) { setLoading(false); return; }
+      if (!token) { 
+        if (sessionStatus !== "loading") setLoading(false); 
+        return; 
+      }
 
       try {
         const res = await fetch("/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) { logout(); return; }
+        if (!res.ok) { 
+          // Token invalid, force logout
+          clearAuthCookies();
+          setUser(null);
+          notifyExtension("_AUTH_LOGOUT");
+          if (sessionStatus !== "loading") setLoading(false);
+          return; 
+        }
 
         const dbUser = await res.json();
         const fresh: User = {
@@ -140,17 +180,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(fresh);
       } catch (err) {
         console.error("[AuthContext] validate error:", err);
-        // Network error — keep cached user, don't redirect
       } finally {
-        setLoading(false);
+        if (sessionStatus !== "loading") setLoading(false);
       }
     };
 
     validate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sessionStatus]);
 
-  // ── Login ─────────────────────────────────────────────────────────────────
+  // ── Logout ────────────────────────────────────────────────────────────────
+  const logout = useCallback(async () => {
+    setUser(null);
+    clearAuthCookies();
+    notifyExtension("_AUTH_LOGOUT");
+    if (session) await nextAuthSignOut({ redirect: false });
+    router.push("/login");
+  }, [router, session]);
+
+  // ── Login (Credentials) ───────────────────────────────────────────────────
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     try {
@@ -175,7 +223,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       saveAuthCookies(data.token, userData);
       setUser(userData);
-      notifyExtension("_AUTH_LOGIN", { token: data.token, user: userData }); // ← tell extension: user logged in
+      notifyExtension("_AUTH_LOGIN", { token: data.token, user: userData });
       router.push(`/chat/${userData.id}`);
     } catch (err) {
       console.error("[AuthContext] login error:", err);
@@ -185,32 +233,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [router]);
 
+  // ── SignIn with OIDC ──────────────────────────────────────────────────────
+const signInWithOIDC = useCallback(async () => {
+  setLoading(true);
+  try {
+    await signIn("google", { callbackUrl: "/chat" });
+  } catch (error) {
+    console.error("[AuthContext] Google Sign In error:", error);
+    setLoading(false);
+    throw error;
+  }
+}, []);
+
+const signOut = useCallback(async () => {
+    setLoading(true);
+    try {
+      // 1. Clear local state and cookies immediately
+      setUser(null);
+      clearAuthCookies();
+      notifyExtension("_AUTH_LOGOUT");
+
+      // 2. Call NextAuth signOut to clear the server session
+      // redirect: false prevents a full page reload, keeping it smooth
+      await nextAuthSignOut({ redirect: false });
+      
+      // 3. Redirect to login page
+      router.push("/login");
+    } catch (error) {
+      console.error("[AuthContext] Sign Out error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
   // ── Register ──────────────────────────────────────────────────────────────
-  const register = useCallback(
-    async (email: string, password: string, name: string) => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/auth/register", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ email, password, name }),
-        });
+const register = useCallback(
+  async (email: string, password: string, name: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }),
+      });
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error || "Pendaftaran gagal");
-        }
-
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-      } catch (err) {
-        console.error("[AuthContext] register error:", err);
-        throw err;
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Pendaftaran gagal");
       }
-    },
-    [router]
-  );
+
+      // Optional: Auto-login after register or redirect to verify email
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      console.error("[AuthContext] register error:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  },
+  [router]
+);
 
   // ── Forgot password ───────────────────────────────────────────────────────
   const forgotPassword = useCallback(async (email: string) => {
@@ -266,12 +348,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user, loading, isAuthenticated: !!user,
       login, register, logout,
       forgotPassword, resetPassword, changePassword, changeEmail,
+      signInWithOIDC,
     }),
     [user, loading, login, register, logout,
-     forgotPassword, resetPassword, changePassword, changeEmail]
+     forgotPassword, resetPassword, changePassword, changeEmail, signInWithOIDC]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+// ── Main Exported Provider (Wraps with NextAuth SessionProvider) ────────────
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthProviderInternal>{children}</AuthProviderInternal>
+    </SessionProvider>
+  );
 }
 
 export function useAuth() {

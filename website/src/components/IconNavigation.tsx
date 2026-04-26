@@ -1,8 +1,8 @@
 "use-client";
 
-import Icon from "./IconStyles";
+import Icon from "@sharedUI/components/IconStyles";
 import Link from "next/link";
-import { buttonStyles as S } from "@/lib/styles/buttons";
+import { buttonStyles as S } from "@sharedUI/lib/styles/buttons";
 
 export default function IconNav() {
   return (

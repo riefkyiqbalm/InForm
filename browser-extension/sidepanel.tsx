@@ -1,11 +1,11 @@
 // sidepanel.tsx — Plasmo entry point
-import globalStyles                   from "data-text:~styles/globals.css"
+import globalStyles                   from "data-text:~styles/global.css"
 import MainChat                       from "~components/chats/MainChat"
 import NetworkGuard                   from "~components/NetworkGuard"
 
-import { AuthProvider, useAuth }      from "@sharedUI/context/AuthContext"
+import { AuthProvider, useAuth }      from "@sharedUI/context/ListeningAuthContext"
 import { ChatProvider}                from "@sharedUI/context/ChatContext"
-import { FormProvider }               from "~features/FormContext"
+import { FormProvider }               from "@sharedUI/context/FormContext"
 import { ToastProvider }              from "@sharedUI/context/ToastContext"
 
 

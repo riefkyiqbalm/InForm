@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import Icon  from "@/components/IconStyles";
-import { FormInput } from "@/components/FormInput";
-import { ErrorBox } from "@/components/ErrorBox";
+import Icon  from "@sharedUI/components/IconStyles";
+import { FormInput } from "@sharedUI/components/FormInput";
+import { ErrorBox } from "@sharedUI/components/ErrorBox";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { checkPasswordStrength, validatePasswordMatch } from "@/lib/validators";
 
@@ -106,7 +106,7 @@ export function RegisterForm({ onSubmit, loading, error, onError }: RegisterForm
       <button type="submit" disabled={loading} style={S.mainBtn}>
         {loading ? (
           <>
-            <Icon name="loading" size={18} className="animate-spin" />
+            <Icon name="loading" size={18}  />
             <span>Memproses…</span>
           </>
         ) : (

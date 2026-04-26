@@ -1,4 +1,5 @@
 // components/chats/FileMetadataPreview.tsx
+'use-client'
 import React from "react"
 import Icon from "@sharedUI/components/IconStyles"
 

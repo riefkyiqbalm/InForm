@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Icon from '../IconStyles';
+import Icon from '@sharedUI/components/IconStyles';
 
 
 interface DangerZoneCardProps {

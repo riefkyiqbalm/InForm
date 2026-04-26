@@ -1,6 +1,6 @@
 import React from 'react';
-import LogOut from '../buttons/LogOutButton';
-import Icon from '../IconStyles';
+import LogOut from '@/components/auth/LogOutButton';
+import Icon from '@sharedUI/components/IconStyles';
 
 export default function LeftPanel() {
   return (

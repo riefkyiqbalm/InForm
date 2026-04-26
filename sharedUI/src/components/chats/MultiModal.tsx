@@ -1,10 +1,7 @@
-
-
+'use-client'
 import React from 'react';
 import { type InputMode } from '@sharedUI/types';
 import Icon from '../IconStyles';
-
-
 
 interface MultiModalProps {
   inputMode: InputMode;

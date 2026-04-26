@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import SmallLogo from './SmallLogo';
+import SmallLogo from '@sharedUI/components/logo/SmallLogo';
 
 export default function TopBarLogo() {
   const { user, isAuthenticated } = useAuth();  

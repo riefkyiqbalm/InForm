@@ -1,4 +1,5 @@
 // components/chats/ChatInputPanel.tsx
+'use-client'
 import React, { useState } from "react"
 import type { InputMode } from "@sharedUI/types"
 import AttachFile from "@sharedUI/components/buttons/AttachButton"

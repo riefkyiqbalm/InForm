@@ -5,12 +5,12 @@ import { useAuth } from "@/context/AuthContext";
 import { parseErrorMessage } from "@/lib/errors";
 
 // ── keep your existing components ────────────────────────────────────────────
-import Background  from "@/components/Background";
-import Welcome     from "@/components/Welcome";
+import Background  from "@sharedUI/components/Background";
+import Welcome     from "@sharedUI/components/Welcome";
 
 // ── new broken-down components ────────────────────────────────────────────────
-import { Card }           from "@/components/Cards";
-import { TabButtons }     from "@/components/Tabbutons";
+import { Card }           from "@sharedUI/components/Cards";
+import { TabButtons }     from "@sharedUI/components/Tabbutons";
 import { LoginForm }      from "@/components/auth/LoginForm";
 import { RegisterForm }   from "@/components/auth/RegisterForm";
 

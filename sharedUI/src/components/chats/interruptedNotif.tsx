@@ -3,6 +3,7 @@
 //
 // Shown inside ChatInputPanel when the user stopped a running generation.
 // Displays the interrupted message text and offers a Retry button.
+'use-client'
 
 import React, { useState } from "react";
 import Icon from "../IconStyles";

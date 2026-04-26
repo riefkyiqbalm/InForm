@@ -1,4 +1,5 @@
 // components/ui/Icon.tsx
+'use-client'
 import { ICONS, type IconType } from '@sharedUI/lib/constants/icon';
 
 interface IconProps {

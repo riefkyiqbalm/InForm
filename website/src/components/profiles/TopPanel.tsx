@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import BackButton from '@/components/buttons/BackButton';
+import BackButton from '@sharedUI/components/buttons/BackButton';
 import TopBarLogo from '../logo/TopBarLogo';
 
 interface AppHeaderProps {

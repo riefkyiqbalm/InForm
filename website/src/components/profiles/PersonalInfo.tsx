@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useAuth } from "@/context/AuthContext"; //
-import SaveButton from "../buttons/SaveButton";
-import FormatButton from "../buttons/FormatButton";
-import Icon from "../IconStyles";
+import SaveButton from "@sharedUI/components/buttons/SaveButton";
+import FormatButton from "@sharedUI/components/buttons/FormatButton";
+import Icon from "@sharedUI/components/IconStyles";
 
 interface DbUser {
   id: number;

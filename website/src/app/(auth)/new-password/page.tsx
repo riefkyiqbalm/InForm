@@ -1,8 +1,8 @@
 "use-client";
 import React from "react";
 import { InputPassword } from "@/components/auth/InputNewPassword";
-import Background from "@/components/Background";
-import { Card } from "@/components/Cards";
+import Background from "@sharedUI/components/Background";
+import { Card } from "@sharedUI/components/Cards";
 
 export default function forgotPassword() {
   return (

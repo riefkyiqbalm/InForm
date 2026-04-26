@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import HamburgerIcon from "@/components/chats/HamburgerIcon";
-import NewChatButton from "@/components/buttons/NewButton";
-import ChatList from "@/components/chats/ChatList"; 
+import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon";
+import NewChatButton from "@sharedUI/components/buttons/NewButton";
+import ChatList from "@sharedUI/components/chats/ChatList"; 
 import SidebarFooter from "@/components/chats/LeftFooter";
 
 export default function LeftPanel() {

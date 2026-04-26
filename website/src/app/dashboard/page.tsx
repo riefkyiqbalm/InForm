@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { useChat } from "../../context/ChatContext";
-import { useLMStatus } from "../../hooks/useLMStatus";
-import StatusDot from "@/components/StatusDot";
+import { useChat } from "@sharedUI/context/ChatContext";
+import { useLMStatus } from "../../../../sharedUI/src/hooks/useLMStatus";
+// import StatusDot from "@/components/StatusDot";
 import TopPanel from "@/components/profiles/TopPanel";
-import { textStyles as T } from "@/lib/styles/text";
-import { Card } from "@/components/Cards";
+import { textStyles as T } from "@sharedUI/lib/styles/text";
+// import { Card } from "@/components/Cards";
 
 
 
@@ -44,7 +44,7 @@ export default function DashboardPage() {
           <div style={S.card}>
             <h2 style={S.cardTitle}>Status Sistem</h2>
             <div style={S.statusSection}>
-              <StatusDot />
+              {/* <StatusDot /> */}
             </div>
             <div style={S.infoGrid}>
               <div style={S.infoItem}>

@@ -15,6 +15,7 @@
     "deploy:s3": "next build && aws s3 sync ./out s3://aotamata.space --delete --acl public-read --cache-control max-age=31536000,public"
   },
   "dependencies": {
+    "@inform/ui": "*",
     "@lmstudio/sdk": "^1.5.0",
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "7.7",
@@ -25,8 +26,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
     "next": "^16.2.3",
-    "npm": "^11.12.1",
-    "npx": "^3.0.0",
+    "next-auth": "^4.24.14",
     "pg": "^8.20.0",
     "push": "^0.0.1",
     "react": "^19.2.4",

@@ -2,93 +2,82 @@
 
 const KEY_TOKEN   = "_auth_token";
 const KEY_USER    = "_auth_user";
-const NEXTJS_BASE = "http://localhost:3000";
+const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000";
 
-// ── On install ────────────────────────────────────────────────────────────────
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
-  }
-});
-
-// ── Open sidepanel on icon click ──────────────────────────────────────────────
-chrome.action.onClicked.addListener((tab) => {
-  if (tab.id) {
-    // @ts-ignore
-    chrome.sidePanel.open({ tabId: tab.id }).catch(console.error);
-  }
-});
-
-// ── Function For Detect Web/Page Form ──────────────────────────────────────────────
-async function handlePageHasForm(
-  payload: { fields: unknown[]; url: string },
-  tabId?: number
-) {
-  if (!tabId || !payload.fields?.length) return
- 
-  // Get auth token
-  const result = await chrome.storage.local.get(KEY_TOKEN)
-  const token  = (result[KEY_TOKEN] as string) || null
-  if (!token) return   // not logged in — don't analyze
- 
-  // Call Next.js /api/analyze
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function parseUserCookie(raw: string | undefined): any | null {
+  if (!raw) return null;
   try {
-    const res = await fetch(`${NEXTJS_BASE}/api/analyze`, {
-      method:  "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:  `Bearer ${token}`,
-      },
-      body: JSON.stringify({ schema: payload.fields }),
-      signal: AbortSignal.timeout(30_000),
-    })
- 
-    if (!res.ok) {
-      console.warn("[InForm] analyze returned", res.status)
-      return
-    }
- 
-    const data = await res.json() as {
-      filled: Record<string, { value: string; confidence: number; source: string }>
-    }
- 
-    if (!data.filled || Object.keys(data.filled).length === 0) return
- 
-    // Send analyzed values to content.ts — it will inject the fill buttons
-    chrome.tabs.sendMessage(tabId, {
-      type:    "INJECT_FILL_BUTTONS",
-      payload: data.filled,
-    }).catch(() => {
-      // Tab may have navigated away — safe to ignore
-    })
- 
-  } catch (err) {
-    console.error("[InForm] handlePageHasForm:", err)
+    // Cookies might be URI encoded
+    const decoded = decodeURIComponent(raw);
+    return JSON.parse(decoded);
+  } catch (e) {
+    console.error("[Background] Failed to parse user cookie:", e);
+    return null;
   }
 }
 
-// ── When a tab is activated or updated, sync cookie → chrome.storage.local ───
-// This is the KEY fix: every time the user opens or switches to a tab on
-// localhost:3000, we read the auth cookie and sync it into chrome.storage.local
-// so the sidepanel always has the token on reopen — even without a LOGIN message.
+// Sync current cookies to storage (used on startup/tab switch)
 async function syncCookieToStorage(): Promise<void> {
   try {
-    const tokenCookie = await chrome.cookies.get({ url: NEXTJS_BASE, name: KEY_TOKEN });
-    const userCookie  = await chrome.cookies.get({ url: NEXTJS_BASE, name: KEY_USER  });
+    const [tokenCookie, userCookie] = await Promise.all([
+      chrome.cookies.get({ url: NEXTJS_BASE, name: KEY_TOKEN }),
+      chrome.cookies.get({ url: NEXTJS_BASE, name: KEY_USER })
+    ]);
 
     if (tokenCookie?.value) {
       const toStore: Record<string, string> = { [KEY_TOKEN]: tokenCookie.value };
-      if (userCookie?.value) toStore[KEY_USER] = decodeURIComponent(userCookie.value);
+      if (userCookie?.value) {
+        toStore[KEY_USER] = userCookie.value; // Store raw, let context decode
+      }
       await chrome.storage.local.set(toStore);
+      
+      // Notify sidepanel immediately if we found a token
+      chrome.runtime.sendMessage({ 
+        type: "_AUTH_LOGIN", 
+        token: tokenCookie.value, 
+        user: parseUserCookie(userCookie.value) || {} 
+      }).catch(() => {});
     } else {
-      // Cookie gone (user logged out on website) — clear extension storage too
+      // No token found → ensure storage is cleared
       await chrome.storage.local.remove([KEY_TOKEN, KEY_USER]);
+      chrome.runtime.sendMessage({ type: "_AUTH_LOGOUT" }).catch(() => {});
     }
   } catch (err) {
     console.error("[InForm] syncCookieToStorage error:", err);
   }
 }
 
+// ── 1. Listen for Cookie Changes (The "Magic" Sync for Google OAuth) ─────────
+// This triggers instantly when NextAuth sets/removes cookies after Google Login
+chrome.cookies.onChanged.addListener(async (changeInfo) => {
+  const { cookie, removed } = changeInfo;
+
+  // Only care about our specific auth cookies
+  if (cookie.name !== KEY_TOKEN && cookie.name !== KEY_USER) return;
+
+  // Verify domain matches our Next.js app
+  const url = new URL(NEXTJS_BASE);
+  const isMatchingDomain = 
+    cookie.domain === url.hostname || 
+    cookie.domain === `.${url.hostname}` ||
+    cookie.domain === url.hostname.replace("www.", "");
+
+  if (!isMatchingDomain) return;
+
+  console.log("[Background] Auth cookie changed:", cookie.name, removed ? "REMOVED" : "SET");
+
+  if (removed) {
+    // User logged out on website → Clear extension storage & notify sidepanel
+    await chrome.storage.local.remove([KEY_TOKEN, KEY_USER]);
+    chrome.runtime.sendMessage({ type: "_AUTH_LOGOUT" }).catch(() => {});
+  } else {
+    // User logged in/refreshed on website → Sync immediately
+    await syncCookieToStorage();
+  }
+});
+
+// ── 2. Sync on Tab Events (Fallback/Startup) ─────────────────────────────────
 // Sync whenever a tab on localhost:3000 finishes loading
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url?.startsWith(NEXTJS_BASE)) {
@@ -104,27 +93,87 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   }
 });
 
-// Also sync when the sidepanel connects (service worker wakes up)
-// This runs on every extension startup / sidepanel open
+// Initial sync when service worker starts
 syncCookieToStorage();
 
-// ── Internal messages ─────────────────────────────────────────────────────────
+// ── 3. On Install & Action Click ─────────────────────────────────────────────
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(console.error);
+  }
+});
+
+chrome.action.onClicked.addListener((tab) => {
+  if (tab.id) {
+    // @ts-ignore
+    chrome.sidePanel.open({ tabId: tab.id }).catch(console.error);
+  }
+});
+
+// ── 4. Form Detection & Analysis Logic ───────────────────────────────────────
+async function handlePageHasForm(
+  payload: { fields: unknown[]; url: string },
+  tabId?: number
+) {
+  if (!tabId || !payload.fields?.length) return;
+
+  // Get auth token
+  const result = await chrome.storage.local.get(KEY_TOKEN);
+  const token  = (result[KEY_TOKEN] as string) || null;
+  if (!token) return; // not logged in — don't analyze
+
+  // Call Next.js /api/analyze
+  try {
+    const res = await fetch(`${NEXTJS_BASE}/api/analyze`, {
+      method:  "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:  `Bearer ${token}`,
+      },
+      body: JSON.stringify({ schema: payload.fields }),
+      signal: AbortSignal.timeout(30_000),
+    });
+
+    if (!res.ok) {
+      console.warn("[InForm] analyze returned", res.status);
+      return;
+    }
+
+    const data = await res.json() as {
+      filled: Record<string, { value: string; confidence: number; source: string }>
+    };
+
+    if (!data.filled || Object.keys(data.filled).length === 0) return;
+
+    // Send analyzed values to content.ts — it will inject the fill buttons
+    chrome.tabs.sendMessage(tabId, {
+      type:    "INJECT_FILL_BUTTONS",
+      payload: data.filled,
+    }).catch(() => {
+      // Tab may have navigated away — safe to ignore
+    });
+
+  } catch (err) {
+    console.error("[InForm] handlePageHasForm:", err);
+  }
+}
+
+// ── 5. Message Listeners ─────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message?.type) return false;
 
   if (message.type === "PAGE_HAS_FORM") {
-    handlePageHasForm(message.payload, sender.tab?.id)
-    sendResponse({ ok: true })
-    return true
+    handlePageHasForm(message.payload, sender.tab?.id);
+    sendResponse({ ok: true });
+    return true;
   }
- 
+
   if (message.type === "FILL_RESULT") {
     // Forward fill result to sidepanel so chat can show the score
-    chrome.runtime.sendMessage({ type: "FILL_RESULT", payload: message.payload }).catch(() => {})
-    sendResponse({ ok: true })
-    return true
+    chrome.runtime.sendMessage({ type: "FILL_RESULT", payload: message.payload }).catch(() => {});
+    sendResponse({ ok: true });
+    return true;
   }
- 
 
   if (message.type === "GET_AUTH_STATUS") {
     chrome.storage.local.get(KEY_TOKEN).then((result) => {
@@ -146,8 +195,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return false;
 });
 
-
-// ── External messages from the website ────────────────────────────────────────
+// ── 6. External Messages from Website (Optional Backup) ──────────────────────
 const ALLOWED_ORIGINS = [NEXTJS_BASE, "https://inform-anda.com"];
 
 chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
@@ -164,9 +212,8 @@ chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) =>
       if (user) toStore[KEY_USER] = JSON.stringify(user);
       chrome.storage.local.set(toStore);
     }
-    // Forward to sidepanel so AuthContext reacts instantly
+    // Forward to sidepanel
     chrome.runtime.sendMessage({ type: "_AUTH_LOGIN", token, user }).catch(() => {});
-    // Auto-open sidepanel
     if (sender.tab?.id) {
       // @ts-ignore
       chrome.sidePanel.open({ tabId: sender.tab.id }).catch(console.error);
@@ -184,26 +231,5 @@ chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) =>
 
   return false;
 });
-
-const POPUP_WIDTH  = 420   // px — adjust to your preference
-const POPUP_HEIGHT = 700   // px
- 
-chrome.action.onClicked.addListener(async (tab) => {
-  // Get current window to position the popup at the right edge
-  const win = await chrome.windows.getCurrent()
- 
-  const left = (win.left ?? 0) + (win.width ?? 1200) - POPUP_WIDTH - 20
-  const top  = (win.top  ?? 0) + 60
- 
-  chrome.windows.create({
-    url:    chrome.runtime.getURL("sidepanel.html"),
-    type:   "popup",
-    width:  POPUP_WIDTH,
-    height: POPUP_HEIGHT,
-    left,
-    top,
-  })
-})
- 
 
 export {};

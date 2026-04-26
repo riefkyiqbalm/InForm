@@ -1,8 +1,9 @@
 'use client';
 
 import { AuthProvider, useAuth } from "@/context/AuthContext";
-import { ChatProvider } from "@/context/ChatContext";
-import { ToastProvider } from "@/context/ToastContext";
+import { ChatProvider } from "@sharedUI/context/ChatContext";
+import { FormProvider } from "@sharedUI/context/FormContext";
+import { ToastProvider } from "@sharedUI/context/ToastContext";
 
 /**
  * Komponen Gatekeeper ini bertugas memantau status login.
@@ -37,9 +38,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <ToastProvider>
-        {/* Bungkus children dengan Gatekeeper di sini */}
         <ChatGatekeeper>
+          <FormProvider>
           {children}
+          </FormProvider>
         </ChatGatekeeper>
       </ToastProvider>
     </AuthProvider>

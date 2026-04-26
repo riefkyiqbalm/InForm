@@ -1,5 +1,5 @@
 /**
- * BG-AI Library Utilities - Central Export Point
+ * InForm Library Utilities - Central Export Point
  * 
  * This file re-exports all utility functions and styles for easier importing.
  * 
@@ -17,7 +17,7 @@ export {
   capitalize,
   formatNumber,
   formatDateReadable,
-} from './formatters'
+} from '../../../sharedUI/src/lib/formatters'
 
 // ── Validation Utilities ──────────────────────────────────────────
 export {
@@ -70,7 +70,7 @@ export {
   useLocalStorage,
   useIsMounted,
   useAsync,
-} from './hooks'
+} from '@sharedUI/lib/hooks'
 
 // ── Style Objects ─────────────────────────────────────────────────
 // export { buttonStyles, buttonGroupStyles } from './styles/buttons'
@@ -89,7 +89,7 @@ export {
   API_ENDPOINTS,
   ANIMATION_DURATIONS,
   BREAKPOINTS,
-} from './constants/icon'
+} from '@sharedUI/lib/constants/icon'
 
 // ── Suggestion Constants ──────────────────────────────────────────
 export {
@@ -104,7 +104,7 @@ export {
   getRandomSuggestion,
   filterSuggestions,
   type Suggestion,
-} from './constants/suggestions'
+} from '@sharedUI/lib/constants/suggestions'
 
 // ── Existing Utilities ────────────────────────────────────────────
 export { getUserFromToken } from './auth'

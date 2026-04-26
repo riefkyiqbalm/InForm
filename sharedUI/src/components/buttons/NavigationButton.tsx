@@ -4,12 +4,12 @@
 //   conversation → calls onToggleLeftPanel (opens LeftPanel in sidepanel)
 //   settings     → opens SettingsModal in-panel (no routing needed)
 //   logout       → clears auth from chrome.storage.local → NetworkGuard shown
-
+'use-client'
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import Icon from "@sharedUI/components/IconStyles"
 import SettingsModal from "@sharedUI/components/SettingsModal"
-import { useAuth } from "@sharedUI/context/AuthContext"
+import { useAuth } from "@sharedUI/context/ListeningAuthContext"
 
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000"
 

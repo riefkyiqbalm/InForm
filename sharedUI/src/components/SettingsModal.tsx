@@ -6,6 +6,8 @@
 //   - removeDoc reads from same `docs` array it renders
 //   - Toast fires correctly for all outcomes
 
+'use-client'
+
 import React, { useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import Icon from "./IconStyles"

@@ -1,4 +1,5 @@
 // components/StatusDot.tsx — Plasmo compatible (no Next.js imports)
+'use-client'
 import { useEffect, useState } from "react";
 
 // Reads the same env var used by AuthContext

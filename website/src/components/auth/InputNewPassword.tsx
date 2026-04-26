@@ -1,64 +1,58 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation"; // Import router untuk navigasi
-import Icon from "@/components/IconStyles";
-import { FormInput } from "@/components/FormInput";
-import { ErrorBox } from "@/components/ErrorBox";
-import BackButton from "@/components/buttons/BackButton";
-import SmallLogo from "@/components/logo/SmallLogo";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Icon from "@sharedUI/components/IconStyles";
+import { FormInput } from "@sharedUI/components/FormInput";
+import { ErrorBox } from "@sharedUI/components/ErrorBox";
+import BackButton from "@sharedUI/components/buttons/BackButton";
+import SmallLogo from "@sharedUI/components/logo/SmallLogo";
 
-
-type Step = "reset" | "done" ;
+type Step = "reset" | "done";
 
 export function InputPassword() {
-  const router = useRouter(); // Inisialisasi router
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [step, setStep] = useState<Step>("reset");
-  const [email, setEmail] = useState("");
-//   const [oldPassword, setOldPassword] = useState("");
-  const [reset, setReset]     = useState("");
-  const [showOld, setShowOld] = useState(false);
+  const [reset, setReset] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
-  const searchToken           = useSearchParams();
-  const token                 = searchToken.get('token')
+  const [error, setError] = useState("");
+  const [tokenMissing, setTokenMissing] = useState(false);
 
-//   const handleEmailSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setError("");
-//     setLoading(true);
-//     try {
-//       const res = await fetch("/api/auth/forgot_password", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ step: "verify_email", email }),
-//       });
-//       const data = await res.json();
-//       if (!res.ok) throw new Error(data.message ?? "Email tidak ditemukan.");
-//       setStep("reset");
-//     } catch (err: unknown) {
-//       setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  // Get token safely
+  const token = searchParams?.get('token');
+
+  // Check if token exists on mount
+  useEffect(() => {
+    if (!token) {
+      setTokenMissing(true);
+      setError("Tautan reset tidak valid atau telah kadaluarsa.");
+    }
+  }, [token]);
 
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    
+    if (!token) {
+      setError("Tautan reset tidak ditemukan.");
+      return;
+    }
+
     if (!reset || reset.length < 6) {
       setError("Kata sandi baru minimal 6 karakter.");
       return;
     }
+
     setLoading(true);
     try {
       const res = await fetch("/api/auth/reset_password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          step: "reset_password",
-          token:token,
-          password:reset,
+          token: token,
+          password: reset,
         }),
       });
       const data = await res.json();
@@ -71,27 +65,35 @@ export function InputPassword() {
     }
   };
 
+  // If token is missing, show error immediately but allow rendering
+  if (tokenMissing && !error) {
+     // Fallback if useEffect hasn't run yet
+     return (
+       <div style={S.pageWrapper}>
+         <div style={S.container}>
+           <ErrorBox message="Tautan reset tidak valid." />
+           <button style={S.mainBtn} onClick={() => router.push("/login")}>
+             Kembali ke Masuk
+           </button>
+         </div>
+       </div>
+     );
+  }
+
   return (
-    /* ── Main Container (Halaman Penuh) ── */
     <div style={S.pageWrapper}>
       <div style={S.container}>
-        {/* Header dengan Tombol Kembali */}
         <div style={S.header}>
           <BackButton href="/login" label="Login" variant="ghost"/>
-          {/* <button style={S.backBtn} onClick={() => router.back()}>
-            <Icon name="back" size={20} />
-          </button> */}
           <div style={S.headerLeft}>
             <Icon name="lock" size={20} />
             <h1 style={S.title}>
-              {/* {step === "email" && "Lupa Kata Sandi"} */}
               {step === "reset" && "Atur Ulang Kata Sandi"}
               {step === "done" && "Berhasil!"}
             </h1>
           </div>
         </div>
 
-        {/* Konten Berdasarkan Step */}
         <div style={S.content}>
           {step === "done" ? (
             <div style={S.doneWrap}>
@@ -105,22 +107,35 @@ export function InputPassword() {
             <form onSubmit={handleResetSubmit}>
               <p style={S.desc}>Silakan Masukan Password Baru Anda</p>
               <ErrorBox message={error} />
-              {/* <OldPasswordInput value={oldPassword} onChange={setOldPassword} show={showOld} onToggleShow={() => setShowOld(!showOld)} disabled={loading} /> */}
-              <NewPasswordInput value={reset} onChange={setReset} show={showNew} onToggleShow={() => setShowNew(!showNew)} disabled={loading} />
-              <button type="submit" disabled={loading} style={S.mainBtn}>
-                {loading ? <Icon name="loading" size={18} className="animate-spin" /> : <Icon name="check" size={18} />}
+              
+              <NewPasswordInput 
+                value={reset} 
+                onChange={setReset} 
+                show={showNew} 
+                onToggleShow={() => setShowNew(!showNew)} 
+                disabled={loading || !token} 
+              />
+              
+              <button 
+                type="submit" 
+                disabled={loading || !token} 
+                style={{
+                  ...S.mainBtn,
+                  opacity: (loading || !token) ? 0.6 : 1,
+                  cursor: (loading || !token) ? "not-allowed" : "pointer"
+                }}
+              >
+                {loading ? <Icon name="loading" size={18} /> : <Icon name="check" size={18} />}
                 <span>{loading ? "Menyimpan..." : "Simpan Kata Sandi Baru"}</span>
               </button>
             </form>
           )}
         </div>
-    </div>
+      </div>
     </div>
   );
 }
 
-// Sub-komponen (OldPasswordInput & NewPasswordInput tetap sama seperti sebelumnya)
-// ── Sub-component: Old Password Input ────────────────────────────────────────
 interface PasswordFieldProps {
   value:         string;
   onChange:      (v: string) => void;
@@ -129,33 +144,6 @@ interface PasswordFieldProps {
   disabled?:     boolean;
 }
 
-// export function OldPasswordInput({
-//   value,
-//   onChange,
-//   show,
-//   onToggleShow,
-//   disabled,
-// }: PasswordFieldProps) {
-//   return (
-//     <FormInput
-//       label="Kata Sandi Lama"
-//       type={show ? "text" : "password"}
-//       value={value}
-//       onChange={(e) => onChange(e.target.value)}
-//       placeholder="Masukkan kata sandi lama"
-//       iconName="lock"
-//       required
-//       disabled={disabled}
-//       rightSlot={
-//         <span onClick={onToggleShow} style={{ cursor: "pointer", opacity: 0.7 }}>
-//           <Icon name={show ? "eyeoff" : "eye"} size={18} />
-//         </span>
-//       }
-//     />
-//   );
-// }
-
-// ── Sub-component: New Password Input ────────────────────────────────────────
 export function NewPasswordInput({
   value,
   onChange,
@@ -182,35 +170,29 @@ export function NewPasswordInput({
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
 const S: Record<string, React.CSSProperties> = {
-  overlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.6)",
-    backdropFilter: "blur(4px)",
+  pageWrapper: {
+    minHeight: "100vh",
+    background: "var(--bg, #0d1117)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 100,
-    animation: "fadeIn 0.2s ease-out",
+    padding: "20px",
   },
-  modal: {
-    background: "var(--panel)",
-    border: "1px solid var(--border)",
+  container: {
+    background: "var(--panel, #161b22)",
+    border: "1px solid var(--border, #30363d)",
     borderRadius: "24px",
-    padding: "28px 32px 32px",
+    padding: "32px",
     width: "100%",
-    maxWidth: "400px",
+    maxWidth: "420px",
     boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
-    position: "relative",
-    animation: "slideUp 0.25s ease-out",
   },
   header: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: "16px",
+    marginBottom: "24px",
   },
   headerLeft: {
     display: "flex",
@@ -218,33 +200,20 @@ const S: Record<string, React.CSSProperties> = {
     gap: "10px",
   },
   title: {
-    fontSize: "16px",
+    fontSize: "18px",
     fontWeight: 700,
-    color: "var(--text)",
-  },
-  closeBtn: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    color: "var(--muted)",
-    padding: "4px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "8px",
-    transition: "0.2s",
+    color: "var(--text, #e6edf3)",
   },
   desc: {
     fontSize: "14px",
-    color: "var(--teal)",
+    color: "var(--muted, #8b949e)",
     marginBottom: "20px",
     lineHeight: 1.6,
-    justifyContent: "center"
   },
   mainBtn: {
     width: "100%",
     padding: "14px",
-    background: "linear-gradient(135deg, var(--teal), #0080cc)",
+    background: "linear-gradient(135deg, var(--teal, #00d4c8), #0080cc)",
     color: "#fff",
     border: "none",
     borderRadius: "14px",
@@ -259,34 +228,12 @@ const S: Record<string, React.CSSProperties> = {
     gap: "8px",
     marginTop: "8px",
   },
-  stepRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    marginTop: "24px",
-  },
-  stepDot: {
-    width: "10px",
-    height: "10px",
-    borderRadius: "50%",
-    transition: "0.3s",
-  },
-  stepActive:   { background: "var(--teal)", boxShadow: "0 0 8px var(--teal)" },
-  stepDone:     { background: "#3dffa0" },
-  stepInactive: { background: "var(--border)" },
-  stepLine: {
-    width: "40px",
-    height: "2px",
-    background: "var(--border)",
-    borderRadius: "1px",
-  },
   doneWrap: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     gap: "16px",
-    padding: "8px 0 4px",
+    padding: "20px 0",
   },
   doneIcon: {
     width: "64px",
@@ -301,7 +248,7 @@ const S: Record<string, React.CSSProperties> = {
   },
   doneText: {
     fontSize: "14px",
-    color: "var(--muted)",
+    color: "var(--muted, #8b949e)",
     textAlign: "center",
     lineHeight: 1.6,
     maxWidth: "280px",

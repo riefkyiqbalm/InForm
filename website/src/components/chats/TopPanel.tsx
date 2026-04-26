@@ -1,10 +1,10 @@
 'use client';
 
 import React from "react";
-import { useChat } from "@/context/ChatContext";
+import { useChat } from "@sharedUI/context/ChatContext";
 import TopBarLogo from "../logo/TopBarLogo";
 import IconNav from "../IconNavigation";
-import StatusDot from "../StatusDot";
+// import StatusDot from "../StatusDot";
 
 export default function TopPanel() {
   const { activeSession } = useChat();

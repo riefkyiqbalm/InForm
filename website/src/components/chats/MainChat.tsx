@@ -1,16 +1,24 @@
-// browser-extension/components/chats/MainChat.tsx
+"use client";
+// app/chat/[id]/page.tsx
+import {useForm, isFillIntent}                from "@sharedUI/context/FormContext"
 import React, { useEffect, useRef, useState } from "react"
 import type { InputMode, AttachmentInfo }     from "@sharedUI/types"
-import type { StoredDoc }         from "@sharedUI/components/SettingsModal"
-import { useChat }                from "@sharedUI/context/ChatContext"
-import { useForm, isFillIntent }  from "@sharedUI/context/FormContext"
-import { useToast }               from "@sharedUI/context/ToastContext"
+import type { StoredDoc }                     from "@sharedUI/components/SettingsModal"
+import { useChat }                            from "@sharedUI/context/ChatContext"
+import { useToast }                           from "@sharedUI/context/ToastContext"
 
-import ChatArea          from "@sharedUI/components/chats/ChatArea"
-import ChatInputPanel    from "@sharedUI/components/chats/ChatInputPanel"
-import LeftPanel         from "@sharedUI/components/chats/LeftPanel"
-import TopPanel          from "@sharedUI/components/chats/TopPanel"
-import FirstOpenHint     from "~components/FirstOpenHint"
+import LeftPanel                              from "@/components/chats/LeftPanel";
+import TopPanel                               from "@/components/chats/TopPanel";
+import dynamic                                from "next/dynamic";
+
+const ChatAreaTanpaSSR = dynamic(
+  () => import("@sharedUI/components/chats/ChatArea"),
+  { ssr: false }
+);
+const ChatInputPanelTanpaSSR = dynamic(
+  () => import("@sharedUI/components/chats/ChatInputPanel"),
+  { ssr: false }
+);
 
 // ── Build a human-readable fill reply for MessageBubble ───────────────────────
 function buildFillReply(
@@ -219,24 +227,21 @@ export default function MainChat() {
     try { await retryMessage(text) }
     catch { toast("Gagal mengirim ulang.", "error") }
   }
-
   return (
     <div style={S.root}>
-      <LeftPanel isOpen={isLeftPanelOpen} setIsOpen={setIsLeftPanelOpen} onClose={() => setIsLeftPanelOpen(false)} />
-      {isLeftPanelOpen && <div style={S.backdrop} onClick={() => setIsLeftPanelOpen(false)} />}
+      <LeftPanel />
 
       <main style={S.main}>
-        <TopPanel isLeftPanelOpen={isLeftPanelOpen} onToggleLeftPanel={handleToggleLeftPanel} />
-        <FirstOpenHint/>
+        <TopPanel />
 
-        <ChatArea
+        <ChatAreaTanpaSSR
           messages={messages}
           isWelcomeScreen={isWelcomeScreen}
           onSelectSuggestion={handleSelectSuggestion}
-          isCurrentLoading={isCurrentLoading || isFilling}
+          isCurrentLoading={isCurrentLoading}
         />
 
-        <ChatInputPanel
+        <ChatInputPanelTanpaSSR
           input={input}
           onInput={setInput}
           inputMode={inputMode}
@@ -255,22 +260,46 @@ export default function MainChat() {
           pendingFiles={pendingFiles}
           setPendingFiles={setPendingFiles}
         />
-        <div ref={chatEndRef} />
       </main>
 
-      <style>{`
-        .dot-blink{width:6px;height:6px;background-color:var(--teal,#00d4c8);border-radius:50%;display:inline-block;animation:blink 1.4s infinite ease-in-out both;}
-        @keyframes blink{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1.1)}}
-        .animate-fade-up{animation:fadeUp 0.5s ease-out;}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes spin{to{transform:rotate(360deg);}}
+      <style jsx global>{`
+        .dot-blink {
+          width: 6px;
+          height: 6px;
+          background-color: var(--teal);
+          border-radius: 50%;
+          display: inline-block;
+          animation: blink 1.4s infinite ease-in-out both;
+        }
+        @keyframes blink {
+          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+          40%            { opacity: 1;   transform: scale(1.1); }
+        }
+        .animate-fade-up {
+          animation: fadeUp 0.5s ease-out;
+        }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
     </div>
-  )
+  );
 }
 
 const S: Record<string, React.CSSProperties> = {
-  root:     { display:"flex", height:"100vh", background:"var(--bg,#0d1117)", color:"var(--text,#e6edf3)", overflow:"hidden", position:"relative" },
-  main:     { flex:1, display:"flex", flexDirection:"column", minWidth:0, position:"relative" },
-  backdrop: { position:"absolute", inset:0, zIndex:99, background:"rgba(0,0,0,0.45)", backdropFilter:"blur(1px)", WebkitBackdropFilter:"blur(1px)", cursor:"pointer" },
-}
+  root: {
+    display:    "flex",
+    height:     "100vh",
+    background: "var(--bg)",
+    color:      "var(--text)",
+    overflow:   "hidden",
+  },
+  main: {
+    flex:          1,
+    display:       "flex",
+    flexDirection: "column",
+    minWidth:      0,
+    position:      "relative",
+  },
+};

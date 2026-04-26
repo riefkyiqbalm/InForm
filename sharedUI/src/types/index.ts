@@ -2,6 +2,7 @@
 
 export type Role = "USER" | "ASSISTANT";
 
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
 export interface User {
@@ -36,8 +37,16 @@ export interface AuthContextType {
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   /** Request email change — requires password. Sends verification to new address. Returns message. */
   changeEmail:    (newEmail: string, password: string) => Promise<string | void>;
+  signInWithOIDC:   () => Promise<void>;
+  
 }
 
+interface OAuthButtonProps {
+  onClick: () => void;
+  disabled?: boolean;
+  label?: string;
+  className?: string;
+}
 
 // ── Chat ──────────────────────────────────────────────────────────────────────
 

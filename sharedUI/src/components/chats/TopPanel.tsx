@@ -1,4 +1,5 @@
 // components/chats/TopPanel.tsx
+'use-client'
 import React from "react"
 import { useChat } from "@sharedUI/context/ChatContext"
 import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon"

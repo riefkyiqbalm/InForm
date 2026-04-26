@@ -1,69 +1,5 @@
+'use-client'
 import React, { useEffect, useRef, useState } from 'react';
-
-// ── Shared style tokens ───────────────────────────────────────────────────────
-const overlay: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 1000,
-};
-
-const card: React.CSSProperties = {
-  background: 'var(--panel)',
-  border: '1px solid var(--border)',
-  borderRadius: '16px',
-  padding: '24px',
-  maxWidth: '400px',
-  width: '90%',
-  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-head)',
-  fontSize: '18px',
-  fontWeight: 600,
-  marginBottom: '16px',
-  color: 'var(--text)',
-};
-
-const bodyText: React.CSSProperties = {
-  fontSize: '14px',
-  color: 'var(--muted)',
-  marginBottom: '24px',
-  lineHeight: '1.5',
-};
-
-const footer: React.CSSProperties = {
-  display: 'flex',
-  gap: '12px',
-  justifyContent: 'flex-end',
-};
-
-function CancelButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        padding: '8px 16px',
-        borderRadius: '8px',
-        fontSize: '14px',
-        fontWeight: 500,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'all .15s',
-        border: '1px solid var(--border)',
-        background: disabled ? 'rgba(255,255,255,0.05)' : 'var(--card)',
-        color: 'var(--text)',
-        opacity: disabled ? 0.6 : 1,
-      }}
-    >
-      Batal
-    </button>
-  );
-}
 
 // ── Modal (delete confirm) ────────────────────────────────────────────────────
 interface ModalProps {
@@ -241,5 +177,70 @@ export function RenameModal({
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Shared style tokens ───────────────────────────────────────────────────────
+const overlay: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+};
+
+const card: React.CSSProperties = {
+  background: 'var(--panel)',
+  border: '1px solid var(--border)',
+  borderRadius: '16px',
+  padding: '24px',
+  maxWidth: '400px',
+  width: '90%',
+  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+};
+
+const titleStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-head)',
+  fontSize: '18px',
+  fontWeight: 600,
+  marginBottom: '16px',
+  color: 'var(--text)',
+};
+
+const bodyText: React.CSSProperties = {
+  fontSize: '14px',
+  color: 'var(--muted)',
+  marginBottom: '24px',
+  lineHeight: '1.5',
+};
+
+const footer: React.CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+  justifyContent: 'flex-end',
+};
+
+function CancelButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        padding: '8px 16px',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: 500,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'all .15s',
+        border: '1px solid var(--border)',
+        background: disabled ? 'rgba(255,255,255,0.05)' : 'var(--card)',
+        color: 'var(--text)',
+        opacity: disabled ? 0.6 : 1,
+      }}
+    >
+      Batal
+    </button>
   );
 }

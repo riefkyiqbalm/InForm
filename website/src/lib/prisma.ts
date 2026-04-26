@@ -1,18 +1,25 @@
-// lib/prisma.ts, Untuk menginisialisasi Prisma Client dengan adapter PostgreSQL 
-// yang menggunakan connection pooling.
+// src/lib/prisma.ts
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg"; // Import the adapter
+import pg from "pg"; // Or 'neon-serverless' if using Vercel/Neon
 
-import { PrismaClient } from '../../prisma/generated/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
+const connectionString = `${process.env.DATABASE_URL}`;
+
+// Create the pool/connection
+const pool = new pg.Pool({ connectionString });
+
+// Create the adapter
+const adapter = new PrismaPg(pool);
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
+  prisma: PrismaClient | undefined;
+};
 
-const connectionString = process.env.DATABASE_URL!
-const pool = new Pool({ connectionString })
-const adapter = new PrismaPg(pool)
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter, // <--- PASS THE ADAPTER HERE
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

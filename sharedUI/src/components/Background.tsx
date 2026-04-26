@@ -1,4 +1,5 @@
-import { backgroundStyles as Sbg } from "~lib/styles/background";
+'use-client'
+import { backgroundStyles as Sbg } from "../lib/styles/background";
 export default function Background() {
     return (
         <div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useChat } from "~features/ChatContext";
+import { useChat } from "@sharedUI/context/ChatContext";
 import { useToast } from "@sharedUI/context/ToastContext";
 import DropDown from "@sharedUI/components/buttons/ActionButton";
 import Modal, { RenameModal } from "@sharedUI/components/Modal";
