@@ -1,3 +1,4 @@
+'use-client'
 import Icon from "./IconStyles";
 import { buttonStyles as S } from "@sharedUI/lib/styles/buttons";
 
