@@ -21,8 +21,8 @@ export default function OAuthButton() {
         width: "100%",
         padding: "12px",
         marginBottom: "16px",
-        background: loading ? "#4a5568" : "#00d4c8",
-        color: "white",
+        background: loading ? "linear-gradient(135deg, var(--teal), #0080cc)" : "#ffffff",
+        color: "black",
         border: "none",
         borderRadius: "8px",
         fontSize: "14px",
@@ -35,10 +35,14 @@ export default function OAuthButton() {
         transition: "background 0.2s",
       }}
       onMouseEnter={(e) => {
-        if (!loading) e.currentTarget.style.background = "#00b5a9";
+        if (!loading) 
+          e.currentTarget.style.background = "linear-gradient(135deg, var(--teal), #0080cc)";
+          e.currentTarget.style.color = "white";
       }}
       onMouseLeave={(e) => {
-        if (!loading) e.currentTarget.style.background = "#00d4c8";
+        if (!loading) 
+          e.currentTarget.style.background = "#ffffff";
+          e.currentTarget.style.color = "black";
       }}
     >
       {loading ? (

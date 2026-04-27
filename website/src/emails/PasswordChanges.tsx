@@ -30,7 +30,7 @@ export default function PasswordChanges({
   return (
     <Html lang="id" dir="ltr">
       <Head />
-      <Preview>Kata sandi akun BG-AI Anda telah diubah</Preview>
+      <Preview>Kata sandi akun InForm Anda telah diubah</Preview>
 
       <Body style={S.body}>
         <Container style={S.container}>
@@ -41,7 +41,7 @@ export default function PasswordChanges({
               <table cellPadding={0} cellSpacing={0}><tr>
                 <td style={S.logoCell}><Text style={S.logoText}>BG</Text></td>
                 <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
-                  <Text style={S.logoName}>BG-AI</Text>
+                  <Text style={S.logoName}>InForm</Text>
                 </td>
               </tr></table>
             </td></tr></table>
@@ -70,7 +70,7 @@ export default function PasswordChanges({
             </Text>
 
             <Text style={S.body2}>
-              Kata sandi akun <strong style={{ color: "#00d4c8" }}>BG-AI</strong> Anda
+              Kata sandi akun <strong style={{ color: "#00d4c8" }}>InForm</strong> Anda
               telah berhasil diubah pada:
             </Text>
 
@@ -106,7 +106,7 @@ export default function PasswordChanges({
               Email keamanan ini dikirim secara otomatis. Mohon tidak membalas email ini.
             </Text>
             <Text style={S.footerText}>
-              © {new Date().getFullYear()} BG-AI · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
             </Text>
           </Section>
 

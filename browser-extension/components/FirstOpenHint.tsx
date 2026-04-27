@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from "react"
 
-const STORAGE_KEY = "inform_hint_dismissed"
+const STORAGE_KEY = "InForm_hint_dismissed"
 
 export default function FirstOpenHint() {
   const [visible, setVisible] = useState(false)

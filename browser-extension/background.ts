@@ -196,7 +196,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // ── 6. External Messages from Website (Optional Backup) ──────────────────────
-const ALLOWED_ORIGINS = [NEXTJS_BASE, "https://inform-anda.com"];
+const ALLOWED_ORIGINS = [NEXTJS_BASE, "https://InForm-anda.com"];
 
 chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
   if (!sender.origin || !ALLOWED_ORIGINS.includes(sender.origin)) {

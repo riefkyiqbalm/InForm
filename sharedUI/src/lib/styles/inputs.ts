@@ -1,6 +1,6 @@
 /**
  * Shared input field styles used across multiple components
- * Extracted from: LoginForm, RegisterForm, ChatInput, etc.
+ * Extracted from: LogInForm, RegisterForm, ChatInput, etc.
  */
 
 export const inputStyles = {

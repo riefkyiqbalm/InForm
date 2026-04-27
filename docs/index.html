@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BG-AI - Chat</title>
+<title>InForm - Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <link href="index.css"rel="stylesheet">
 </head>
@@ -14,7 +14,7 @@
 <aside class="sidebar">
   <div class="logo-wrap">
     <div class="logo-icon">B•G</div>
-    <div class="logo-text">BG-AI <span>|</span> NG</div>
+    <div class="logo-text">InForm <span>|</span> NG</div>
   </div>
 
   <button class="new-chat-btn" onclick="startNewChat()">
@@ -38,7 +38,7 @@
   <div style="margin-top:auto; border-top:1px solid var(--border); padding-top:10px;"></div>
   <a href="/terms" style="text-decoration:none; color:var(--muted); font-size:11px; padding:4px 8px; display:block; transition:.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='var(--muted)'">⚖ Ketentuan Layanan</a>
 
-  <div class="sidebar-footer" onclick="location.href='https://riefkyiqbalm.github.io/BG-AI/auth.html'">
+  <div class="sidebar-footer" onclick="location.href='https://riefkyiqbalm.github.io/InForm/auth.html'">
     <div class="avatar">RP</div>
     <div class="avatar-info">
       <div class="avatar-name">Riefky P.</div>
@@ -51,7 +51,7 @@
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div class="topbar-title">BG-AI <span>Analyzer</span></div>
+    <div class="topbar-title">InForm <span>Analyzer</span></div>
     <span class="topbar-badge">● LIVE</span>
     <div class="topbar-actions">
       <button class="tb-btn" title="Ekspor Laporan">↓</button>
@@ -64,7 +64,7 @@
     <!-- Welcome state -->
     <div class="welcome" id="welcomeState">
       <div class="welcome-icon">🥗</div>
-      <h2>Selamat datang di <span>BG-AI</span></h2>
+      <h2>Selamat datang di <span>InForm</span></h2>
       <p>Kirimkan foto, video, atau deskripsi teks menu makanan untuk analisis kandungan gizi otomatis. Atau unggah dokumen vendor MBG untuk verifikasi perizinan.</p>
       <div class="suggestion-grid">
         <div class="suggestion-card" onclick="fillPrompt('Analisis kandungan gizi foto nasi goreng dengan telur dan sayuran')">
@@ -128,7 +128,7 @@
     <div class="rp-section-title">Status Sistem</div>
     <div class="status-card">
       <div class="status-row">
-        <span class="status-label">BG-AI</span>
+        <span class="status-label">InForm</span>
         <span class="status-val"><span class="dot-green" id="statusDot"></span><span id="statusLabel">Online</span></span>
       </div>
       <div class="status-row">

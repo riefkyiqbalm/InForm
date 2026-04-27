@@ -227,8 +227,8 @@ interface AnalyzedField {
 // ── State ──────────────────────────────────────────────────────────────────────
 let analyzedValues: Record<string, AnalyzedField> = {}
 let fillButtonsInjected = false
-const BUTTON_CLASS = "inform-fill-btn"
-const OVERLAY_ID   = "inform-fill-overlay"
+const BUTTON_CLASS = "InForm-fill-btn"
+const OVERLAY_ID   = "InForm-fill-overlay"
 
 // ── 1. Scrape all visible form fields ─────────────────────────────────────────
 function scrapeForm(): ScrapedField[] {
@@ -267,9 +267,9 @@ function injectFillButtons(values: Record<string, AnalyzedField>) {
   if (fieldKeys.length === 0) return
 
   // Inject global styles once
-  if (!document.getElementById("inform-styles")) {
+  if (!document.getElementById("InForm-styles")) {
     const style = document.createElement("style")
-    style.id = "inform-styles"
+    style.id = "InForm-styles"
     style.textContent = `
       .${BUTTON_CLASS} {
         position: absolute;
@@ -336,20 +336,20 @@ function injectFillButtons(values: Record<string, AnalyzedField>) {
         <div style="font-weight:600;color:#00d4c8">InForm siap</div>
         <div style="color:#8b949e;font-size:11px">${fieldKeys.length} field terdeteksi</div>
       </div>
-      <button id="inform-fill-all-btn" style="
+      <button id="InForm-fill-all-btn" style="
         background:#00d4c8;border:none;border-radius:6px;
         color:#0d1117;font-size:11px;font-weight:700;
         padding:4px 10px;cursor:pointer;margin-left:4px;font-family:inherit;
       ">Isi Semua</button>
-      <span id="inform-dismiss-btn" style="color:#8b949e;cursor:pointer;font-size:14px;padding:0 4px;">✕</span>
+      <span id="InForm-dismiss-btn" style="color:#8b949e;cursor:pointer;font-size:14px;padding:0 4px;">✕</span>
     `
     document.body.appendChild(banner)
 
-    document.getElementById("inform-fill-all-btn")?.addEventListener("click", (e) => {
+    document.getElementById("InForm-fill-all-btn")?.addEventListener("click", (e) => {
       e.stopPropagation()
       fillAllFields()
     })
-    document.getElementById("inform-dismiss-btn")?.addEventListener("click", (e) => {
+    document.getElementById("InForm-dismiss-btn")?.addEventListener("click", (e) => {
       e.stopPropagation()
       removeFillButtons()
     })
@@ -464,9 +464,9 @@ function fillAllFields(): { filled: number; skipped: string[] } {
         <div style="font-weight:600;color:#3dffa0">${filled} field terisi</div>
         <div style="color:#8b949e;font-size:11px">${skipped.length > 0 ? `${skipped.length} dilewati` : "Semua berhasil"}</div>
       </div>
-      <span id="inform-dismiss-btn" style="color:#8b949e;cursor:pointer;font-size:14px;padding:0 4px;">✕</span>
+      <span id="InForm-dismiss-btn" style="color:#8b949e;cursor:pointer;font-size:14px;padding:0 4px;">✕</span>
     `
-    document.getElementById("inform-dismiss-btn")?.addEventListener("click", removeFillButtons)
+    document.getElementById("InForm-dismiss-btn")?.addEventListener("click", removeFillButtons)
     setTimeout(removeFillButtons, 4000)
   }
 

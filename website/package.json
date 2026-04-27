@@ -15,7 +15,7 @@
     "deploy:s3": "next build && aws s3 sync ./out s3://aotamata.space --delete --acl public-read --cache-control max-age=31536000,public"
   },
   "dependencies": {
-    "@inform/ui": "*",
+    "@InForm/ui": "*",
     "@lmstudio/sdk": "^1.5.0",
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "7.7.0",

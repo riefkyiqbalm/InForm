@@ -14,7 +14,7 @@ export default function NotFoundPage({ errorcode, type }: { errorcode: string, t
           <span style={S.line} />{type}<span style={S.line} />
         </div>
         <h1 style={S.h1}>Halaman Ini <span style={{ color: 'var(--teal)' }}>Tidak Ditemukan</span></h1>
-        <p style={S.p}>URL yang Anda akses tidak ada di sistem BG-AI. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>
+        <p style={S.p}>URL yang Anda akses tidak ada di sistem InForm. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>
 
         <div style={S.actions}>
           <BackButton href="/chat" label="Kembali ke Chat" variant="primary" />
@@ -24,7 +24,7 @@ export default function NotFoundPage({ errorcode, type }: { errorcode: string, t
         <div style={S.suggestBox}>
           <div style={S.suggestTitle}>Mungkin yang Anda cari:</div>
           {[
-            { href: '/', icon: '💬', label: 'Chat BG-AI — Analisis Gizi & Vendor MBG' },
+            { href: '/', icon: '💬', label: 'Chat InForm — Analisis Gizi & Vendor MBG' },
             { href: '/login', icon: '🔑', label: 'Halaman Login & Registrasi' },
             { href: '/auth', icon: '👤', label: 'Pengaturan Akun' },
             { href: '/terms', icon: '⚖', label: 'Ketentuan Layanan' },
@@ -38,7 +38,7 @@ export default function NotFoundPage({ errorcode, type }: { errorcode: string, t
         </div>
 
         <div style={S.terminal}>
-          <span style={{ color: 'var(--teal)' }}>BG-AI</span>
+          <span style={{ color: 'var(--teal)' }}>InForm</span>
           <span style={{ color: 'var(--muted)' }}> ~$</span>
           <span> Error 404: route not found</span>
           <span style={S.cursor} />

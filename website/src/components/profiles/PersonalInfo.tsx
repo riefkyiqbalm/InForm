@@ -177,7 +177,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
         alignItems: "center", gap: "8px",
       }}>
         <Icon name="white-user" size={16} />
-        Informasi Pribadi
+        InFormasi Pribadi
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>

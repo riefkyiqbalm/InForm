@@ -1,5 +1,5 @@
 /**
- * BG-AI Library Utilities - Central Export Point
+ * InForm Library Utilities - Central Export Point
  * 
  * This file re-exports all utility functions and styles for easier importing.
  * 

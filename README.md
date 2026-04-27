@@ -186,8 +186,8 @@ packages/ui/
 **1. Bootstrap the Plasmo extension**
 
 ```bash
-pnpm create plasmo inform-extension
-cd inform-extension
+pnpm create plasmo InForm-extension
+cd InForm-extension
 pnpm dev
 ```
 
@@ -201,7 +201,7 @@ pnpm add @plasmohq/storage @plasmohq/messaging
 
 ```tsx
 // sidepanel.tsx
-import { InFormPanel } from "@inform/ui/components"
+import { InFormPanel } from "@InForm/ui/components"
 
 export default function SidePanel() {
   return <InFormPanel />
@@ -212,8 +212,8 @@ export default function SidePanel() {
 
 ```tsx
 // contents/form-scanner.tsx
-import { useFormScanner } from "@inform/ui/hooks"
-import { FieldOverlay } from "@inform/ui/components"
+import { useFormScanner } from "@InForm/ui/hooks"
+import { FieldOverlay } from "@InForm/ui/components"
 
 export default function FormScanner() {
   const { fields, isScanning } = useFormScanner()
@@ -264,10 +264,10 @@ Plasmo uses `PLASMO_PUBLIC_` as the prefix for variables exposed to the extensio
 
 ```env
 # .env (shared)
-PLASMO_PUBLIC_API_URL=https://api.inform.app
-NEXT_PUBLIC_API_URL=https://api.inform.app
+PLASMO_PUBLIC_API_URL=https://api.InForm.app
+NEXT_PUBLIC_API_URL=https://api.InForm.app
 
-PLASMO_PUBLIC_LANGCHAIN_ENDPOINT=https://lc.inform.app
+PLASMO_PUBLIC_LANGCHAIN_ENDPOINT=https://lc.InForm.app
 ```
 
 ---
@@ -293,7 +293,7 @@ InForm adapts field value generation, date/number formatting, and UI language to
 ## Project Structure
 
 ```
-inform/                              # pnpm monorepo
+InForm/                              # pnpm monorepo
 ├── apps/
 │   ├── web/                         # Next.js web app (dashboard, admin)
 │   │   ├── app/

@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import type { AuthContextType, Role, User } from "@sharedUI/types";
 import { signIn, signOut } from "next-auth/react"; // 
 
-const EXTENSION_ID = process.env.NEXT_PUBLIC_INFORM_EXTENSION_ID ?? "";
+const EXTENSION_ID = process.env.NEXT_PUBLIC_InForm_EXTENSION_ID ?? "";
 
 function notifyExtension(type: "_AUTH_LOGIN" | "_AUTH_LOGOUT", payload?: object) {
   if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
@@ -41,6 +41,7 @@ function saveAuthCookies(token: string, user: User) {
 function clearAuthCookies() {
   Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
   Cookies.remove(AUTH_USER_KEY, { path: "/" });
+  
 }
 
 function parseUserCookie(): User | null {

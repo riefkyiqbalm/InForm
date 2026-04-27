@@ -156,7 +156,7 @@ export const ONBOARDING_SUGGESTIONS: Suggestion[] = [
   {
     icon: 'white-help',
     title: "Bantuan",
-    prompt: "Bagaimana cara menggunakan BG-AI?",
+    prompt: "Bagaimana cara menggunakan InForm?",
   },
   {
     icon: 'white-document',

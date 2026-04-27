@@ -29,7 +29,7 @@ export default function EmailChanges({
   return (
     <Html lang="id" dir="ltr">
       <Head />
-      <Preview>Konfirmasi perubahan email akun BG-AI Anda</Preview>
+      <Preview>Konfirmasi perubahan email akun InForm Anda</Preview>
 
       <Body style={S.body}>
         <Container style={S.container}>
@@ -40,7 +40,7 @@ export default function EmailChanges({
               <table cellPadding={0} cellSpacing={0}><tr>
                 <td style={S.logoCell}><Text style={S.logoText}>BG</Text></td>
                 <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
-                  <Text style={S.logoName}>BG-AI</Text>
+                  <Text style={S.logoName}>InForm</Text>
                 </td>
               </tr></table>
             </td></tr></table>
@@ -70,7 +70,7 @@ export default function EmailChanges({
 
             <Text style={S.body2}>
               Anda telah meminta perubahan alamat email untuk akun{" "}
-              <strong style={{ color: "#00d4c8" }}>BG-AI</strong> Anda.
+              <strong style={{ color: "#00d4c8" }}>InForm</strong> Anda.
               Klik tombol di bawah untuk mengonfirmasi perubahan ini.
             </Text>
 
@@ -128,7 +128,7 @@ export default function EmailChanges({
               Email ini dikirim secara otomatis. Mohon tidak membalas email ini.
             </Text>
             <Text style={S.footerText}>
-              © {new Date().getFullYear()} BG-AI · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
             </Text>
           </Section>
 

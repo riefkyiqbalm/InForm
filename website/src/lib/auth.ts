@@ -5,8 +5,8 @@ import bcrypt from "bcryptjs";
 export const AUTH_SECRET = process.env.JWT_SECRET! ;
 
 export function generateToken(userId: any, email: string): string {
-  console.log("--- GENERATING TOKEN ---");
-  console.log("Using Secret (first 5 chars):", AUTH_SECRET.substring(0, 5));
+  // console.log("--- GENERATING TOKEN ---");
+  // console.log("Using Secret (first 5 chars):", AUTH_SECRET.substring(0, 5));
   
   return jwt.sign(
     { userId: userId.toString(), email },
@@ -17,7 +17,7 @@ export function generateToken(userId: any, email: string): string {
 
 export function getUserFromToken(token: string) {
   // LOG INI AKAN MUNCUL DI TERMINAL VS CODE
-  console.log("DEBUG: Secret yang dipakai verifikasi:", process.env.JWT_SECRET);
+  // console.log("DEBUG: Secret yang dipakai verifikasi:", process.env.JWT_SECRET);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     return (decoded as any).userId;

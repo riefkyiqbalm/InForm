@@ -6,7 +6,7 @@
 // Setup:
 //   1. npm install resend @react-email/components
 //   2. Add RESEND_API_KEY=re_... to .env
-//   3. Add RESEND_FROM=BG-AI <noreply@yourdomain.com> to .env
+//   3. Add RESEND_FROM=InForm <noreply@yourdomain.com> to .env
 //      (domain must be verified in your Resend dashboard)
 
 import { Resend } from "resend";
@@ -20,7 +20,7 @@ import EmailChanges from "@/emails/EmailChanges";
 // Instantiated once per process — not per request.
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
-const FROM   = process.env.RESEND_FROM   ?? "BG-AI <noreply@aotamata.space>";
+const FROM   = process.env.RESEND_FROM   ?? "InForm <noreply@aotamata.space>";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
 // ── sendVerificationEmail ─────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ export async function sendVerificationEmail(
   const { error } = await resend.emails.send({
     from:    FROM,
     to:      [to],
-    subject: "Verifikasi Email Akun BG-AI Anda",
+    subject: "Verifikasi Email Akun InForm Anda",
     html,
   });
 
@@ -72,7 +72,7 @@ export async function sendResendVerificationEmail(
   const { error } = await resend.emails.send({
     from:    FROM,
     to:      [to],
-    subject: "Kirim Ulang: Verifikasi Email Akun BG-AI Anda",
+    subject: "Kirim Ulang: Verifikasi Email Akun InForm Anda",
     html,
   });
 
@@ -87,7 +87,7 @@ export async function sendResendVerificationEmail(
 // Setup:
 //   npm install resend @react-email/components
 //   RESEND_API_KEY=re_...  in .env
-//   RESEND_FROM=BG-AI <noreply@yourdomain.com>  in .env
+//   RESEND_FROM=InForm <noreply@yourdomain.com>  in .env
 
 // ── Helper ────────────────────────────────────────────────────────────────────
 async function send(to: string, subject: string, html: string) {
@@ -101,7 +101,7 @@ export async function sendPasswordResetEmail(
 ) {
   const resetUrl = `${BASE_URL}/new-password?token=${token}`;
   const html = await render(PasswordReset({ name, resetUrl }) as React.ReactElement);
-  await send(to, "Reset Kata Sandi Akun BG-AI Anda", html);
+  await send(to, "Reset Kata Sandi Akun InForm Anda", html);
 }
 
 // ── 3. Password changed confirmation (security alert) ────────────────────────
@@ -110,7 +110,7 @@ export async function sendPasswordChangedEmail(
 ) {
   const changedAt = new Date().toISOString();
   const html = await render(PasswordChanges({ name, changedAt }) as React.ReactElement);
-  await send(to, "Kata Sandi Akun BG-AI Anda Telah Diubah", html);
+  await send(to, "Kata Sandi Akun InForm Anda Telah Diubah", html);
 }
 
 // ── 4. Email change — sent to the NEW address ─────────────────────────────────
@@ -123,5 +123,5 @@ export async function sendEmailChangeVerification(
       name, newEmail: toNewEmail, oldEmail, verifyUrl,
     }) as React.ReactElement
   );
-  await send(toNewEmail, "Konfirmasi Perubahan Email Akun BG-AI Anda", html);
+  await send(toNewEmail, "Konfirmasi Perubahan Email Akun InForm Anda", html);
 }

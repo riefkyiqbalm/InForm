@@ -7,7 +7,7 @@ import AppHeader from "@/components/profiles/TopPanel";
 export default function Terms() {
   return (
     <div style={S.root}>
-      <AppHeader title="BG-AI" subtitle="Ketentuan Layanan" backHref="/chat" />
+      <AppHeader title="InFormm" subtitle="Ketentuan Layanan" backHref="/chat" />
 
       <main style={S.main}>
         <div style={S.container}>
@@ -21,7 +21,7 @@ export default function Terms() {
             <section style={S.section}>
               <h2 style={S.h2}>1. Penerimaan Syarat</h2>
               <p style={S.p}>
-                Dengan mengakses dan menggunakan platform BG-AI, Anda соглашаетесь untuk terikat oleh 
+                Dengan mengakses dan menggunakan platform InFormm, Anda соглашаетесь untuk terikat oleh 
                 ketentuan layanan ini. Jika Anda tidak setuju dengan salah satu ketentuan, 
                 Anda tidak diperkenankan menggunakan layanan ini.
               </p>
@@ -30,7 +30,7 @@ export default function Terms() {
             <section style={S.section}>
               <h2 style={S.h2}>2. Deskripsi Layanan</h2>
               <p style={S.p}>
-                BG-AI adalah platform chatbot multimodal berbasis LLM (Large Language Model) yang 
+                InFormm adalah platform chatbot multimodal berbasis LLM (Large Language Model) yang 
                 menyediakan layanan analisis dan konsultasi untuk keperluan administrasi dan perizinan IPAL 
                 (Instalasi Pengolahan Air Limbah). Layanan ini menggunakan model AI Qwen3-4B yang dijalankan 
                 secara lokal melalui LM Studio.
@@ -46,12 +46,12 @@ export default function Terms() {
             <section style={S.section}>
               <h2 style={S.h2}>3. Akun Pengguna</h2>
               <p style={S.p}>
-                Untuk mengakses fitur tertentu, Anda harus membuat akun dengan informasi yang valid. 
+                Untuk mengakses fitur tertentu, Anda harus membuat akun dengan InFormasi yang valid. 
                 Anda bertanggung jawab untuk:
               </p>
               <ul style={S.ul}>
                 <li>Menjaga kerahasiaan kata sandi akun Anda</li>
-                <li>Menginformasikan kami segera tentang penggunaan tidak sah</li>
+                <li>MengInFormasikan kami segera tentang penggunaan tidak sah</li>
                 <li>Menggunakan layanan hanya untuk tujuan yang sah</li>
                 <li>Tidak membagikan akun kepada orang lain</li>
               </ul>
@@ -76,8 +76,8 @@ export default function Terms() {
                 <div>
                   <strong>Perhatian Penting</strong>
                   <p style={{ margin: "4px 0 0", fontSize: "13px" }}>
-                    Respons yang dihasilkan oleh AI bersifat informasi umum dan tidak dimaksudkan 
-                    sebagai nasihat profesional. Sempre verifikasi informasi penting dengan sumber 
+                    Respons yang dihasilkan oleh AI bersifat InFormasi umum dan tidak dimaksudkan 
+                    sebagai nasihat profesional. Sempre verifikasi InFormasi penting dengan sumber 
                     resmi dan konsultan yang kompeten.
                   </p>
                 </div>
@@ -101,7 +101,7 @@ export default function Terms() {
             <section style={S.section}>
               <h2 style={S.h2}>7. Batasan Tanggung Jawab</h2>
               <p style={S.p}>
-                BG-AI dan tim developer tidak bertanggung jawab atas:
+                InFormm dan tim developer tidak bertanggung jawab atas:
               </p>
               <ul style={S.ul}>
                 <li>Kerugian langsung atau tidak langsung dari penggunaan layanan</li>

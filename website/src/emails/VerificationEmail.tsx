@@ -1,7 +1,7 @@
 // emails/VerificationEmail.tsx
 //
 // React Email template for the email verification flow.
-// Matches BG-AI's dark/teal design language.
+// Matches InForm's dark/teal design language.
 // Rendered server-side by the Resend SDK — never imported by Next.js pages.
 //
 // Install deps:
@@ -41,7 +41,7 @@ export default function VerificationEmail({
       <Head />
 
       {/* Preview text shown in inbox before opening */}
-      <Preview>Verifikasi email Anda untuk mengaktifkan akun BG-AI</Preview>
+      <Preview>Verifikasi email Anda untuk mengaktifkan akun InForm</Preview>
 
       <Body style={body}>
         <Container style={container}>
@@ -58,7 +58,7 @@ export default function VerificationEmail({
                         <Text style={logoText}>BG</Text>
                       </td>
                       <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
-                        <Text style={logoName}>BG-AI</Text>
+                        <Text style={logoName}>InForm</Text>
                       </td>
                     </tr>
                   </table>
@@ -95,7 +95,7 @@ export default function VerificationEmail({
             </Text>
 
             <Text style={bodyText}>
-              Terima kasih telah mendaftar di <strong style={{ color: "#00d4c8" }}>BG-AI</strong> —
+              Terima kasih telah mendaftar di <strong style={{ color: "#00d4c8" }}>InForm</strong> —
               platform AI multimodal pengawasan gizi. Klik tombol di bawah untuk
               memverifikasi alamat email Anda dan mengaktifkan akun.
             </Text>
@@ -130,11 +130,11 @@ export default function VerificationEmail({
           {/* ── Footer ─────────────────────────────────────────────────── */}
           <Section style={footerSection}>
             <Text style={footerText}>
-              Email ini dikirim oleh BG-AI secara otomatis. Mohon tidak membalas
+              Email ini dikirim oleh InForm secara otomatis. Mohon tidak membalas
               email ini.
             </Text>
             <Text style={footerText}>
-              © {new Date().getFullYear()} BG-AI · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
             </Text>
           </Section>
 
@@ -152,7 +152,7 @@ VerificationEmail.PreviewProps = {
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 // React Email uses inline styles — no CSS classes or variables.
-// Colors mirror BG-AI's global.css tokens.
+// Colors mirror InForm's global.css tokens.
 
 const body: React.CSSProperties = {
   backgroundColor: "#060d1a",

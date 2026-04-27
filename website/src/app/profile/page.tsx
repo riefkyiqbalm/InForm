@@ -72,7 +72,7 @@ export default function AuthPage() {
 
   return (
     <div style={S.pageRoot}>
-      <TopPanel title="BG-AI" subtitle="Profil" />
+      <TopPanel title="InFormmm" subtitle="Profil" />
 
       <div style={S.pageBody}>
         <LeftPanel />

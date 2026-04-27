@@ -11,7 +11,7 @@ import Welcome     from "@sharedUI/components/Welcome";
 // ── new broken-down components ────────────────────────────────────────────────
 import { Card }           from "@sharedUI/components/Cards";
 import { TabButtons }     from "@sharedUI/components/Tabbutons";
-import { LoginForm }      from "@/components/auth/LoginForm";
+import { LogInForm }      from "@/components/auth/LoginForm";
 import { RegisterForm }   from "@/components/auth/RegisterForm";
 
 type Panel = "login" | "register";
@@ -62,7 +62,6 @@ export default function AuthPanel() {
       <div style={S.container}>
         <Background />
         <Welcome />
-
         <Card>
           {/* Tab switcher */}
           <TabButtons
@@ -75,7 +74,7 @@ export default function AuthPanel() {
 
           {/* Active form */}
           {activePanel === "login" ? (
-            <LoginForm
+            <LogInForm
               onSubmit={handleLogin}
               loading={loading}
               error={error}

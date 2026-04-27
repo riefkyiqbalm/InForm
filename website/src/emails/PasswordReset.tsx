@@ -23,7 +23,7 @@ export default function PasswordReset({
   return (
     <Html lang="id" dir="ltr">
       <Head />
-      <Preview>Reset kata sandi akun BG-AI Anda</Preview>
+      <Preview>Reset kata sandi akun InFormm Anda</Preview>
 
       <Body style={S.body}>
         <Container style={S.container}>
@@ -34,7 +34,7 @@ export default function PasswordReset({
               <table cellPadding={0} cellSpacing={0}><tr>
                 <td style={S.logoCell}><Text style={S.logoText}>BG</Text></td>
                 <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
-                  <Text style={S.logoName}>BG-AI</Text>
+                  <Text style={S.logoName}>InForm</Text>
                 </td>
               </tr></table>
             </td></tr></table>
@@ -65,7 +65,7 @@ export default function PasswordReset({
 
             <Text style={S.body2}>
               Kami menerima permintaan untuk mereset kata sandi akun{" "}
-              <strong style={{ color: "#00d4c8" }}>BG-AI</strong> Anda.
+              <strong style={{ color: "#00d4c8" }}>InForm</strong> Anda.
               Klik tombol di bawah untuk membuat kata sandi baru.
             </Text>
 
@@ -101,7 +101,7 @@ export default function PasswordReset({
               Email ini dikirim secara otomatis. Mohon tidak membalas email ini.
             </Text>
             <Text style={S.footerText}>
-              © {new Date().getFullYear()} BG-AI · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
             </Text>
           </Section>
 

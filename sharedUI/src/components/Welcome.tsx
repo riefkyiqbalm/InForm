@@ -7,10 +7,9 @@ export default function Welcome() {
     <>
     <div style={T.brand}>
         <BigLogo/>
-        <h1 style={T.h1}>inForm</h1>
+        <h1 style={T.h1}>InForm</h1>
         <p style={T.p}>
-          inForm siap membantu untuk proses administrasi dan perizinan
-          MBG.
+          InForm siap membantu untuk proses Administrasi dan Pengisian Formulir
         </p>
     </div>
     </>

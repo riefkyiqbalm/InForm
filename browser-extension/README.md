@@ -238,7 +238,7 @@ InForm is multilingual and adapts to the user's locale for:
 ## File Structure (Next.js)
 
 ```
-inform/
+InForm/
 ├── apps/
 │   ├── web/                    # Next.js frontend
 │   │   ├── app/

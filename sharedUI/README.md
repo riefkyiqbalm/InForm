@@ -12,7 +12,7 @@
 
 ```
 shared-ui/
-├── package.json          # @inform/ui package config
+├── package.json          # @InForm/ui package config
 ├── tsconfig.json         # TypeScript config with path aliases
 ├── README.md             # This file
 └── src/
@@ -29,16 +29,16 @@ shared-ui/
 The path aliases are already configured. Import like this:
 
 ```typescript
-import { ChatMessage, ChatSession, User } from "@inform/types";
-import { Button } from "@inform/ui/components/Button"; // when you add components
+import { ChatMessage, ChatSession, User } from "@InForm/types";
+import { Button } from "@InForm/ui/components/Button"; // when you add components
 ```
 
 ### In website (tsconfig.json):
 The path aliases are already configured. Import the same way:
 
 ```typescript
-import { ChatMessage, ChatSession, User } from "@inform/types";
-import { Button } from "@inform/ui/components/Button"; // when you add components
+import { ChatMessage, ChatSession, User } from "@InForm/types";
+import { Button } from "@InForm/ui/components/Button"; // when you add components
 ```
 
 ## Migration Guide: Moving Existing Components to shared-ui
@@ -55,7 +55,7 @@ Good candidates:
 
 ### Step 2: Move Component to shared-ui
 1. Create the component file in `shared-ui/src/components/ComponentName.tsx`
-2. Update imports to use React and shared types from `@inform/types`
+2. Update imports to use React and shared types from `@InForm/types`
 3. Export the component from `shared-ui/src/index.ts`
 
 Example:
@@ -93,13 +93,13 @@ In `browser-extension/` and `website/`:
    import SendButton from "~components/buttons/SendButton";
 
    // After
-   import { SendButton } from "@inform/ui/components/SendButton";
+   import { SendButton } from "@InForm/ui/components/SendButton";
    ```
 
 ## Build & Development
 
 ### Development (No build required)
-Both projects can import from `@inform/ui` and `@inform/types` directly using
+Both projects can import from `@InForm/ui` and `@InForm/types` directly using
 TypeScript path aliases. No build step needed during development.
 
 ### Type Checking
@@ -121,7 +121,7 @@ Then update package.json in browser-extension and website:
 ```json
 {
   "dependencies": {
-    "@inform/ui": "^0.0.1"
+    "@InForm/ui": "^0.0.1"
   }
 }
 ```
@@ -130,7 +130,7 @@ Then update package.json in browser-extension and website:
 
 1. **Keep it simple**: Only move truly shared components
 2. **Avoid project-specific imports**: Don't import from `~/*` or `@/*` in shared components
-3. **Use shared types**: Always use types from `@inform/types` instead of defining locally
+3. **Use shared types**: Always use types from `@InForm/types` instead of defining locally
 4. **Test in both projects**: After moving a component, verify it works in both extension and website
 5. **Version control**: Keep shared-ui in the same monorepo for easy development
 
@@ -142,15 +142,15 @@ Make sure tsconfig.json in both projects has the correct paths:
 {
   "compilerOptions": {
     "paths": {
-      "@inform/ui/*": ["../shared-ui/src/*"],
-      "@inform/types": ["../shared-ui/src/types/index.ts"]
+      "@InForm/ui/*": ["../shared-ui/src/*"],
+      "@InForm/types": ["../shared-ui/src/types/index.ts"]
     }
   }
 }
 ```
 
 ### Type conflicts
-If you see duplicate type definitions, remove the local types and import from `@inform/types` instead.
+If you see duplicate type definitions, remove the local types and import from `@InForm/types` instead.
 
 ### IDE issues
 Restart your TypeScript language server or reload your IDE window after adding new path aliases.

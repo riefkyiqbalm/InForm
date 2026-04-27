@@ -41,7 +41,7 @@ export default function LeftPanel({ isOpen, setIsOpen, onClose }: LeftPanelProps
             opacity: isOpen ? 1 : 0,
             transform: isOpen ? "translateX(0)" : "translateX(-10px)",
           }}>
-            <div style={S.title}>BG-AI</div>
+            <div style={S.title}>InFormm</div>
             <div style={S.subtitle}>{user?.name || "Guest"}</div>
           </div>
         </div>

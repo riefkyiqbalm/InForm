@@ -37,7 +37,7 @@ export default function LeftPanel() {
             transform: isOpen ? "translateX(0)" : "translateX(-10px)",
             pointerEvents: isOpen ? "auto" : "none"
           }}>
-            <div style={S.title}>BG-AI</div>
+            <div style={S.title}>InForm</div>
             <div style={S.subtitle}>{user?.name || "Guest"}</div>
           </div>
         </div>

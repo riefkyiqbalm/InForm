@@ -134,7 +134,7 @@ export default function MainChat() {
     // ── INJEKSI FILE KE DALAM TEKS UNTUK AI ─────────────────────────────────
     let finalPrompt = text;
     if (filesToSend.length > 0) {
-      // Buat string berisi informasi file.
+      // Buat string berisi InFormasi file.
       // Jika StoredDoc Anda memiliki properti konten teks (misal: f.content atau f.text),
       // Anda BISA menambahkannya di sini agar AI langsung bisa membacanya.
      const fileInfo = filesToSend.map(f => "[Nama File: " + f.name + "]\nIsi File:\n" + f.type).join("\n\n");

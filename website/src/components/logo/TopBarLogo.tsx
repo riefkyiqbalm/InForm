@@ -13,7 +13,7 @@ export default function TopBarLogo() {
     <Link href={targetPath} style={S.brandAnchor} title='Chat'
     suppressHydrationWarning={true}>
         <SmallLogo/>
-        <div style={S.brandText}>inForm</div>
+        <div style={S.brandText}>InForm</div>
     </Link>
   );
 }

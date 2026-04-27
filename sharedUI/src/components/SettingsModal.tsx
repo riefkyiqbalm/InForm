@@ -22,7 +22,7 @@ interface SettingsModalProps {
 
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000"
 const KEY_TOKEN   = "_auth_token"
-const STORAGE_KEY = "inform_memory_docs"
+const STORAGE_KEY = "InForm_memory_docs"
 
 async function getToken(): Promise<string | null> {
   try { const r = await chrome.storage.local.get(KEY_TOKEN); return (r[KEY_TOKEN] as string) || null }
@@ -116,8 +116,8 @@ function RootPage({ onNavigate }: { onNavigate: (p: SettingsPage) => void }) {
 }
 
 function AIModelPage() {
-  const [selected, setSelected] = useState(() => localStorage.getItem("inform_ai_model") ?? "qwen3-4b")
-  const choose = (id: string) => { setSelected(id); localStorage.setItem("inform_ai_model", id) }
+  const [selected, setSelected] = useState(() => localStorage.getItem("InForm_ai_model") ?? "qwen3-4b")
+  const choose = (id: string) => { setSelected(id); localStorage.setItem("InForm_ai_model", id) }
   return (
     <div>
       <p style={S.sectionDesc}>
@@ -148,11 +148,11 @@ function AIModelPage() {
 function PrivacyPage() {
   const { toast } = useToast()
   const [prefs, setPrefs] = useState<Record<string,boolean>>(() => {
-    try { return JSON.parse(localStorage.getItem("inform_privacy") ?? "{}") } catch { return {} }
+    try { return JSON.parse(localStorage.getItem("InForm_privacy") ?? "{}") } catch { return {} }
   })
   const toggle = (key: string) => {
     const next = { ...prefs, [key]: !prefs[key] }
-    setPrefs(next); localStorage.setItem("inform_privacy", JSON.stringify(next))
+    setPrefs(next); localStorage.setItem("InForm_privacy", JSON.stringify(next))
   }
   const clearData = () => {
     if (window.confirm("Hapus semua data lokal? / Delete all local data?")) {

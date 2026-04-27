@@ -36,7 +36,7 @@ export default function SuccessView() {
       <Link
         href="/login"
         style={{ ...B.primary, ...B.primarySuccess }}
-        aria-label="Masuk ke BG-AI"
+        aria-label="Masuk ke InForm"
       >
         Masuk Sekarang →
       </Link>

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// lib/inform-extension.ts  (paste this into your Next.js website at localhost:3000)
+// lib/InForm-extension.ts  (paste this into your Next.js website at localhost:3000)
 // ─────────────────────────────────────────────────────────────────────────────
 //
 // After a successful login, call notifyExtension(token, user).
@@ -12,7 +12,7 @@
 // EXTENSION_ID: find it at chrome://extensions after loading the unpacked build.
 // In production, hardcode the published extension ID here.
 
-const EXTENSION_ID = process.env.NEXT_PUBLIC_INFORM_EXTENSION_ID ?? ""
+const EXTENSION_ID = process.env.NEXT_PUBLIC_InForm_EXTENSION_ID ?? ""
 
 export interface ExtensionUser {
   id: string | number
@@ -68,7 +68,7 @@ export function notifyExtensionLogout(): void {
 // USAGE EXAMPLE — inside your website's AuthContext or login handler:
 // ─────────────────────────────────────────────────────────────────────────────
 //
-// import { notifyExtensionLogin, notifyExtensionLogout } from "~/lib/inform-extension"
+// import { notifyExtensionLogin, notifyExtensionLogout } from "~/lib/InForm-extension"
 //
 // // After successful login:
 // const data = await loginApiCall(email, password)

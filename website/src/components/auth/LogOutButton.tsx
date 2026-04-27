@@ -31,7 +31,7 @@ export default function LogOut() {
         isOpen={showModal}
         onClose={handleCancel}
         onConfirm={handleConfirm}
-        message="Keluar dari BG-AI?"
+        message="Keluar dari InForm?"
       />
     </>
   );

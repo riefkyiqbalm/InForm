@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ChatSession, InterruptedMessage, SendMessageArgs, ChatContextType, ChatMessage } from "../types";
+import Cookies from "js-cookie";
 
 const KEY_TOKEN = "_auth_token";
 // Determine environment
@@ -9,28 +10,24 @@ const IS_EXTENSION = typeof chrome !== 'undefined' && !!chrome.storage;
 const NEXTJS_BASE = process.env.NEXT_PUBLIC_NEXTJS_BASE ?? (process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000");
 
 // --- Token Retrieval (Polyfill for Web vs Extension) ---
+
 async function getToken(): Promise<string | null> {
   if (IS_EXTENSION) {
-  try {
-    const result = await chrome.storage.local.get(KEY_TOKEN);
-    const token = result[KEY_TOKEN];
+    try {
+      const result = await chrome.storage.local.get(KEY_TOKEN);
+      return result[KEY_TOKEN] as string || null;
+    } catch (err) {
+      console.error("[ChatContext] Error reading token:", err);
+      return null;
+    }
+  } else {
+    // WEBSITE: Ambil token dari cookie '_auth_token'
+    const token = Cookies.get("_auth_token"); 
     
     if (!token) {
-      console.warn("[ChatContext] No token found in chrome.storage.local. Did login complete?");
+      console.warn("[ChatContext] No token found in cookies.");
     }
-    return token as string || null;
-  } catch (err) {
-    console.error("[ChatContext] Error reading token:", err);
-    return null;
-  }
-  } else {
-    // Website: Get token from AuthContext or Cookie
-    // Since we can't import useAuth here (circular dep), we rely on the API call 
-    // failing if no cookie is present, OR we fetch it from a dedicated endpoint.
-    // Best practice for Website: The API relies on HttpOnly cookies automatically.
-    // We return null here, and the fetch headers will just omit Authorization, 
-    // letting the server read the cookie.
-    return null; 
+    return token || null;
   }
 }
 

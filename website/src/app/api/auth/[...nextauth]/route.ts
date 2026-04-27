@@ -2,7 +2,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import jwt from "jsonwebtoken";
-// ✅ IMPORT THE SHARED INSTANCE HERE
 import { prisma } from "@/lib/prisma";
 import { Role } from "@sharedUI/types";
 import { AUTH_SECRET } from "@/lib/auth"; // Impor dari lib Anda

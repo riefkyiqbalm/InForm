@@ -1,6 +1,6 @@
 /**
  * Form and input validation utilities
- * Extracted from components: LoginForm, RegisterForm, ChatInput, etc.
+ * Extracted from components: LogInForm, RegisterForm, ChatInput, etc.
  */
 
 /**
