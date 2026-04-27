@@ -12,6 +12,7 @@ import LeftPanel         from "@sharedUI/components/chats/LeftPanel"
 import TopPanel          from "@sharedUI/components/chats/TopPanel"
 import FirstOpenHint     from "~components/FirstOpenHint"
 
+
 // ── Build a human-readable fill reply for MessageBubble ───────────────────────
 function buildFillReply(
   filled: number,

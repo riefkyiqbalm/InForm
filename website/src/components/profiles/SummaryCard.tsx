@@ -24,7 +24,7 @@ export default function SummaryCard({ name, email, roles }: SummaryCardProps) {
         <p style={S.email}>{email}</p>
         <div style={S.badges}>
           {roles.map((r) => (
-            <span key={r} style={S.badge}>✦ {r}</span>
+            <span key={r} style={S.badge}>+ {r}</span>
           ))}
         </div>
       </div>

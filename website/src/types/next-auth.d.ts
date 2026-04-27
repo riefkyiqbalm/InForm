@@ -1,10 +1,12 @@
-// website/src/types/next-auth.d.ts
 import NextAuth from "next-auth";
 import { Role } from "@sharedUI/types";
 
 declare module "next-auth" {
   interface Session {
-    accessToken?: string;
+    // The Custom JWT compatible with getUserFromToken()
+    accessToken?: string; 
+    // The raw Google Access Token (optional, for Google APIs)
+    googleAccessToken?: string;
     user: {
       id: string;
       name?: string | null;
@@ -17,8 +19,9 @@ declare module "next-auth" {
   }
 
   interface JWT {
-    accessToken?: string;
-    sub?: string;
+    id: string;
+    customAccessToken?: string;
+    accessToken?: string; // Google's token
     role?: Role;
     contact?: string | null;
     institution?: string | null;

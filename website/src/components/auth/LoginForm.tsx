@@ -101,7 +101,7 @@ export function LoginForm({
           disabled={loading}
           rightSlot={
             <span onClick={() => setShowPass(!showPass)} style={S.togglePass}>
-              <Icon name={showPass ? "eyeoff" : "eye"} size={18} />
+              <Icon name={showPass ? "white-eyeoff" : "white-eye"} size={18} />
             </span>
           }
         />
@@ -120,12 +120,12 @@ export function LoginForm({
         <button type="submit" disabled={loading} style={S.mainBtn}>
           {loading ? (
             <>
-              <Icon name="loading" size={18} />
+              <Icon name="white-loading" size={18} />
               <span>Memproses…</span>
             </>
           ) : (
             <>
-              <Icon name="forward" size={18} />
+              <Icon name="white-arrow-right" size={18} />
               <span>Masuk ke InForm</span>
             </>
           )}

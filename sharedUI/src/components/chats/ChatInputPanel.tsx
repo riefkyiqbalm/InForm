@@ -1,60 +1,58 @@
 // components/chats/ChatInputPanel.tsx
-'use-client'
-import React, { useState } from "react"
-import type { InputMode } from "@sharedUI/types"
-import AttachFile from "@sharedUI/components/buttons/AttachButton"
-import SendButton from "@sharedUI/components/buttons/SendButton"
-import StopButton from "@sharedUI/components/buttons/StopButton"
-import InterruptedNotif, { type InterruptedMessage } from "@sharedUI/components/chats/interruptedNotif"
-import FileMetadataPreview from "@sharedUI/components/FileMetadataPreview"
-import type { StoredDoc } from "@sharedUI/components/SettingsModal"
+"use-client";
+import React, { useState } from "react";
+import type { InputMode } from "@sharedUI/types";
+import AttachFile from "@sharedUI/components/buttons/AttachButton";
+import SendButton from "@sharedUI/components/buttons/SendButton";
+import StopButton from "@sharedUI/components/buttons/StopButton";
+import InterruptedNotif, {
+  type InterruptedMessage,
+} from "@sharedUI/components/chats/interruptedNotif";
+import FileMetadataPreview from "@sharedUI/components/FileMetadataPreview";
+import type { StoredDoc } from "@sharedUI/components/SettingsModal";
 
 interface ChatInputPanelProps {
-  input: string
-  onInput: (value: string) => void
-  inputMode: InputMode
-  onModeChange: (mode: InputMode) => void
-  isCurrentLoading: boolean
-  onSend: () => void // Ditambah param opsional
-  onStop: () => void
-  onFileUpload: (file: File) => void
-  onKeyDown: (e: React.KeyboardEvent) => void
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>
-  onResizeTextarea: () => void
-  disabled?: boolean
-  isOpen: boolean
-  interruptedMessage: InterruptedMessage | null
-  onRetry: (text: string) => Promise<void>
-  onDismissInterrupt: () => void
-  pendingFiles: StoredDoc[]              // State dari parent
-  setPendingFiles: React.Dispatch<React.SetStateAction<StoredDoc[]>>
+  input: string;
+  onInput: (value: string) => void;
+  inputMode: InputMode;
+  onModeChange: (mode: InputMode) => void;
+  isCurrentLoading: boolean;
+  onSend: () => void; // Ditambah param opsional
+  onStop: () => void;
+  onFileUpload: (file: File) => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  onResizeTextarea: () => void;
+  disabled?: boolean;
+  isOpen: boolean;
+  interruptedMessage: InterruptedMessage | null;
+  onRetry: (text: string) => Promise<void>;
+  onDismissInterrupt: () => void;
+  pendingFiles: StoredDoc[]; // State dari parent
+  setPendingFiles: React.Dispatch<React.SetStateAction<StoredDoc[]>>;
 }
 
 export default function ChatInputPanel(props: ChatInputPanelProps) {
-  
   const handleAttachAction = (type: InputMode, docs?: StoredDoc[]) => {
     if (docs && docs.length > 0) {
       props.setPendingFiles((prev) => [...prev, ...docs]);
     }
     // Tetap jalankan mode change jika diperlukan
-    props.onModeChange(type)
-  }
+    props.onModeChange(type);
+  };
 
   const handleRemoveFile = (index: number) => {
     props.setPendingFiles((prev) => prev.filter((_, i) => i !== index));
-  }
+  };
   // const handleSendInternal = () => {
   //   if (props.isCurrentLoading) return
   //   // Kirim beserta lampiran jika ada
   //   props.onSend(pendingFiles)
   //   setPendingFiles([]) // Bersihkan setelah kirim
   // }
-
-
   return (
     <div style={S.container}>
       <div style={S.centerContainer}>
-
         {props.interruptedMessage && (
           <InterruptedNotif
             interrupted={props.interruptedMessage}
@@ -66,7 +64,11 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
         <div style={S.chatBox}>
           {/* Preview Metadata File di atas Textarea */}
           <FileMetadataPreview
-            files={props.pendingFiles.map(f => ({ name: f.name, type: f.type, size: f.size }))}
+            files={props.pendingFiles.map((f) => ({
+              name: f.name,
+              type: f.type,
+              size: f.size,
+            }))}
             onRemove={handleRemoveFile} // Oper fungsi hapus ke sini
           />
 
@@ -74,15 +76,15 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
             ref={props.textareaRef}
             value={props.input}
             onChange={(e) => {
-              props.onInput(e.target.value)
-              props.onResizeTextarea()
+              props.onInput(e.target.value);
+              props.onResizeTextarea();
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault()
+                e.preventDefault();
                 props.onSend();
               } else {
-                props.onKeyDown(e)
+                props.onKeyDown(e);
               }
             }}
             placeholder="Tanyakan sesuatu..."
@@ -104,7 +106,10 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
               ) : (
                 <SendButton
                   onClick={props.onSend}
-                  disabled={props.disabled || (!props.input.trim() && props.pendingFiles.length === 0)}
+                  disabled={
+                    props.disabled ||
+                    (!props.input.trim() && props.pendingFiles.length === 0)
+                  }
                 />
               )}
             </div>
@@ -112,7 +117,7 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const S: Record<string, React.CSSProperties> = {
@@ -130,7 +135,7 @@ const S: Record<string, React.CSSProperties> = {
     flexDirection: "column",
     padding: "10px 20px 20px",
     pointerEvents: "auto",
-    margin: "0 auto"
+    margin: "0 auto",
   },
   dropZone: {
     padding: "12px 14px",
@@ -156,7 +161,7 @@ const S: Record<string, React.CSSProperties> = {
     padding: "4px 8px",
     background: "transparent",
     color: "var(--text,#e6edf3)",
-    fontFamily: "var(--font-head,'DM Sans',system-ui,sans-serif)",
+    fontFamily: "var(--font-head)",
     fontSize: 15,
     outline: "none",
     lineHeight: 1.5,
@@ -183,4 +188,4 @@ const S: Record<string, React.CSSProperties> = {
     fontSize: 12,
     textAlign: "center",
   },
-}
+};

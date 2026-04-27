@@ -24,7 +24,7 @@ export default function LogOut() {
   return (
     <>
       <a onClick={handleLogoutClick} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', color: 'var(--red)', cursor: 'pointer', textDecoration: 'none', transition: 'all .15s' }}>
-        <Icon name="logout" size={20} invert = {false}/>
+        <Icon name="red-logout" size={20} invert = {false}/>
         Keluar
       </a>
       <Modal

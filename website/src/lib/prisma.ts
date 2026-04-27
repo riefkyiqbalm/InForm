@@ -1,5 +1,5 @@
 // src/lib/prisma.ts
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/client";
 import { PrismaPg } from "@prisma/adapter-pg"; // Import the adapter
 import pg from "pg"; // Or 'neon-serverless' if using Vercel/Neon
 

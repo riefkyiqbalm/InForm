@@ -1,10 +1,13 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-// ✅ Import the singleton instance instead of creating a new one
-import { prisma } from "@/lib/prisma"; 
+import jwt from "jsonwebtoken";
+// ✅ IMPORT THE SHARED INSTANCE HERE
+import { prisma } from "@/lib/prisma";
 import { Role } from "@sharedUI/types";
-import crypto from "crypto";
+import { AUTH_SECRET } from "@/lib/auth"; // Impor dari lib Anda
+
+// const MY_SECRET = process.env.JWT_SECRET || "fallback-secret-change-in-prod";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,57 +17,90 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google") {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google" && user.email) {
         try {
-          // Check if user exists
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! },
+          // ✅ USE THE IMPORTED 'prisma' INSTANCE
+          let dbUser = await prisma.user.findUnique({
+            where: { email: user.email },
           });
 
-          if (!existingUser) {
-            // Create user with a random dummy password if schema requires it
-            const randomPassword = crypto.randomBytes(32).toString("hex");
-            
-            await prisma.user.create({
+          if (!dbUser) {
+            const randomPassword = Math.random().toString(36).slice(-10);
+            dbUser = await prisma.user.create({
               data: {
-                email: user.email!,
-                name: user.name!,
-                image: user.image!,
+                email: user.email,
+                name: user.name || "",
+                image: user.image || "",
+                password: randomPassword,
                 role: "USER" as Role,
-                password: randomPassword, 
+              },
+            });
+          } else {
+            await prisma.user.update({
+              where: { id: dbUser.id },
+              data: {
+                name: user.name || dbUser.name,
+                image: user.image || dbUser.image,
               },
             });
           }
+
+          user.id = dbUser.id.toString();
+          return true;
         } catch (error) {
-          console.error("Error in signIn callback:", error);
+          console.error("SignIn Error:", error);
           return false;
         }
       }
       return true;
     },
-    async session({ session, token }) {
-      if (session.user) {
-        session.accessToken = token.accessToken as string;
-        session.user.id = token.sub as string;
-        // Fetch extra fields if needed
-        const dbUser = await prisma.user.findUnique({
-          where: { id: String(token.sub) },
-          select: { role: true, contact: true, institution: true }
-        });
-        if (dbUser) {
-          (session.user as any).role = dbUser.role;
-          (session.user as any).contact = dbUser.contact;
-          (session.user as any).institution = dbUser.institution;
-        }
+
+    async jwt({ token, user, account }) {
+      if (user) {
+        token.id = user.id;
+        const customToken = jwt.sign(
+          { userId: user.id, email: token.email },
+          AUTH_SECRET,
+          { expiresIn: "7d" },
+        );
+        token.customAccessToken = customToken;
+
+        // DEBUG LOG: Check if token is generated
+        // console.log(
+        //   "🔑 [NextAuth JWT] Generated Custom Token:",
+        //   customToken ? "YES" : "NO",
+        // );
+        // console.log(
+        //   "🔑 [NextAuth JWT] Token Start:",
+        //   customToken ? customToken.substring(0, 20) + "..." : "NONE",
+        // );
       }
-      return session;
-    },
-    async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
       }
       return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.accessToken = token.customAccessToken as string;
+        session.googleAccessToken = token.accessToken as string;
+
+        // DEBUG LOG: Check what we are sending to client
+        // console.log(
+        //   "📤 [NextAuth Session] Sending AccessToken to Client:",
+        //   session.accessToken ? "YES" : "NO",
+        // );
+        // if (session.accessToken) {
+        //   console.log(
+        //     "📤 [NextAuth Session] Token Start:",
+        //     session.accessToken.substring(0, 20) + "...",
+        //   );
+        // }
+      }
+      return session;
     },
   },
   pages: {

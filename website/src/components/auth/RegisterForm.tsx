@@ -84,7 +84,7 @@ export function RegisterForm({ onSubmit, loading, error, onError }: RegisterForm
               onClick={() => setShowPass(!showPass)}
               style={S.togglePass}
             >
-              <Icon name={showPass ? "eyeoff" : "eye"} size={18} />
+              <Icon name={showPass ? "white-eyeoff" : "white-eye"} size={18} />
             </span>
           }
         />
@@ -106,12 +106,12 @@ export function RegisterForm({ onSubmit, loading, error, onError }: RegisterForm
       <button type="submit" disabled={loading} style={S.mainBtn}>
         {loading ? (
           <>
-            <Icon name="loading" size={18}  />
+            <Icon name="white-loading" size={18}  />
             <span>Memproses…</span>
           </>
         ) : (
           <>
-            <Icon name="new_user" size={18} />
+            <Icon name="white-new-user" size={18} />
             <span>Buat Akun</span>
           </>
         )}

@@ -13,12 +13,12 @@ export default function DangerZoneCard({ onDeleteAll, onDeleteAccount }: DangerZ
   return (
     <div style={S.card}>
       <div style={S.title}>
-        <Icon name="warning" size={20} invert = {false}/> Zona Bahaya
+        <Icon name="red-warning" size={20} invert = {false}/> Zona Bahaya
       </div>
       <div style={S.text}>Tindakan berikut bersifat permanen dan tidak dapat dibatalkan.</div>
       <div style={S.buttons}>
-        <button onClick={onDeleteAll ?? (() => alert('Konfirmasi penghapusan data akan dikirim ke email Anda.'))} style={S.btnDanger}><Icon name="delete_account" size={16} invert={false} /> Hapus Semua Data Chat</button>
-        <button onClick={onDeleteAccount ?? (() => { if (confirm('Yakin ingin menghapus akun?')) window.location.href = '/login'; })} style={S.btnDanger}><Icon name="close" size={16} invert = {false}/> Hapus Akun Saya</button>
+        <button onClick={onDeleteAll ?? (() => alert('Konfirmasi penghapusan data akan dikirim ke email Anda.'))} style={S.btnDanger}><Icon name="red-trash" size={20} invert={false} /> Hapus Semua Data Chat</button>
+        <button onClick={onDeleteAccount ?? (() => { if (confirm('Yakin ingin menghapus akun?')) window.location.href = '/login'; })} style={S.btnDanger}><Icon name="red-warning" size={16} invert = {false}/> Hapus Akun Saya</button>
       </div>
     </div>
   );

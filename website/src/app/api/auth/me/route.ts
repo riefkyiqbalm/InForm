@@ -31,7 +31,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Token tidak valid" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await prisma.user.findUnique({ where: { id: String(userId) } });
     if (!user) {
       return NextResponse.json({ error: "Pengguna tidak ditemukan" }, { status: 404 });
     }
@@ -78,7 +78,7 @@ export async function PUT(req: Request) {
     };
 
     const updated = await prisma.user.update({
-      where: { id: userId },
+      where: { id: String(userId) },
       data: {
         // 2. Use '??' instead of '||' to allow empty strings if necessary, 
         // or just pass the value directly if it exists.

@@ -65,7 +65,7 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
 
   if (!isMatchingDomain) return;
 
-  console.log("[Background] Auth cookie changed:", cookie.name, removed ? "REMOVED" : "SET");
+  // console.log("[Background] Auth cookie changed:", cookie.name, removed ? "REMOVED" : "SET");
 
   if (removed) {
     // User logged out on website → Clear extension storage & notify sidepanel

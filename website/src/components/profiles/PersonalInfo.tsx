@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { useAuth } from "@/context/AuthContext"; //
+import { useAuth } from "@/context/AuthContext";
 import SaveButton from "@sharedUI/components/buttons/SaveButton";
 import FormatButton from "@sharedUI/components/buttons/FormatButton";
 import Icon from "@sharedUI/components/IconStyles";
@@ -25,32 +25,80 @@ interface PersonalInfoProps {
 }
 
 export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
-  // Mengambil user dan fungsi changeEmail dari AuthContext
-  const { user, changeEmail } = useAuth(); 
+  const { user, changeEmail, loading: authLoading } = useAuth(); 
   
   const [loading, setLoading] = useState(true);
   const [dbUser, setDbUser] = useState<DbUser | null>(null);
+  
+  // Form States
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [institution, setInstitution] = useState("");
   const [role, setRole] = useState("");
-  const [password, setPassword] = useState(""); // State baru untuk verifikasi
+  const [password, setPassword] = useState(""); 
   const [status, setStatus] = useState("");
 
   useEffect(() => {
+    // Wait for AuthContext to finish initializing before fetching
+    if (authLoading) return;
+    
+
     async function fetchUser() {
       setLoading(true);
+      setStatus("");
       try {
-        const token = Cookies.get("_auth_token");
-        if (!token) throw new Error("Token tidak ditemukan");
+        // Priority 1: Get token from AuthContext logic (which syncs with NextAuth)
+        // Priority 2: Fallback to cookie directly
+        let token = Cookies.get("_auth_token");
+        // console.log(token)
+        
+        if (!token) {
+          console.warn("[PersonalInfo] No token found. User might be logged out.");
+          setLoading(false);
+          return;
+        }
 
         const response = await fetch("/api/auth/me", {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` 
+          },
         });
 
-        if (!response.ok) throw new Error("Gagal mengambil data user");
+        // Detailed Error Logging
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`[PersonalInfo] API Error ${response.status}:`, errorText);
+          
+          if (response.status === 401) {
+            setStatus("Sesi kadaluarsa. Silakan login ulang.");
+            // Optional: Trigger logout automatically
+            // window.location.href = "/login"; 
+          } else if (response.status === 500) {
+            setStatus("Kesalahan server. Coba lagi nanti.");
+          }
+          
+          // Fallback to context user data if API fails but we have local state
+          if (user) {
+            setDbUser({
+              id: parseInt(user.id) || 0,
+              name: user.name,
+              email: user.email,
+              contact: user.contact,
+              institution: user.institution,
+              role: user.role,
+            });
+            setEmail(user.email || "");
+            setName(user.name || "");
+            setContact(user.contact || "");
+            setInstitution(user.institution || "");
+            setRole(user.role || "");
+          }
+          setLoading(false);
+          return;
+        }
 
         const data = await response.json();
         setDbUser(data);
@@ -67,11 +115,16 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
             role: data.role || "User",
           });
         }
-      } catch (err) {
-        console.error("[PersonalInfo] ", err);
+      } catch (err: any) {
+        console.error("[PersonalInfo] Fetch exception:", err);
+        setStatus("Gagal memuat data profil.");
+        // Fallback to context user
         if (user) {
           setEmail(user.email || "");
           setName(user.name || "");
+          setContact(user.contact || "");
+          setInstitution(user.institution || "");
+          setRole(user.role || "");
         }
       } finally {
         setLoading(false);
@@ -79,9 +132,29 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
     }
 
     fetchUser();
-  }, [user]);
+  }, [user, authLoading]);
 
-  if (loading) return <div>Mengambil data pengguna...</div>;
+  if (authLoading || loading) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center", color: "var(--muted)" }}>
+        Memuat data profil...
+      </div>
+    );
+  }
+
+  if (!user && !dbUser) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <p>Silakan login untuk melihat profil.</p>
+        <button 
+          onClick={() => window.location.href = "/login"}
+          style={{ marginTop: "10px", padding: "8px 16px", background: "var(--teal)", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -103,7 +176,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
         display: "flex",
         alignItems: "center", gap: "8px",
       }}>
-        <Icon name="user" size={16}  />
+        <Icon name="white-user" size={16} />
         Informasi Pribadi
       </div>
 
@@ -138,7 +211,6 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
         </select>
       </div>
 
-      {/* Tampilkan field Password hanya jika email berubah */}
       {email !== dbUser?.email && (
         <div style={{ 
           marginTop: "16px", 
@@ -174,17 +246,19 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
             onClick={async () => {
               try {
                 setStatus("Menyimpan perubahan...");
-                const token = Cookies.get("_auth_token");
-                if (!token) throw new Error("Token tidak ditemukan");
+                let token = Cookies.get("_auth_token");
+                if (!token) throw new Error("Token tidak ditemukan. Silakan login ulang.");
 
                 // 1. Jika email berubah, gunakan fungsi dari AuthContext
                 if (email !== dbUser?.email) {
                   if (!password) throw new Error("Kata sandi diperlukan untuk mengubah email");
-                  const msg = await changeEmail(email, password); //
+                  const msg = await changeEmail(email, password);
                   setStatus(msg || "Cek email baru Anda untuk verifikasi.");
+                  // Don't proceed to save other fields if email change requires verification
+                  return; 
                 }
 
-                // 2. Simpan data profil lainnya
+                // 2. Simpan data profil lainnya (hanya jika email TIDAK berubah)
                 const res = await fetch("/api/auth/me", {
                   method: "PUT",
                   headers: {
@@ -210,7 +284,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
                 setContact(updated.contact ?? "");
                 setInstitution(updated.institution ?? "");
                 setRole(updated.role ?? "");
-                setPassword(""); // Reset password field
+                setPassword(""); 
 
                 if (onProfileUpdated) {
                   onProfileUpdated({
@@ -220,9 +294,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
                   });
                 }
 
-                if (!status.includes("verifikasi")) {
-                  setStatus("Berhasil menyimpan perubahan profil.");
-                }
+                setStatus("Berhasil menyimpan perubahan profil.");
               } catch (err: any) {
                 console.error("[PersonalInfo.save]", err);
                 setStatus(`Gagal: ${err.message || "Terjadi kesalahan"}`);
@@ -232,11 +304,12 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
 
           <FormatButton
             onClick={() => {
-              setName(dbUser?.name ?? "");
-              setEmail(dbUser?.email ?? "");
-              setContact(dbUser?.contact ?? "");
-              setInstitution(dbUser?.institution ?? "");
-              setRole(dbUser?.role ?? "User");
+              if (!dbUser) return;
+              setName(dbUser.name ?? "");
+              setEmail(dbUser.email ?? "");
+              setContact(dbUser.contact ?? "");
+              setInstitution(dbUser.institution ?? "");
+              setRole(dbUser.role ?? "User");
               setPassword("");
               setStatus("Perubahan telah di-reset.");
             }}

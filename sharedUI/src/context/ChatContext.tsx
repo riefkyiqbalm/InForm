@@ -1,81 +1,86 @@
-// +++ browser-extension/features/ChatContext.tsx
-// features/ChatContext.tsx — Plasmo sidepanel
+// shared-ui/src/context/ChatContext.tsx
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import type { ChatSession, InterruptedMessage, SendMessageArgs, ChatContextType, ChatMessage } from "@sharedUI/types";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type { ChatSession, InterruptedMessage, SendMessageArgs, ChatContextType, ChatMessage } from "../types";
 
-const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000";
-const KEY_TOKEN   = "_auth_token";
+const KEY_TOKEN = "_auth_token";
+// Determine environment
+const IS_EXTENSION = typeof chrome !== 'undefined' && !!chrome.storage;
+const NEXTJS_BASE = process.env.NEXT_PUBLIC_NEXTJS_BASE ?? (process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000");
 
+// --- Token Retrieval (Polyfill for Web vs Extension) ---
 async function getToken(): Promise<string | null> {
+  if (IS_EXTENSION) {
   try {
     const result = await chrome.storage.local.get(KEY_TOKEN);
-    return (result[KEY_TOKEN] as string) || null;
-  } catch {
+    const token = result[KEY_TOKEN];
+    
+    if (!token) {
+      console.warn("[ChatContext] No token found in chrome.storage.local. Did login complete?");
+    }
+    return token as string || null;
+  } catch (err) {
+    console.error("[ChatContext] Error reading token:", err);
     return null;
+  }
+  } else {
+    // Website: Get token from AuthContext or Cookie
+    // Since we can't import useAuth here (circular dep), we rely on the API call 
+    // failing if no cookie is present, OR we fetch it from a dedicated endpoint.
+    // Best practice for Website: The API relies on HttpOnly cookies automatically.
+    // We return null here, and the fetch headers will just omit Authorization, 
+    // letting the server read the cookie.
+    return null; 
   }
 }
 
-function authHeaders(token: string): HeadersInit {
-  return {
-    "Content-Type": "application/json",
-    Authorization:  `Bearer ${token}`,
-  };
+function authHeaders(token: string | null): HeadersInit {
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
 }
 
-const SESSIONS    = `${NEXTJS_BASE}/api/chat/sessions`;
-const sessionUrl  = (id: string) => `${NEXTJS_BASE}/api/chat/sessions/${id}`;
+const SESSIONS = `${NEXTJS_BASE}/api/chat/sessions`;
+const sessionUrl = (id: string) => `${NEXTJS_BASE}/api/chat/sessions/${id}`;
 const messagesUrl = (id: string) => `${NEXTJS_BASE}/api/chat/sessions/${id}/messages`;
 
-// ── Extended context type with createSession returning the new ID ──────────────
-// FIX: createSession now returns string (the new session ID) instead of void.
-// This lets handleSend in sidepanel.tsx pass the real ID to sendMessage
-// without depending on React state updates being synchronous.
 export interface ExtendedChatContextType extends ChatContextType {
   createSession: () => Promise<string>;
-  
 }
 
 const ChatContext = createContext<ExtendedChatContextType | undefined>(undefined);
 
 function sortSessions(list: ChatSession[]): ChatSession[] {
-  const pinned   = list.filter((s) =>  s.pinnedAt).sort((a, b) => new Date(b.pinnedAt!).getTime() - new Date(a.pinnedAt!).getTime());
+  const pinned = list.filter((s) => s.pinnedAt).sort((a, b) => new Date(b.pinnedAt!).getTime() - new Date(a.pinnedAt!).getTime());
   const unpinned = list.filter((s) => !s.pinnedAt).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   return [...pinned, ...unpinned];
 }
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const [sessions,         setSessions]         = useState<ChatSession[]>([]);
-  const [activeSessionId,  setActiveSessionId]  = useState<string>("");
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string>("");
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
-  const [isLoading,        setIsLoading]        = useState(false);
-  const [error,            setError]            = useState<string | null>(null);
-  const [abortedMessage,   setAbortedMessage]   = useState<InterruptedMessage | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [abortedMessage, setAbortedMessage] = useState<InterruptedMessage | null>(null);
 
-  const clearError   = useCallback(() => setError(null), []);
+  const clearError = useCallback(() => setError(null), []);
   const clearAborted = useCallback(() => setAbortedMessage(null), []);
 
   // ── Load sessions on mount ─────────────────────────────────────────────────
   useEffect(() => {
     const fetchSessions = async () => {
       const token = await getToken();
-      if (!token) {setSessions([]);return;}
+      // If no token in extension, and no cookie in web, this might fail gracefully or return 401
       try {
         const res = await fetch(SESSIONS, { headers: authHeaders(token) });
         if (res.ok) {
-          const data   = await res.json() as { sessions?: ChatSession[] };
+          const data = await res.json() as { sessions?: ChatSession[] };
           const sorted = sortSessions(data.sessions ?? []);
           setSessions(sorted);
           if (sorted.length > 0) setActiveSessionId(sorted[0].id);
-        } else {
-          console.error("[ChatContext] fetchSessions", res.status, await res.text());
         }
       } catch (err) {
         console.error("[ChatContext] fetchSessions:", err);
@@ -87,7 +92,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // ── loadSession ────────────────────────────────────────────────────────────
   const loadSession = useCallback(async (id: string) => {
     const token = await getToken();
-    if (!token) return;
     try {
       const res = await fetch(sessionUrl(id), { headers: authHeaders(token) });
       if (res.ok) {
@@ -101,31 +105,28 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (activeSessionId) loadSession(activeSessionId);
-  }, [activeSessionId, loadSession,]);
+  }, [activeSessionId, loadSession]);
 
-  // ── createSession — FIX: returns the new session ID ───────────────────────
+  // ── createSession ──────────────────────────────────────────────────────────
   const createSession = useCallback(async (): Promise<string> => {
     const token = await getToken();
     setIsLoading(true);
     setError(null);
     try {
       const res = await fetch(SESSIONS, {
-        method:  "POST",
-        headers: authHeaders(token!),
+        method: "POST",
+        headers: authHeaders(token),
       });
-      if (!res.ok) {
-        const body = await res.text();
-        throw new Error(`HTTP ${res.status}: ${body}`);
-      }
-      const data       = await res.json() as { session: ChatSession };
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
+      const data = await res.json() as { session: ChatSession };
       const newSession = data.session;
+      
       setSessions((prev) => sortSessions([newSession, ...prev]));
       setActiveSessionId(newSession.id);
-      // Return the ID so callers don't need to wait for React state to update
       return newSession.id;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Gagal membuat sesi";
-      setError(msg);
+      setError(err instanceof Error ? err.message : "Gagal membuat sesi");
       throw err;
     } finally {
       setIsLoading(false);
@@ -135,200 +136,141 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // ── deleteSession ──────────────────────────────────────────────────────────
   const deleteSession = useCallback(async (sessionId: string) => {
     const token = await getToken();
-    const res   = await fetch(sessionUrl(sessionId), {
-      method:  "DELETE",
-      headers: authHeaders(token!),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({})) as { error?: string };
-      throw new Error(err.error ?? `Gagal menghapus sesi (${res.status})`);
-    }
-    const body = await res.json() as { success: boolean; nextSessionId: string | null };
+    const res = await fetch(sessionUrl(sessionId), { method: "DELETE", headers: authHeaders(token) });
+    if (!res.ok) throw new Error("Gagal menghapus sesi");
+    
+    const body = await res.json() as { nextSessionId: string | null };
     setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     setActiveSessionId(body.nextSessionId ?? "");
   }, []);
 
   // ── renameSession ──────────────────────────────────────────────────────────
   const renameSession = useCallback(async (sessionId: string, newTitle: string) => {
-    const trimmed  = newTitle.trim();
-    if (!trimmed) throw new Error("Judul tidak boleh kosong");
-    const token    = await getToken();
-    const original = sessions.find((s) => s.id === sessionId)?.title ?? trimmed;
+    const trimmed = newTitle.trim();
+    if (!trimmed) throw new Error("Judul kosong");
+    const token = await getToken();
+    
+    // Optimistic update
     setSessions((prev) => prev.map((s) => (s.id === sessionId ? { ...s, title: trimmed } : s)));
+    
     const res = await fetch(sessionUrl(sessionId), {
-      method:  "PATCH",
-      headers: authHeaders(token!),
-      body:    JSON.stringify({ title: trimmed }),
+      method: "PATCH",
+      headers: authHeaders(token),
+      body: JSON.stringify({ title: trimmed }),
     });
+    
     if (!res.ok) {
-      setSessions((prev) => prev.map((s) => (s.id === sessionId ? { ...s, title: original } : s)));
-      const err = await res.json().catch(() => ({})) as { error?: string };
-      throw new Error(err.error ?? "Gagal mengganti nama sesi");
+      // Revert on error
+      setSessions((prev) => prev.map((s) => (s.id === sessionId ? { ...s, title: sessions.find(x=>x.id===sessionId)?.title || trimmed } : s)));
+      throw new Error("Gagal rename");
     }
-    const data = await res.json() as { session: { id: string; title: string } };
-    setSessions((prev) => prev.map((s) => (s.id === sessionId ? { ...s, title: data.session.title } : s)));
   }, [sessions]);
 
   // ── pinSession ─────────────────────────────────────────────────────────────
   const pinSession = useCallback(async (sessionId: string) => {
-    const token   = await getToken();
+    const token = await getToken();
     const current = sessions.find((s) => s.id === sessionId);
     if (!current) return;
-    const isPinned    = Boolean(current.pinnedAt);
-    const newPinnedAt = isPinned ? null : new Date().toISOString();
+    
+    const newPinnedAt = current.pinnedAt ? null : new Date().toISOString();
     setSessions((prev) => sortSessions(prev.map((s) => (s.id === sessionId ? { ...s, pinnedAt: newPinnedAt } : s))));
+    
     const res = await fetch(sessionUrl(sessionId), {
-      method:  "PATCH",
-      headers: authHeaders(token!),
-      body:    JSON.stringify({ action: isPinned ? "unpin" : "pin" }),
+      method: "PATCH",
+      headers: authHeaders(token),
+      body: JSON.stringify({ action: current.pinnedAt ? "unpin" : "pin" }),
     });
-    if (!res.ok) {
-      setSessions((prev) => sortSessions(prev.map((s) => (s.id === sessionId ? { ...s, pinnedAt: current.pinnedAt } : s))));
-      const err = await res.json().catch(() => ({})) as { error?: string };
-      throw new Error(err.error ?? "Gagal mengubah pin sesi");
-    }
-    const data = await res.json() as { session: { id: string; pinnedAt: string | null } };
-    setSessions((prev) => sortSessions(prev.map((s) => s.id === sessionId ? { ...s, pinnedAt: data.session.pinnedAt } : s)));
+    
+    if (!res.ok) throw new Error("Gagal pin");
   }, [sessions]);
 
-  // ── setActiveSession ───────────────────────────────────────────────────────
   const setActiveSession = useCallback((sessionId: string) => {
-    setSessions((prev) => {
-      if (prev.some((s) => s.id === sessionId)) setActiveSessionId(sessionId);
-      return prev;
-    });
+    if (sessions.some((s) => s.id === sessionId)) setActiveSessionId(sessionId);
+  }, [sessions]);
+
+  // ── addMessage ─────────────────────────────────────────────────────────────
+  const addMessage = useCallback((sessionId: string, payload: Omit<ChatMessage, "id" | "createdAt">) => {
+    setSessions((prev) =>
+      prev.map((session) => {
+        if (session.id !== sessionId) return session;
+        const msg: ChatMessage = { ...payload, id: `${sessionId}_${Date.now()}`, createdAt: new Date().toISOString() };
+        return { ...session, updatedAt: new Date().toISOString(), messages: [...(session.messages ?? []), msg] };
+      })
+    );
   }, []);
 
-  // ── addMessage (optimistic) ────────────────────────────────────────────────
-  const addMessage = useCallback(
-    (sessionId: string, payload: Omit<ChatMessage, "id" | "createdAt">) => {
-      setSessions((prev) =>
-        prev.map((session) => {
-          if (session.id !== sessionId) return session;
-          const msg: ChatMessage = { ...payload, id: `${sessionId}_${Date.now()}`, createdAt: new Date().toISOString() };
-          return { ...session, updatedAt: new Date().toISOString(), messages: [...(session.messages ?? []), msg] };
-        })
-      );
-    },
-    []
-  );
-
   // ── sendMessage ────────────────────────────────────────────────────────────
-  const sendMessage = useCallback(
-    async ({ text, signal, sessionId, attachments }: SendMessageArgs) => {
-      // FIX: use the explicitly passed sessionId first, then fall back to
-      // activeSessionId. This prevents the stale-state 404 bug where
-      // a freshly created session's ID hasn't propagated to state yet.
-      const targetSession = sessionId ?? activeSessionId;
+  const sendMessage = useCallback(async ({ text, signal, sessionId, attachments }: SendMessageArgs) => {
+    const targetSession = sessionId ?? activeSessionId;
+    if (!targetSession) return;
 
-      if (!targetSession) {
-        console.error("[ChatContext] sendMessage called with no session ID");
+    const hasAttachments = attachments && attachments.length > 0;
+    if (!text.trim() && !hasAttachments) return;
+
+    const token = await getToken();
+    setLoadingSessionId(targetSession);
+
+    let displayText = text;
+    if (hasAttachments) {
+      const fileNames = attachments.map((f: any) => f.name).join(", ");
+      displayText = text.trim() ? `${text}\n\n📎 ${fileNames}` : `📎 ${fileNames}`;
+    }
+
+    const tempMsg: ChatMessage = {
+      id: `temp-${Date.now()}`,
+      role: "USER",
+      text: displayText,
+      sessionId: targetSession,
+      createdAt: new Date().toISOString(),
+    };
+
+    setSessions((prev) =>
+      prev.map((s) => s.id === targetSession ? { ...s, messages: [...(s.messages ?? []), tempMsg] } : s)
+    );
+
+    try {
+      const body: any = { message: text };
+      if (hasAttachments) body.attachments = attachments;
+
+      const res = await fetch(messagesUrl(targetSession), {
+        method: "POST",
+        headers: authHeaders(token),
+        body: JSON.stringify(body),
+        signal,
+      });
+
+      if (!res.ok) throw new Error("Gagal kirim pesan");
+      
+      const data = await res.json() as { aborted?: boolean; originalText?: string };
+      if (data.aborted) {
+        setAbortedMessage({ text: data.originalText ?? text, sessionId: targetSession });
         return;
       }
-
-      // FIX Bug 2: Allow sending when there are attachments even if text is empty
-      const hasAttachments = attachments && attachments.length > 0;
-      if (!text.trim() && !hasAttachments) return;
-
-      const token = await getToken();
-      setLoadingSessionId(targetSession);
-
-      // FIX Bug 2: Include attachment info in optimistic user message
-      let displayText = text;
-      if (hasAttachments) {
-        const fileNames = attachments.map((f: any) => f.name).join(", ");
-        if (text.trim()) {
-          displayText = `${text}\n\n📎 ${fileNames}`;
-        } else {
-          displayText = `📎 ${fileNames}`;
-        }
+      await loadSession(targetSession);
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        setAbortedMessage({ text, sessionId: targetSession });
+        return;
       }
+      setError("Gagal mengirim pesan.");
+      await loadSession(targetSession);
+    } finally {
+      setLoadingSessionId(null);
+    }
+  }, [activeSessionId, loadSession]);
 
-      // Optimistic user message shown immediately
-      const tempMsg: ChatMessage = {
-        id:        `temp-${Date.now()}`,
-        role:      "USER",
-        text:      displayText,
-        sessionId: targetSession,
-        createdAt: new Date().toISOString(),
-      };
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === targetSession
-            ? { ...s, messages: [...(s.messages ?? []), tempMsg] }
-            : s
-        )
-      );
+  const retryMessage = useCallback(async (text: string) => {
+    if (!abortedMessage) return;
+    setAbortedMessage(null);
+    await sendMessage({ text, sessionId: abortedMessage.sessionId });
+  }, [abortedMessage, sendMessage]);
 
-      try {
-        // FIX Bug 1 & Bug 4: Send attachments and use the full text (which may include file info from finalPrompt)
-        const body: { message: string; attachments?: any[] } = { message: text };
-        if (hasAttachments) {
-          body.attachments = attachments;
-        }
-        // FIX Bug 4: Use finalPrompt instead of text when available (passed via attachments context)
-        // Note: MainChat now passes finalPrompt as the text argument, so this is handled upstream
-
-        const res = await fetch(messagesUrl(targetSession), {
-          method:  "POST",
-          headers: authHeaders(token!),
-          body:    JSON.stringify(body),
-          signal,
-        });
-
-        if (!res.ok) {
-          await loadSession(targetSession);
-          const errData = await res.json().catch(() => ({})) as { error?: string };
-          throw new Error(errData.error ?? "Gagal mengirim pesan");
-        }
-
-        const data = await res.json() as { aborted?: boolean; originalText?: string };
-
-        if (data.aborted) {
-          await loadSession(targetSession);
-          setAbortedMessage({ text: data.originalText ?? text, sessionId: targetSession });
-          return;
-        }
-
-        await loadSession(targetSession);
-        setAbortedMessage(null);
-
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name === "AbortError") {
-          await loadSession(targetSession);
-          setAbortedMessage({ text, sessionId: targetSession });
-          return;
-        }
-        setError("Gagal mengirim pesan.");
-        await loadSession(targetSession);
-      } finally {
-        setLoadingSessionId(null);
-      }
-    },
-    [activeSessionId, loadSession]
-  );
-
-  // ── retryMessage ───────────────────────────────────────────────────────────
-  const retryMessage = useCallback(
-    async (text: string) => {
-      if (!abortedMessage) return;
-      setAbortedMessage(null);
-      await sendMessage({ text, sessionId: abortedMessage.sessionId });
-    },
-    [abortedMessage, sendMessage]
-  );
-
-  const activeSession = useMemo(
-    () => sessions.find((s) => s.id === activeSessionId) ?? null,
-    [sessions, activeSessionId]
-  );
+  const activeSession = useMemo(() => sessions.find((s) => s.id === activeSessionId) ?? null, [sessions, activeSessionId]);
 
   const value: ExtendedChatContextType = {
-    sessions, activeSessionId, activeSession,
-    loadingSessionId, isLoading, error, abortedMessage,
-    createSession, setActiveSession, loadSession, addMessage,
-    sendMessage, deleteSession, renameSession, pinSession,
-    clearError, clearAborted, retryMessage, setLoadingSessionId
+    sessions, activeSessionId, activeSession, loadingSessionId, isLoading, error, abortedMessage,
+    createSession, setActiveSession, loadSession, addMessage, sendMessage, deleteSession, 
+    renameSession, pinSession, clearError, clearAborted, retryMessage, setLoadingSessionId
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
