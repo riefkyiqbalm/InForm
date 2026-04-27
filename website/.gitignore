@@ -110,6 +110,8 @@ depcryted/
 
 #Oauth
 gcp_Oauth.json
+JWTsecret.txt
+
 
 #Schema-Prisma
 schema.prisma
