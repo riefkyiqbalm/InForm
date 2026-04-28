@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useEffect, useMemo, useState, useCon
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import type { AuthContextType, Role, User } from "@sharedUI/types";
-import { signIn, signOut } from "next-auth/react"; 
+import { signIn, signOut, useSession } from "next-auth/react";
 
 /**
  * PENTING: 
@@ -83,11 +83,39 @@ const AuthContext = createContext<AuthContextType>(defaultAuth);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(() => parseUserCookie());
   const [loading, setLoading] = useState(true);
+   // Hook ke NextAuth session untuk mendeteksi login Google OIDC
+  const { data: session } = useSession();
+
+  // Sinkronisasi session dari NextAuth (Google Login, dsb)
+  useEffect(() => {
+    if (session?.user && (session as any).accessToken) {
+      const syncedUser: User = {
+        id: (session.user as any).id ?? session.user.email ?? "",
+        name: session.user.name ?? "",
+        email: session.user.email ?? "",
+        image: session.user.image ?? "",
+        contact: (session.user as any).contact ?? "",
+        institution: (session.user as any).institution ?? "",
+        role: ((session.user as any).role as Role) || "USER",
+        createdAt: new Date().toISOString(),
+      };
+
+      const token = (session as any).accessToken;
+      saveAuthCookies(token, syncedUser);
+      setUser(syncedUser);
+      notifyExtension("_AUTH_LOGIN", { token, user: syncedUser });
+      setLoading(false);
+    } else if (!session && !getToken()) {
+      setUser(null);
+      setLoading(false);
+    }
+  }, [session]);
   const router = useRouter();
 
   // Fungsi Logout untuk Website
 const logout = useCallback(async () => {
-  setLoading(true);
+  setUser(null);
+  clearAuthCookies();
   
   // 1. Hapus user state
   setUser(null);
