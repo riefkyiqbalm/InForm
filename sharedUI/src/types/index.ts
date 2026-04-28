@@ -178,3 +178,6 @@ declare module "next-auth" {
     institution?: string | null;
   }
 }
+
+// ── Tab type for profile leftpanel tabs ────────────────────────────────────────────────────────────────
+export type TabType = "profile" | "security" | "api-key" | "terms" | "logout"

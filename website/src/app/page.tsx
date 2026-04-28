@@ -26,17 +26,13 @@ export default function RootPage() {
         router.replace("/login");
       }
     }
-
+    
     return () => {
       if (timer) clearTimeout(timer);
     };
   }, [isAuthenticated, user, loading, router]);
 
   if (isTimeout && loading) {
-    return <Loading />;
-  }
-
-  if (loading) {
     return (
       <div style={S.root}>
         <div style={S.container}>
@@ -47,6 +43,10 @@ export default function RootPage() {
         </div>
       </div>
     );
+  }
+
+  if (loading) {
+    return <Loading />;
   }
 
   return null;

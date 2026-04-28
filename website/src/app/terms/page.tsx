@@ -7,7 +7,7 @@ import AppHeader from "@/components/profiles/TopPanel";
 export default function Terms() {
   return (
     <div style={S.root}>
-      <AppHeader title="InFormm" subtitle="Ketentuan Layanan" backHref="/chat" />
+      {/* <AppHeader title="InFormm" subtitle="Ketentuan Layanan" backHref="/chat" /> */}
 
       <main style={S.main}>
         <div style={S.container}>
