@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import SaveButton from "@sharedUI/components/buttons/SaveButton";
 import FormatButton from "@sharedUI/components/buttons/FormatButton";
 import Icon from "@sharedUI/components/IconStyles";

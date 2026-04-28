@@ -6,7 +6,7 @@ import SummaryCard from '@/components/profiles/SummaryCard';
 import PersonalInfo from '@/components/profiles/PersonalInfo';
 import DangerZoneCard from '@/components/profiles/DangerZoneCard';
 import Toast from '@sharedUI/components/Toast';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@sharedUI/context/SharedAuthContext';
 import Modal from '@sharedUI/components/Modal';
 import Cookies from 'js-cookie';
 import TopPanel from '@/components/profiles/TopPanel';
