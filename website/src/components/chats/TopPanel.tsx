@@ -3,10 +3,15 @@
 import React from "react";
 import { useChat } from "@sharedUI/context/ChatContext";
 import TopBarLogo from "../logo/TopBarLogo";
-import IconNav from "../IconNavigation";
-// import StatusDot from "../StatusDot";
+import Profile from "../Profile";
+import KebabNavDropDown from "@sharedUI/components/buttons/KebabNavigationButton"
 
-export default function TopPanel() {
+interface TopPanelProps {
+  isLeftPanelOpen:   boolean
+  onToggleLeftPanel: () => void
+}
+
+export default function TopPanel({ isLeftPanelOpen, onToggleLeftPanel }: TopPanelProps) {
   const { activeSession } = useChat();
 
   return (
@@ -14,7 +19,6 @@ export default function TopPanel() {
       <div style={S.topbarComponent}>
         <TopBarLogo />
       </div>
-
       {activeSession ? (
         <span style={S.sessionTitle}>
           {activeSession.title.length > 36
@@ -24,7 +28,13 @@ export default function TopPanel() {
       ) : (
         <span style={S.sessionTitle}>Chat Baru</span>
       )}
-      <IconNav/>
+      <Profile/>
+       <div style={S.rightGroup}>
+        {/* <StatusDot showLabel={false} /> */}
+        {/* NavDropDown owns all navigation logic internally */}
+        <KebabNavDropDown onToggleLeftPanel={onToggleLeftPanel} />
+      </div>
+
     </div>
   );
 }
@@ -56,15 +66,10 @@ const S: Record<string, React.CSSProperties> = {
     textOverflow: "ellipsis",
     maxWidth: 280,
   },
-  liveBadge: {
-    background: "rgba(0,212,200,.1)",
-    border: "1px solid rgba(0,212,200,.3)",
-    color: "var(--teal)",
-    fontFamily: "var(--font-mono)",
-    fontSize: 10,
-    padding: "3px 10px",
-    borderRadius: 99,
-    letterSpacing: 1,
+  rightGroup: {
+    display:    "flex",
+    alignItems: "center",
+    gap:        8,
     flexShrink: 0,
   },
 };

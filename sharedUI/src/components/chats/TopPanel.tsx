@@ -1,10 +1,8 @@
-// components/chats/TopPanel.tsx
 'use-client'
 import React from "react"
 import { useChat } from "@sharedUI/context/ChatContext"
 import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon"
-import NavDropDown from "@sharedUI/components/buttons/NavigationButton"
-// import StatusDot from "~components/StatusDot"
+import NavDropDown from "@sharedUI/components/buttons/KebabNavigationButton"
 
 interface TopPanelProps {
   isLeftPanelOpen:   boolean

@@ -1,30 +1,42 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+// Menggunakan import standar untuk Next.js
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+/** * Menggunakan referensi context yang sesuai. 
+ * Jika @sharedUI tidak terbaca di editor ini, pastikan path alias di tsconfig sudah benar.
+ */
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 
+/**
+ * RootPage (/) - Menangani distribusi user setelah login
+ */
 export default function RootPage() {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Jika proses loading selesai
-    if (!loading) {
-      if (isAuthenticated && user?.id) {
-        // Jika sudah login, lempar ke chat spesifik ID user
-        router.replace(`/chat/${user.id}`);
-      } else {
-        // Jika belum login, lempar ke login
-        router.replace("/login");
-      }
+    // Jangan lakukan apapun jika AuthContext masih dalam proses validasi awal
+    if (loading) return;
+
+    if (isAuthenticated && user?.id) {
+      // Jika sudah punya data user lengkap, langsung ke chat spesifik
+      router.replace(`/chat/${user.id}`);
+    } else if (!isAuthenticated) {
+      // Jika benar-benar tidak terautentikasi, lempar ke login
+      router.replace("/login");
     }
   }, [isAuthenticated, user, loading, router]);
 
-  // Tampilkan loading screen sederhana saat proses redirect
+  // Tampilan loading yang konsisten dengan tema aplikasi
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+    <div className="flex h-screen w-full items-center justify-center bg-[#0d1117]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-500 border-t-transparent"></div>
+        <p className="text-gray-400 text-sm font-medium animate-pulse">
+          Menyiapkan sesi Anda...
+        </p>
+      </div>
     </div>
   );
 }

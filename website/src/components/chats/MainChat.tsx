@@ -6,15 +6,16 @@ import type { InputMode, AttachmentInfo }     from "@sharedUI/types"
 import type { StoredDoc }                     from "@sharedUI/components/SettingsModal"
 import { useChat }                            from "@sharedUI/context/ChatContext"
 import { useToast }                           from "@sharedUI/context/ToastContext"
-
 import LeftPanel                              from "@/components/chats/LeftPanel";
 import TopPanel                               from "@/components/chats/TopPanel";
 import dynamic                                from "next/dynamic";
+import ChatArea                               from "@sharedUI/components/chats/ChatArea";
+import ChatInputPanel                         from "@sharedUI/components/chats/ChatInputPanel";
 
-const ChatAreaTanpaSSR = dynamic(
-  () => import("@sharedUI/components/chats/ChatArea"),
-  { ssr: false }
-);
+// const ChatAreaTanpaSSR = dynamic(
+//   () => import("@sharedUI/components/chats/ChatArea"),
+//   { ssr: false }
+// );
 const ChatInputPanelTanpaSSR = dynamic(
   () => import("@sharedUI/components/chats/ChatInputPanel"),
   { ssr: false }
@@ -58,7 +59,7 @@ function buildBar(score: number): string {
 // Add this helper function inside MainChat.tsx (before the component definition or inside it)
 const convertStoredDocsToAttachments = (docs: StoredDoc[]): AttachmentInfo[] => {
   return docs.map((doc) => ({
-    id: doc.documentId,
+    documentId: doc.documentId,
     name: doc.name,
     type: doc.type || 'application/octet-stream', // Fallback if type is missing
     // Convert size: if it's a number string, parse it; otherwise default to 0 or extract bytes if formatted
@@ -232,16 +233,16 @@ export default function MainChat() {
       <LeftPanel />
 
       <main style={S.main}>
-        <TopPanel />
+        <TopPanel isLeftPanelOpen={isLeftPanelOpen} onToggleLeftPanel={handleToggleLeftPanel} />
 
-        <ChatAreaTanpaSSR
+        <ChatArea
           messages={messages}
           isWelcomeScreen={isWelcomeScreen}
           onSelectSuggestion={handleSelectSuggestion}
           isCurrentLoading={isCurrentLoading}
         />
 
-        <ChatInputPanelTanpaSSR
+        <ChatInputPanel
           input={input}
           onInput={setInput}
           inputMode={inputMode}

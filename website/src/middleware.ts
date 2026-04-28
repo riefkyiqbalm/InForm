@@ -1,39 +1,60 @@
-// middleware.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+/**
+ * Middleware untuk menangani proteksi rute.
+ * Mendukung autentikasi manual (_auth_token) dan Google OAuth (next-auth).
+ */
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const token = request.cookies.get('_auth_token')?.value;
+  
+  // 1. Ambil token kustom (setelah login manual atau sinkronisasi)
+  const customToken = request.cookies.get('_auth_token')?.value;
+  
+  // 2. Ambil token sesi bawaan Next-Auth (Fallback saat transisi Google Login)
+  // Next-Auth menggunakan nama berbeda untuk HTTP dan HTTPS (__Secure-)
+  const nextAuthToken = 
+    request.cookies.get('next-auth.session-token')?.value;
+    // request.cookies.get('__Secure-next-auth.session-token')?.value;
 
-  // ── STRATEGI BYPASS API ───────────────────────────────────────────────────
-  // Sangat Penting: Jika request mengarah ke API, jangan lakukan redirect.
-  // Ini memastikan registrasi (POST) tidak kehilangan body data karena redirect.
-  if (path.startsWith('/api')) {
+  // Anggap pengguna terautentikasi jika salah satu token ditemukan
+  const isAuthenticated = !!customToken || !!nextAuthToken;
+
+  // ── 1. BYPASS API & ASET STATIS ──────────────────────────────────────────
+  // Sangat penting untuk melewati rute /api/auth agar callback Google lancar
+  if (
+    path.startsWith('/api') || 
+    path.startsWith('/_next') || 
+    path.includes('/favicon.ico')
+  ) {
     return NextResponse.next();
   }
 
-  // ── DEFINISI PATH ─────────────────────────────────────────────────────────
-  const isGuestOnlyPath = path === '/login' || path === '/register';
-  const isVerifyPath = path === '/verify-email';
-  const isPublicPath = isGuestOnlyPath || isVerifyPath || path === '/forgot-password' || path === '/new-password';
+  // ── 2. DEFINISI PATH ─────────────────────────────────────────────────────
+  const isGuestOnlyPath = path === '/login' || path === '/register' ||'';
+  const isPublicPath = isGuestOnlyPath || 
+                       path === '/verify-email' || 
+                       path === '/forgot-password' || 
+                       path === '/new-password';
 
-  // ── LOGIKA REDIRECT HALAMAN ───────────────────────────────────────────────
+  // ── 3. LOGIKA REDIRECT ───────────────────────────────────────────────────
 
-  // 1. Jika sudah login tapi coba masuk ke Login/Register -> Lempar ke dashboard
-  if (token && isGuestOnlyPath) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  // 2. Jika sudah login dan buka /verify-email -> IZINKAN (Kasus Edit Profile)
-  if (token && isVerifyPath) {
+  // A. Jika Pengguna Sudah Login:
+  if (isAuthenticated) {
+    // Jika mencoba akses Login/Register atau Halaman Utama (/), arahkan ke Chat
+    if (isGuestOnlyPath ) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
     return NextResponse.next();
   }
 
-  // 3. Jika belum login dan coba akses halaman terproteksi -> Lempar ke Login
-  // Kecualikan path '/' jika itu adalah landing page publik
-  if (!token && !isPublicPath && path !== '/') {
-    return NextResponse.redirect(new URL('/login', request.url));
+  // B. Jika Pengguna Belum Login:
+  if (!isAuthenticated) {
+    // Jika mencoba akses halaman terproteksi (seperti /chat)
+    if (!isPublicPath) {
+      // Redirect ke login jika mencoba akses halaman internal atau root (/)
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
   }
 
   return NextResponse.next();
@@ -42,11 +63,8 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Jalankan middleware pada semua path kecuali:
-     * - _next/static (file statis)
-     * - _next/image (optimasi gambar)
-     * - favicon.ico (ikon browser)
+     * Menjalankan middleware pada semua path kecuali file statis dengan ekstensi
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

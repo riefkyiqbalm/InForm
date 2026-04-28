@@ -3,10 +3,11 @@ import globalStyles                   from "data-text:~styles/global.css"
 import MainChat                       from "~components/chats/MainChat"
 import NetworkGuard                   from "~components/NetworkGuard"
 
-import { AuthProvider, useAuth }      from "@sharedUI/context/ListeningAuthContext"
+import { useAuth }                    from "@sharedUI/context/SharedAuthContext"
 import { ChatProvider}                from "@sharedUI/context/ChatContext"
 import { FormProvider }               from "@sharedUI/context/FormContext"
 import { ToastProvider }              from "@sharedUI/context/ToastContext"
+import { ListeningAuthProvider}                 from "@sharedUI/context/ListeningAuthContext"
 
 
 const FALLBACK_CSS = `
@@ -48,13 +49,13 @@ export default function SidePanel() {
     <>
       <style>{globalStyles || FALLBACK_CSS}</style>
       <ToastProvider>
-        <AuthProvider>
+        <ListeningAuthProvider>
           <ChatProvider>
             <FormProvider>
               <SidePanelContent />
             </FormProvider>
           </ChatProvider>
-        </AuthProvider>
+        </ListeningAuthProvider>
       </ToastProvider>
     </>
   )

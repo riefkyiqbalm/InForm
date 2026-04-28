@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import { parseErrorMessage } from "@/lib/errors";
 
 // ── keep your existing components ────────────────────────────────────────────

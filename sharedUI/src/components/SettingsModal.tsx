@@ -186,7 +186,7 @@ function PrivacyPage() {
         <button style={S.dangerBtn} onClick={clearData}
           onMouseEnter={(e) => (e.currentTarget.style.background="rgba(255,77,109,0.2)")}
           onMouseLeave={(e) => (e.currentTarget.style.background="rgba(255,77,109,0.1)")}>
-          <Icon name="white-trash" size={14} invert={false} />
+          <Icon name="red-trash" size={14} invert={false} />
           <span>Hapus Semua Data / Delete All Data</span>
         </button>
       </div>
@@ -330,7 +330,7 @@ function MemoryPage() {
               <button style={S.removeBtn} onClick={() => removeDoc(i)} title="Hapus / Remove"
                 onMouseEnter={(e) => (e.currentTarget.style.color="#ff4d6d")}
                 onMouseLeave={(e) => (e.currentTarget.style.color="#5a6a7a")}>
-                <Icon name="white-delete" size={18} invert={false} />
+                <Icon name="red-trash" size={18} invert={false} />
               </button>
             </div>
           ))}

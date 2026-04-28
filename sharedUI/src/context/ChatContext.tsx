@@ -1,8 +1,8 @@
 // shared-ui/src/context/ChatContext.tsx
-
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ChatSession, InterruptedMessage, SendMessageArgs, ChatContextType, ChatMessage } from "../types";
 import Cookies from "js-cookie";
+import { useAuth } from "./SharedAuthContext";
 
 const KEY_TOKEN = "_auth_token";
 // Determine environment
@@ -65,26 +65,47 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const clearError = useCallback(() => setError(null), []);
   const clearAborted = useCallback(() => setAbortedMessage(null), []);
+  const {user, isAuthenticated} = useAuth();
 
   // ── Load sessions on mount ─────────────────────────────────────────────────
   useEffect(() => {
+    /**
+     * GUARD CLAUSE:
+     * Jika user tidak terautentikasi, kita langsung berhenti dan mengosongkan sesi.
+     * Ini mencegah request 401 Unauthorized ke terminal Next.js saat logout.
+     */
+    if (!isAuthenticated || !user) {
+      setSessions([]);
+      return;
+    }
+
     const fetchSessions = async () => {
-      const token = await getToken();
-      // If no token in extension, and no cookie in web, this might fail gracefully or return 401
+      setIsLoading(true);
       try {
-        const res = await fetch(SESSIONS, { headers: authHeaders(token) });
-        if (res.ok) {
-          const data = await res.json() as { sessions?: ChatSession[] };
-          const sorted = sortSessions(data.sessions ?? []);
-          setSessions(sorted);
-          if (sorted.length > 0) setActiveSessionId(sorted[0].id);
+        // Pemanggilan API tanpa placeholder { ... }
+        const response = await fetch("/api/chat/sessions", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSessions(data);
+        } else if (response.status === 401) {
+          // Jika ternyata token tidak valid, kosongkan sesi secara diam-diam
+          setSessions([]);
         }
-      } catch (err) {
-        console.error("[ChatContext] fetchSessions:", err);
+      } catch (error) {
+        console.error("Gagal mengambil sesi chat:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
+
     fetchSessions();
-  }, []);
+  }, [isAuthenticated, user]);
 
   // ── loadSession ────────────────────────────────────────────────────────────
   const loadSession = useCallback(async (id: string) => {

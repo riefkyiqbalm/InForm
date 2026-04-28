@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import React from "react";
 
 export default function SidebarFooter({ isOpen }: { isOpen: boolean }) {

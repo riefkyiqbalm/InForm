@@ -1,6 +1,6 @@
 'use-client'
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@sharedUI/context/ListeningAuthContext";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon";
 import NewChatButton from "@sharedUI/components/buttons/NewButton";
 import ChatList from "@sharedUI/components/chats/ChatList"; 

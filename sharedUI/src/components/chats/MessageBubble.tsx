@@ -7,6 +7,8 @@ import { useState } from "react";
 import ActionMenu from "@sharedUI/components/buttons/ActionButton";
 import { formatText, formatTimeFromISO } from "@sharedUI/lib/formatters";
 import { useCopyToClipboard } from "@sharedUI/lib/hooks";
+import SmallLogo from "../logo/SmallLogo";
+import Icon from "../IconStyles";
 
 interface Props {
   msg: UIMessage;
@@ -34,7 +36,7 @@ export default function MessageBubble({ msg }: Props) {
     >
       {/* Avatar */}
       <div style={{ ...S.avatar, ...(isUser ? S.avatarUser : S.avatarBot) }}>
-        {isUser ? "👤" : "🌿"}
+        {isUser ? <Icon name="white-user" size={14}/> : <SmallLogo/>}
       </div>
 
       {/* Bubble + meta */}

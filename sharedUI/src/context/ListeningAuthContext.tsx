@@ -1,117 +1,58 @@
-// features/AuthContext.tsx — Plasmo sidepanel
-// Auth API lives on Next.js (NEXTJS_BASE), not Flask.
-// This context ONLY listens to storage/cookies and messages. 
-// It does NOT perform login directly (that happens in the website tab).
-
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+"use client";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Role, User, AuthContextType } from "@sharedUI/types";
+import Cookies from "js-cookie";
 
-// ── Env vars ──────────────────────────────────────────────────────────────────
+/**
+ * ── PERBAIKAN IMPOR ──
+ * Pastikan file SharedAuthContext.tsx sudah ada di folder yang sama 
+ * atau gunakan alias @sharedUI jika sudah terkonfigurasi di tsconfig.
+ */
+import { SharedAuthContext } from "@sharedUI/context/SharedAuthContext";
+
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000";
-
-// ── Storage keys ──────────────────────────────────────────────────────────────
 const KEY_TOKEN = "_auth_token";
 const KEY_USER  = "_auth_user";
+const IS_EXTENSION = typeof chrome !== 'undefined' && !!chrome.storage;
 
-// ── chrome.storage.local helpers (Type-Safe) ─────────────────────────────────
+// Helpers untuk menyimpan data ke storage ekstensi
 async function storageSave(token: string, user: User): Promise<void> {
-  await chrome.storage.local.set({
-    [KEY_TOKEN]: token,
-    [KEY_USER]:  JSON.stringify(user),
-  });
+  if (IS_EXTENSION) {
+    await chrome.storage.local.set({ [KEY_TOKEN]: token, [KEY_USER]: JSON.stringify(user) });
+  }
 }
 
 async function storageClear(): Promise<void> {
-  await chrome.storage.local.remove([KEY_TOKEN, KEY_USER]);
+  if (IS_EXTENSION) {
+    await chrome.storage.local.remove([KEY_TOKEN, KEY_USER]);
+  } else {
+    Cookies.remove(KEY_TOKEN);
+    Cookies.remove(KEY_USER); 
+  }
 }
 
 async function storageGetToken(): Promise<string | null> {
-  try {
-    const result = await chrome.storage.local.get(KEY_TOKEN);
-    // FIX: Explicitly check existence and cast to string
-    const token = result[KEY_TOKEN];
-    return (typeof token === 'string' && token.length > 0) ? token : null;
-  } catch {
-    return null;
+  if (IS_EXTENSION) {
+    try {
+      const result = await chrome.storage.local.get(KEY_TOKEN);
+      return result[KEY_TOKEN] as string || null;
+    } catch { return null; }
   }
+  return Cookies.get(KEY_TOKEN) || null;
 }
 
 async function storageGetUser(): Promise<User | null> {
-  try {
-    const result = await chrome.storage.local.get(KEY_USER);
-    // FIX: Explicitly check existence and cast
-    const raw = result[KEY_USER];
-    if (typeof raw !== 'string' || !raw) return null;
-    
-    return JSON.parse(raw) as User;
-  } catch {
-    return null;
-  }
-}
-
-// ── Cookie reader ─────────────────────────────────────────────────────────────
-async function cookieGetToken(): Promise<string | null> {
-  try {
-    const cookie = await chrome.cookies.get({
-      url:  NEXTJS_BASE,
-      name: KEY_TOKEN,
-    });
-    // FIX: Optional chaining and null coalescing
-    return cookie?.value ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function cookieGetUser(): Promise<User | null> {
-  try {
-    const cookie = await chrome.cookies.get({
-      url:  NEXTJS_BASE,
-      name: KEY_USER,
-    });
-    if (!cookie?.value) return null;
+  if (IS_EXTENSION) {
     try {
-      return JSON.parse(decodeURIComponent(cookie.value)) as User;
-    } catch {
-      return null;
-    }
-  } catch {
-    return null;
+      const result = await chrome.storage.local.get(KEY_USER);
+      const raw = result[KEY_USER];
+      if (typeof raw !== 'string' || !raw) return null;
+      return JSON.parse(raw) as User;
+    } catch { return null; }
   }
+  return null;
 }
 
-// ── Resolve token ───────────────────────────────────────────────────────────
-async function resolveToken(): Promise<{ token: string | null; user: User | null }> {
-  // 1. Try chrome.storage.local
-  const storedToken = await storageGetToken();
-  if (storedToken) {
-    const storedUser = await storageGetUser();
-    return { token: storedToken, user: storedUser };
-  }
-
-  // 2. Fallback: browser cookie
-  const cookieToken = await cookieGetToken();
-  if (cookieToken) {
-    const cookieUser = await cookieGetUser();
-    if (cookieUser) {
-      await storageSave(cookieToken, cookieUser).catch(() => {});
-    } else {
-      await chrome.storage.local.set({ [KEY_TOKEN]: cookieToken }).catch(() => {});
-    }
-    return { token: cookieToken, user: cookieUser };
-  }
-
-  return { token: null, user: null };
-}
-
-// ── Normalize User ───────────────────────────────────────────────────────────
 function normalizeUser(raw: Record<string, unknown>): User {
   return {
     id:          String(raw.id ?? ""),
@@ -125,76 +66,34 @@ function normalizeUser(raw: Record<string, unknown>): User {
   };
 }
 
-function bearerHeaders(token: string): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    Authorization:  `Bearer ${token}`,
-  };
-}
-
-// ── Context ───────────────────────────────────────────────────────────────────
-const defaultAuth: AuthContextType = {
-  user:           null,
-  isAuthenticated: false,
-  loading:        true,
-  login:          async () => {},
-  register:       async () => {},
-  logout:         () => {},
-  forgotPassword: async () => {},
-  resetPassword:  async () => {},
-  changePassword: async () => {},
-  changeEmail:    async () => "",
-  signInWithOIDC: async () => {},
-};
-
-const AuthContext = createContext<AuthContextType>(defaultAuth);
-
-// ── Provider ──────────────────────────────────────────────────────────────────
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user,    setUser]    = useState<User | null>(null);
+export function ListeningAuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ── Logout ────────────────────────────────────────────────────────────────
   const logout = useCallback(() => {
     setUser(null);
-    storageClear();
-    // Optional: Clear cookies if extension has permission
-    chrome.cookies.remove({ url: NEXTJS_BASE, name: KEY_TOKEN }).catch(() => {});
-    chrome.cookies.remove({ url: NEXTJS_BASE, name: KEY_USER }).catch(() => {});
-  }, []);
-
-  // ── OIDC Sign In (Opens Website Tab) ──────────────────────────────────────
-  const signInWithOIDC = useCallback(async () => {
-    // Just open the website login page. 
-    // The background script or cookie listener will handle the rest.
-    await chrome.tabs.create({ url: `${NEXTJS_BASE}/login` });
-  }, []);
-
-  // ── Validate Session ──────────────────────────────────────────────────────
-  const validateSession = useCallback(async (tokenOverride?: string | null) => {
-    let token: string | null = null;
-    let cachedUser: User | null = null;
-
-    if (tokenOverride) {
-      token = tokenOverride;
-      cachedUser = await storageGetUser();
-    } else {
-      const resolved = await resolveToken();
-      token = resolved.token;
-      cachedUser = resolved.user;
+    storageClear().catch(console.warn);
+    
+    if (typeof chrome !== "undefined" && chrome.cookies) {
+      chrome.cookies.remove({ url: NEXTJS_BASE, name: KEY_TOKEN }).catch(() => {});
+      chrome.cookies.remove({ url: NEXTJS_BASE, name: KEY_USER }).catch(() => {});
     }
+  }, []);
 
+  const validateSession = useCallback(async (tokenOverride?: string | null) => {
+    const token = tokenOverride || await storageGetToken();
     if (!token) {
       setUser(null);
       setLoading(false);
       return;
     }
 
-    if (cachedUser) setUser(cachedUser);
-
     try {
       const res = await fetch(`${NEXTJS_BASE}/api/auth/me`, {
-        headers: bearerHeaders(token),
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
       });
 
       if (!res.ok) {
@@ -203,123 +102,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const dbUser = await res.json() as Record<string, unknown>;
-      const fresh  = normalizeUser(dbUser);
+      const fresh = normalizeUser(dbUser);
       await storageSave(token, fresh);
       setUser(fresh);
     } catch (err) {
-      console.warn("[AuthContext] Network error, keeping cached user", err);
-      if (!cachedUser) {
-        // Minimal fallback if we have token but no user data
-        setUser({ 
-          id: "", name: "", email: "", image: "", 
-          contact: "", institution: "", role: "USER", createdAt: "" 
-        });
-      }
+      console.error("Session validation failed", err);
     } finally {
       setLoading(false);
     }
   }, [logout]);
 
-  // ── On Mount ──────────────────────────────────────────────────────────────
   useEffect(() => {
     validateSession();
   }, [validateSession]);
 
-  // ── Listen for Messages from Background ───────────────────────────────────
+  // Listener untuk pesan dari Website (AuthProvider)
   useEffect(() => {
-    const handler = (
-      message: { type?: string; token?: string; user?: Record<string, unknown> },
-      _sender: chrome.runtime.MessageSender,
-      sendResponse: (r: unknown) => void
-    ) => {
-      if (!message?.type) return false;
+    if (!IS_EXTENSION) return;
 
+    const handler = (message: any, _sender: any, sendResponse: any) => {
       if (message.type === "_AUTH_LOGIN") {
-        const { token, user: rawUser } = message;
-        if (token && typeof token === 'string') {
-          if (rawUser && typeof rawUser === 'object') {
-            const u = normalizeUser(rawUser);
-            storageSave(token, u).then(() => {
-              setUser(u);
-              setLoading(false);
-            });
-          } else {
-            validateSession(token);
-          }
-        }
+        validateSession(message.token);
         sendResponse({ ok: true });
-        return true;
-      }
-
-      if (message.type === "_AUTH_LOGOUT") {
+      } else if (message.type === "_AUTH_LOGOUT") {
         logout();
         sendResponse({ ok: true });
-        return true;
       }
-
-      if (message.type === "_AUTH_REFRESH") {
-        const t = message.token;
-        validateSession(typeof t === 'string' ? t : null);
-        sendResponse({ ok: true });
-        return true;
-      }
-
-      return false;
+      return true;
     };
 
     chrome.runtime.onMessage.addListener(handler);
     return () => chrome.runtime.onMessage.removeListener(handler);
   }, [logout, validateSession]);
 
-  // ── Dummy Functions (Handled by Website) ──────────────────────────────────
-  // These are present to satisfy the interface but don't perform actions here
-  const login = useCallback(async (_email: string, _password: string) => {
-    throw new Error("Login must be performed on the website.");
-  }, []);
-
-  const register = useCallback(async (_email: string, _password: string, _name: string) => {
-    throw new Error("Registration must be performed on the website.");
-  }, []);
-
-  const forgotPassword = useCallback(async (_email: string) => {
-    throw new Error("Password reset must be performed on the website.");
-  }, []);
-
-  const resetPassword = useCallback(async (_token: string, _newPassword: string) => {
-    throw new Error("Password reset must be performed on the website.");
-  }, []);
-
-  const changePassword = useCallback(async (_current: string, _newPass: string) => {
-    throw new Error("Profile changes must be performed on the website.");
-  }, []);
-
-  const changeEmail = useCallback(async (_newEmail: string, _password: string) => {
-    throw new Error("Email changes must be performed on the website.");
-    return "";
-  }, []);
-
   const value = useMemo<AuthContextType>(
     () => ({
       user,
       loading,
       isAuthenticated: !!user,
-      login,
-      register,
+      login: async () => { window.open(`${NEXTJS_BASE}/login`, '_blank') },
+      register: async () => { window.open(`${NEXTJS_BASE}/register`, '_blank') },
       logout,
-      forgotPassword,
-      resetPassword,
-      changePassword,
-      changeEmail,
-      signInWithOIDC,
+      forgotPassword: async () => {},
+      resetPassword: async () => {},
+      changePassword: async () => {},
+      changeEmail: async () => "",
+      signInWithOIDC: async () => { window.open(`${NEXTJS_BASE}/login`, '_blank') },
     }),
-    [user, loading, login, register, logout, forgotPassword, resetPassword, changePassword, changeEmail, signInWithOIDC]
+    [user, loading, logout]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
-  return ctx;
+  return (
+    <SharedAuthContext.Provider value={value}>
+      {children}
+    </SharedAuthContext.Provider>
+  );
 }

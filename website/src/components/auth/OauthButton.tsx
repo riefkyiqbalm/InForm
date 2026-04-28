@@ -1,33 +1,41 @@
 "use client";
-import React from "react";
-import { useAuth } from "@/context/AuthContext";
+import React, { useState } from "react";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 
 export default function OAuthButton() {
-  const { signInWithOIDC, loading } = useAuth();
+  // Hanya ambil fungsi signInWithOIDC, jangan gunakan global 'loading'
+  const { signInWithOIDC } = useAuth();
+  
+  // Buat state lokal khusus untuk tombol ini
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const handleClick = async () => {
+    setIsConnecting(true); // Aktifkan loading HANYA saat tombol diklik
     try {
       await signInWithOIDC();
+      // Tidak perlu setIsConnecting(false) di sini karena browser akan
+      // otomatis berpindah halaman (redirect) ke Google.
     } catch (err) {
       console.error("OAuth login failed:", err);
+      setIsConnecting(false); // Kembalikan ke normal jika terjadi error
     }
   };
 
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
+      disabled={isConnecting}
       style={{
         width: "100%",
         padding: "12px",
         marginBottom: "16px",
-        background: loading ? "linear-gradient(135deg, var(--teal), #0080cc)" : "#ffffff",
+        background: isConnecting ? "linear-gradient(135deg, var(--teal), #0080cc)" : "#ffffff",
         color: "black",
         border: "none",
         borderRadius: "8px",
         fontSize: "14px",
         fontWeight: "600",
-        cursor: loading ? "not-allowed" : "pointer",
+        cursor: isConnecting ? "not-allowed" : "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -35,18 +43,21 @@ export default function OAuthButton() {
         transition: "background 0.2s",
       }}
       onMouseEnter={(e) => {
-        if (!loading) 
+        // PERBAIKAN: Gunakan kurung kurawal agar kedua baris dieksekusi
+        if (!isConnecting) {
           e.currentTarget.style.background = "linear-gradient(135deg, var(--teal), #0080cc)";
           e.currentTarget.style.color = "white";
+        }
       }}
       onMouseLeave={(e) => {
-        if (!loading) 
+        if (!isConnecting) {
           e.currentTarget.style.background = "#ffffff";
           e.currentTarget.style.color = "black";
+        }
       }}
     >
-      {loading ? (
-        <span>Connecting...</span>
+      {isConnecting ? (
+        <span style={{color:'white'}}>Connecting...</span>
       ) : (
         <>
           {/* Google Icon */}

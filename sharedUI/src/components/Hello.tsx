@@ -1,6 +1,6 @@
 'use-client'
 import { textStyles as T } from "@sharedUI/lib/styles/text";
-import { useAuth } from "@sharedUI/context/ListeningAuthContext";
+import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import Logo from "./logo/BigLogo";
 
 export default function Welcome() {

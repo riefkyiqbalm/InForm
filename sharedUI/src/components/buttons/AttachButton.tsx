@@ -14,6 +14,7 @@ import { useToast } from "@sharedUI/context/ToastContext"
 import { loadDocs, saveDocs } from "@sharedUI/components/SettingsModal"
 import type { StoredDoc } from "../SettingsModal"
 import type { InputMode } from "@sharedUI/types"
+import Cookies from "js-cookie"; // Pastikan sudah install js-cookie
 
 interface AttachFileProps {
   onAction:      (type: InputMode, docs?: StoredDoc[]) => void
@@ -29,10 +30,20 @@ const DEFAULT_LABELS: Record<InputMode, string> = {
 
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000"
 const KEY_TOKEN   = "_auth_token"
+const IS_EXTENSION = typeof chrome !== 'undefined' && !!chrome.storage;
 
 async function getToken(): Promise<string | null> {
-  try { const r = await chrome.storage.local.get(KEY_TOKEN); return (r[KEY_TOKEN] as string) || null }
-  catch { return null }
+  if (IS_EXTENSION) {
+    try {
+      const result = await chrome.storage.local.get(KEY_TOKEN);
+      return (result[KEY_TOKEN] as string) || null;
+    } catch {
+      return null;
+    }
+  } else {
+    // WEBSITE: Ambil dari cookie agar sinkron dengan ChatContext
+    return Cookies.get(KEY_TOKEN) || null;
+  }
 }
 
 function formatSize(bytes: number): string {

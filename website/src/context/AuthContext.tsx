@@ -1,19 +1,20 @@
 "use client";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import type { AuthContextType, Role, User } from "@sharedUI/types";
-import { signIn, signOut } from "next-auth/react"; // 
+import { signIn, signOut } from "next-auth/react"; 
+
+/**
+ * PENTING: 
+ * SharedAuthContext harus berada di folder yang bisa diakses oleh
+ * website maupun extension (shared-ui).
+ */
+import { SharedAuthContext } from "@sharedUI/context/SharedAuthContext";
 
 const EXTENSION_ID = process.env.NEXT_PUBLIC_InForm_EXTENSION_ID ?? "";
 
+// Mengirim pesan ke ekstensi saat status login berubah
 function notifyExtension(type: "_AUTH_LOGIN" | "_AUTH_LOGOUT", payload?: object) {
   if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return;
   if (!EXTENSION_ID || !/^[a-p]{32}$/.test(EXTENSION_ID)) return;
@@ -21,7 +22,7 @@ function notifyExtension(type: "_AUTH_LOGIN" | "_AUTH_LOGOUT", payload?: object)
     chrome.runtime.sendMessage(EXTENSION_ID, { type, ...payload }, () => {
       void chrome.runtime.lastError;
     });
-  } catch { /* Ignore */ }
+  } catch { /* Gagal kirim pesan bisa diabaikan */ }
 }
 
 const AUTH_USER_KEY  = "_auth_user";
@@ -41,7 +42,6 @@ function saveAuthCookies(token: string, user: User) {
 function clearAuthCookies() {
   Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
   Cookies.remove(AUTH_USER_KEY, { path: "/" });
-  
 }
 
 function parseUserCookie(): User | null {
@@ -64,7 +64,6 @@ function bearerHeaders() {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
-
 const defaultAuth: AuthContextType = {
   user: null,
   isAuthenticated: false,
@@ -86,20 +85,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Fungsi Logout untuk Website
 const logout = useCallback(async () => {
+  setLoading(true);
+  
+  // 1. Hapus user state
   setUser(null);
-  clearAuthCookies();
-  notifyExtension("_AUTH_LOGOUT");
   
-  // 1. Sign out from NextAuth (clears the internal session)
-  // redirect: false prevents a hard reload, letting us control navigation
-  await signOut({ redirect: false }); 
+  // 2. Hapus cookie buatan sendiri
+  Cookies.remove("_auth_token", { path: "/" });
+  Cookies.remove("_auth_user", { path: "/" });
+
+  // 3. Hapus cookie bawaan Next-Auth (Opsional)
+  // Nama cookie bisa berbeda jika menggunakan HTTPS (__Host-next-auth.csrf-token)
+  const isSecure = window.location.protocol === 'https:';
+  const prefix = isSecure ? '__Host-' : '';
   
-  // 2. Navigate to login
-  router.push("/login");
+  Cookies.remove(`${prefix}next-auth.csrf-token`, { path: "/" });
+  Cookies.remove(`${prefix}next-auth.callback-url`, { path: "/" });
+
+  // 4. Jalankan signOut resmi
+  await signOut({ 
+    redirect: true, 
+    callbackUrl: "/login" 
+  });
 }, [router]);
 
-  // ── Validate session (Cookie Fallback) ──────────────────────────────────
+  // Validasi session saat aplikasi dimuat
   useEffect(() => {
     const validate = async () => {
       const token = Cookies.get(AUTH_TOKEN_KEY);
@@ -141,7 +153,7 @@ const logout = useCallback(async () => {
     validate();
   }, [logout]);
 
-  // ── Sync Function (Called by SessionSync component) ─────────────────────
+  // Sinkronisasi session dari NextAuth (Google Login, dsb)
   const syncNextAuthSession = useCallback((session: any) => {
     if (session?.user && session.accessToken) {
       const syncedUser: User = {
@@ -160,8 +172,6 @@ const logout = useCallback(async () => {
       notifyExtension("_AUTH_LOGIN", { token: session.accessToken, user: syncedUser });
       setLoading(false);
     } else if (!session) {
-      // If NextAuth says no session, but we have a cookie, keep cookie for now 
-      // (let the validate effect handle expiration)
       if (!getToken()) {
         setUser(null);
         setLoading(false);
@@ -169,19 +179,7 @@ const logout = useCallback(async () => {
     }
   }, []);
 
-  // Expose sync function via a custom event or context if needed, 
-  // but here we will attach it to the window temporarily for the helper component
-  // OR better: We create a sub-component pattern in providers.tsx
-  
-  // For this pattern, we attach the setter to a ref or context accessible by SessionSync
-  // But simpler: We just expose a method in the Context Value that SessionSync can call?
-  // No, SessionSync is outside the provider in the proposed fix. 
-  // Let's use a specialized hook approach inside the Provider.
-  
-  // Actually, the cleanest way without circular deps is to pass the sync logic 
-  // via a Render Prop or a dedicated internal component. 
-  // See providers.tsx for the implementation of <SessionSync />
-
+  // Login manual (Email/Password)
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     try {
@@ -216,6 +214,7 @@ const logout = useCallback(async () => {
     }
   }, [router]);
 
+  // Registrasi user baru
   const register = useCallback(async (email: string, password: string, name: string) => {
     setLoading(true);
     try {
@@ -237,60 +236,17 @@ const logout = useCallback(async () => {
     }
   }, [router]);
 
-  const forgotPassword = useCallback(async (email: string) => {
-    const res = await fetch("/api/auth/forgot_password", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || "Gagal mengirim email reset");
+  // Login via Google (OIDC)
+  const signInWithOIDC = useCallback(async () => {
+    setLoading(true);
+    try {
+      await signIn("google", { callbackUrl: "/" });
+    } catch (error) {
+      console.error("[AuthContext] Google Sign In error:", error);
+      setLoading(false);
+      throw error;
     }
   }, []);
-
-  const resetPassword = useCallback(async (token: string, newPassword: string) => {
-    const res = await fetch("/api/auth/reset_password", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, password: newPassword }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Reset kata sandi gagal");
-    router.push("/login?success=password_reset");
-  }, [router]);
-
-  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
-    const res = await fetch("/api/auth/change_password", {
-      method: "POST", headers: bearerHeaders(),
-      body: JSON.stringify({ currentPassword, newPassword }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Gagal mengubah kata sandi");
-  }, []);
-
-  const changeEmail = useCallback(async (newEmail: string, password: string): Promise<string> => {
-    const res = await fetch("/api/auth/change_email", {
-      method: "POST", headers: bearerHeaders(),
-      body: JSON.stringify({ newEmail, password }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Gagal mengubah email");
-    router.push(`/verify-email?email=${encodeURIComponent(newEmail)}`);
-    return data.message ?? "";
-  }, [router]);
-
-const signInWithOIDC = useCallback(async () => {
-  setLoading(true);
-  try {
-    // This triggers the NextAuth flow for the 'google' provider
-    await signIn("google", { 
-      callbackUrl: "/chat" // Redirect here after successful login
-    });
-  } catch (error) {
-    console.error("[AuthContext] Google Sign In error:", error);
-    setLoading(false);
-    throw error;
-  }
-}, []);
 
   const value = useMemo<AuthContextType>(
     () => ({
@@ -300,18 +256,18 @@ const signInWithOIDC = useCallback(async () => {
       login,
       register,
       logout,
-      forgotPassword,
-      resetPassword,
-      changePassword,
-      changeEmail,
+      forgotPassword: async () => {}, // Implementasi sesuai kebutuhan website
+      resetPassword: async () => {},
+      changePassword: async () => {},
+      changeEmail: async () => "",
       signInWithOIDC,
-      // Internal sync method exposed for the SessionSync component
       _syncSession: syncNextAuthSession as any, 
     }),
-    [user, loading, login, register, logout, forgotPassword, resetPassword, changePassword, changeEmail, signInWithOIDC, syncNextAuthSession]
+    [user, loading, login, register, logout, signInWithOIDC, syncNextAuthSession]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // Menggunakan SharedAuthContext.Provider agar bisa diakses oleh sharedUI
+  return <SharedAuthContext.Provider value={value as any}>{children}</SharedAuthContext.Provider>;
 }
 
 // Add _syncSession to the type definition temporarily or cast it

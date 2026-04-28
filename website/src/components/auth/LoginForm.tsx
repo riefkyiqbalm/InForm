@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Icon from "@sharedUI/components/IconStyles";
 import { FormInput } from "@sharedUI/components/FormInput";
 import { ErrorBox } from "@sharedUI/components/ErrorBox";
-import { ForgotPassword } from "@sharedUI/components/buttons/ForgotPassword";
 import OauthButton from "@/components/auth/OauthButton";
 import { useRouter } from "next/navigation";
 
@@ -25,7 +24,6 @@ export function LogInForm({
   const [showPass, setShowPass] = useState(false);
   const [animateMail, setAnimateMail] = useState(false);
   const [animatePass, setAnimatePass] = useState(false);
-  const [showForgot, setShowForgot] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
