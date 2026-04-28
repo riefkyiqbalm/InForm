@@ -99,7 +99,6 @@ export default function AuthPanel() {
         </Card>
       </div>
 
-      {/* Global keyframes */}
       <style jsx global>{`
         @keyframes floatOrb {
           0%, 100% { transform: translateY(0) scale(1); }

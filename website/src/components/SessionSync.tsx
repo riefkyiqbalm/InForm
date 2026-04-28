@@ -18,3 +18,4 @@ export function SessionSync() {
 
   return null; // This component renders nothing
 }
+

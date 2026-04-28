@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "@/context/AuthContext";
@@ -12,14 +12,10 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
       <AuthProvider>
-        {/* SessionSync reads NextAuth session and updates AuthContext */}
         <SessionSync />
-        
         <ToastProvider>
           <ChatProvider>
-            <FormProvider>
-              {children}
-            </FormProvider>
+            <FormProvider>{children}</FormProvider>
           </ChatProvider>
         </ToastProvider>
       </AuthProvider>

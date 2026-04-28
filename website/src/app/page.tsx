@@ -1,42 +1,79 @@
 "use client";
 
-import React, { useEffect } from "react";
-// Menggunakan import standar untuk Next.js
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-/** * Menggunakan referensi context yang sesuai. 
- * Jika @sharedUI tidak terbaca di editor ini, pastikan path alias di tsconfig sudah benar.
- */
 import { useAuth } from "@sharedUI/context/SharedAuthContext";
+import { Card } from "@sharedUI/components/Cards";
+import Loading from "./loading";
+import BackButton from "@sharedUI/components/buttons/BackButton";
 
-/**
- * RootPage (/) - Menangani distribusi user setelah login
- */
 export default function RootPage() {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
+  const [isTimeout, setIsTimeout] = useState(false);
 
   useEffect(() => {
-    // Jangan lakukan apapun jika AuthContext masih dalam proses validasi awal
-    if (loading) return;
+    let timer: NodeJS.Timeout;
 
-    if (isAuthenticated && user?.id) {
-      // Jika sudah punya data user lengkap, langsung ke chat spesifik
-      router.replace(`/chat/${user.id}`);
-    } else if (!isAuthenticated) {
-      // Jika benar-benar tidak terautentikasi, lempar ke login
-      router.replace("/login");
+    if (loading) {
+      timer = setTimeout(() => {
+        setIsTimeout(true);
+      }, 5000);
+    } else {
+      if (isAuthenticated && user?.id) {
+        router.replace(`/chat/${user.id}`);
+      } else if (!isAuthenticated) {
+        router.replace("/login");
+      }
     }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isAuthenticated, user, loading, router]);
 
-  // Tampilan loading yang konsisten dengan tema aplikasi
-  return (
-    <div className="flex h-screen w-full items-center justify-center bg-[#0d1117]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-500 border-t-transparent"></div>
-        <p className="text-gray-400 text-sm font-medium animate-pulse">
-          Menyiapkan sesi Anda...
-        </p>
+  if (isTimeout && loading) {
+    return <Loading />;
+  }
+
+  if (loading) {
+    return (
+      <div style={S.root}>
+        <div style={S.container}>
+          <Card>
+            <BackButton href="/login" />
+            <div style={S.title}>Maaf Auntenikasi Gagal..</div>
+          </Card>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }
+const S: Record<string, React.CSSProperties> = {
+  root: {
+    background: "var(--bg)",
+    color: "var(--text)",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    overflow: "hidden",
+    fontFamily: "sans-serif",
+  },
+  container: {
+    width: "100%",
+    maxWidth: "440px",
+    padding: "20px",
+    position: "relative",
+    zIndex: 10,
+    animation: "fadeUp 0.6s ease-out",
+  },
+  title: {
+    fontSize: "1.25rem",
+    fontWeight: "bold",
+    color: "#ffffff",
+  },
+};
