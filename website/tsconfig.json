@@ -42,7 +42,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "src/app/api/chat/sessions/[id]/[sessionsId]/route.DELETEts", "src/lib/api.ts", "src/lib/auth.ts", "src/lib/db.ts", "src/lib/email.ts", "src/lib/errors.ts", "src/lib/index.ts", "src/lib/prisma.ts", "src/lib/validators.ts", "src/app/providers.tsx", "src/app/api/auth/[...nextauth]/route.ts", "../sharedUI/src/components/buttons/ForgotPassword.tsx", "src/context/AuthContext.tsx", "src/context/AuthContext.tsx"  ],
+, "src/app/api/chat/sessions/[id]/[sessionsId]/route.DELETEts", "src/lib/api.ts", "src/lib/auth.ts", "src/lib/db.ts", "src/lib/email.ts", "src/lib/errors.ts", "src/lib/index.ts", "src/lib/prisma.ts", "src/lib/validators.ts", "src/app/providers.tsx", "src/app/api/auth/[...nextauth]/route.ts", "../sharedUI/src/components/emails/ForgotPassword.tsx", "src/context/AuthContext.tsx", "src/context/AuthContext.tsx", "../sharedUI/src/components/buttons/InputNewPassword.tsx", "../sharedUI/src/components/emails/InputNewPassword.tsx"  ],
   "exclude": [
     "node_modules"
   ]

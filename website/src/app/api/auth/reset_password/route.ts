@@ -1,19 +1,13 @@
 // app/api/auth/reset-password/route.ts
-//
-// GET  /api/auth/reset-password?token=...
-//   → Validates the token is real and not expired (called by the reset page on load).
-//   → Returns { valid: true, email } or 400 error.
-//
-// POST /api/auth/reset-password  { token, password }
-//   → Sets new hashed password, clears reset token, sends PasswordChangedEmail.
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordChangedEmail } from "@/lib/email";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // ── GET — validate token (called on page load) ────────────────────────────────
 export async function GET(req: Request) {
+  
   const { searchParams } = new URL(req.url);
   const token = searchParams.get("token");
 
@@ -21,7 +15,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Token tidak ditemukan" }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where:  { resetToken: token },
     select: { id: true, email: true, resetTokenExpiry: true },
   });
@@ -55,7 +49,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where:  { resetToken: token },
       select: { id: true, name: true, email: true, resetTokenExpiry: true },
     });
@@ -66,7 +60,6 @@ export async function POST(req: Request) {
     if (user.resetTokenExpiry && new Date() > user.resetTokenExpiry) {
       return NextResponse.json({ error: "Token sudah kedaluwarsa" }, { status: 400 });
     }
-
     const hashed = await bcrypt.hash(password, 10);
 
     await prisma.user.update({

@@ -1,6 +1,6 @@
 "use-client";
 import React from "react";
-import { ForgotPassword } from "@sharedUI/components/buttons/ForgotPassword";
+import { ForgotPassword } from "@sharedUI/components/emails/ForgotPassword";
 import Background from "@sharedUI/components/Background";
 import { Card } from "@sharedUI/components/Cards";
 

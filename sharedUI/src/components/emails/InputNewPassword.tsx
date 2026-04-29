@@ -5,7 +5,6 @@ import Icon from "@sharedUI/components/IconStyles";
 import { FormInput } from "@sharedUI/components/FormInput";
 import { ErrorBox } from "@sharedUI/components/ErrorBox";
 import BackButton from "@sharedUI/components/buttons/BackButton";
-import SmallLogo from "@sharedUI/components/logo/SmallLogo";
 
 type Step = "reset" | "done";
 
@@ -81,12 +80,12 @@ export function InputPassword() {
   }
 
   return (
-    <div style={S.pageWrapper}>
-      <div style={S.container}>
+    // <div style={S.pageWrapper}>
+      <div>
         <div style={S.header}>
           <BackButton href="/login" label="Login" variant="ghost"/>
           <div style={S.headerLeft}>
-            <Icon name="lock" size={20} />
+            <Icon name="white-lock" size={20} />
             <h1 style={S.title}>
               {step === "reset" && "Atur Ulang Kata Sandi"}
               {step === "done" && "Berhasil!"}
@@ -97,7 +96,7 @@ export function InputPassword() {
         <div style={S.content}>
           {step === "done" ? (
             <div style={S.doneWrap}>
-              <div style={S.doneIcon}><Icon name="check" size={32} /></div>
+              <div style={S.doneIcon}><Icon name="white-check" size={32} /></div>
               <p style={S.doneText}>Kata sandi berhasil diperbarui. Silakan masuk kembali.</p>
               <button style={S.mainBtn} onClick={() => router.push("/login")}>
                 Kembali ke Masuk
@@ -125,14 +124,14 @@ export function InputPassword() {
                   cursor: (loading || !token) ? "not-allowed" : "pointer"
                 }}
               >
-                {loading ? <Icon name="loading" size={18} /> : <Icon name="check" size={18} />}
+                {loading ? <Icon name="white-loading" size={18} /> : <Icon name="white-key" size={18} />}
                 <span>{loading ? "Menyimpan..." : "Simpan Kata Sandi Baru"}</span>
               </button>
             </form>
           )}
         </div>
       </div>
-    </div>
+    // </div>
   );
 }
 
@@ -163,7 +162,7 @@ export function NewPasswordInput({
       disabled={disabled}
       rightSlot={
         <span onClick={onToggleShow} style={{ cursor: "pointer", opacity: 0.7 }}>
-          <Icon name={show ? "eyeoff" : "eye"} size={18} />
+          <Icon name={show ? "white-eye-off" : "white-eye"} size={18} />
         </span>
       }
     />

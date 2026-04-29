@@ -1,7 +1,8 @@
 // app/api/auth/login/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // 1. Define CORS headers

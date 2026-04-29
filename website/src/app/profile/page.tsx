@@ -182,7 +182,7 @@ export default function ProfilePage() {
           </>
         );
       case "security":
-        return <SecurityTab />;
+        return <SecurityTab/>;
       case "api-key":
         return <ApiKeyTab />;
       case "terms":

@@ -1,6 +1,4 @@
-// emails/PasswordResetEmail.tsx
-// React Email template — password reset request.
-// Preview: npx email dev --dir src/emails
+
 
 import {
   Body, Button, Container, Head, Heading,
@@ -11,7 +9,6 @@ import type React from "react";
 interface PasswordResetProps {
   name: string;
   resetUrl: string;
-  /** How long the link is valid. Default: "1 jam". */
   expiryLabel?: string;
 }
 
@@ -113,7 +110,7 @@ export default function PasswordReset({
 
 PasswordReset.PreviewProps = {
   name:     "Budi Santoso",
-  resetUrl: "http://localhost:3000/reset-password?token=preview_token",
+  resetUrl: "http://localhost:3000/new-password?token=preview_token",
 } satisfies PasswordResetProps;
 
 // ── Styles ────────────────────────────────────────────────────────────────────

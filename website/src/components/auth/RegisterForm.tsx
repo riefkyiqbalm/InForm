@@ -15,11 +15,12 @@ interface RegisterFormProps {
 
 export function RegisterForm({ onSubmit, loading, error, onError }: RegisterFormProps) {
   const [email,           setEmail]           = useState("");
-  const [name,            setName]               = useState("");
+  const [name,            setName]            = useState("");
   const [password,        setPassword]        = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass,        setShowPass]        = useState(false);
   const [passwordStrength,setPasswordStrength]= useState(0);
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +85,7 @@ export function RegisterForm({ onSubmit, loading, error, onError }: RegisterForm
               onClick={() => setShowPass(!showPass)}
               style={S.togglePass}
             >
-              <Icon name={showPass ? "white-eyeoff" : "white-eye"} size={18} />
+              <Icon name={showPass ? "white-eye-off" : "white-eye"} size={18} />
             </span>
           }
         />
@@ -94,13 +95,21 @@ export function RegisterForm({ onSubmit, loading, error, onError }: RegisterForm
       {/* Confirm password */}
       <FormInput
         label="Konfirmasi Sandi"
-        type="password"
+        type={showConfirmPass ? "text" : "password"}
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Ulangi kata sandi"
         iconName="lock"
         required
         disabled={loading}
+        rightSlot={
+            <span
+              onClick={() => setShowConfirmPass(!showConfirmPass)}
+              style={S.togglePass}
+            >
+              <Icon name={showConfirmPass ? "white-eye-off" : "white-eye"} size={18} />
+            </span>
+          }
       />
 
       <button type="submit" disabled={loading} style={S.mainBtn}>

@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
-import bcrypt from "bcrypt"; // Gunakan bcryptjs untuk kompatibilitas lebih baik di Next.js
+import bcrypt from "bcryptjs"; // Gunakan bcryptjs untuk kompatibilitas lebih baik di Next.js
 import crypto from "crypto";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { verifyToken: token },
     });
 

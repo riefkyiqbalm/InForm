@@ -5,7 +5,6 @@ import Icon from "@sharedUI/components/IconStyles";
 import { FormInput } from "@sharedUI/components/FormInput";
 import { ErrorBox } from "@sharedUI/components/ErrorBox";
 import BackButton from "@sharedUI/components/buttons/BackButton";
-import SmallLogo from "@sharedUI/components/logo/SmallLogo";
 
 type Step = "email" | "reset" ;
 
@@ -40,35 +39,6 @@ export function ForgotPassword() {
     }
   };
 
-  // const handleResetSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   if (!newPassword || newPassword.length < 6) {
-  //     setError("Kata sandi baru minimal 6 karakter.");
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch("/api/auth/forgot_password", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         step: "reset_password",
-  //         email,
-  //         oldPassword,
-  //         newPassword,
-  //       }),
-  //     });
-  //     const data = await res.json();
-  //     if (!res.ok) throw new Error(data.message ?? "Gagal mengatur ulang kata sandi.");
-  //     setStep("done");
-  //   } catch (err: unknown) {
-  //     setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
     /* ── Main Container (Halaman Penuh) ── */
     <div style={S.pageWrapper}>
@@ -80,7 +50,7 @@ export function ForgotPassword() {
             <Icon name="back" size={20} />
           </button> */}
           <div style={S.headerLeft}>
-            <Icon name="lock" size={20} />
+            <Icon name="white-lock" size={20} />
             <h1 style={S.title}>
               {step === "email" && "Lupa Kata Sandi"}
               {step === "reset" && "Atur Ulang Kata Sandi"}
@@ -114,7 +84,7 @@ export function ForgotPassword() {
                 disabled={loading}
               />
               <button type="submit" disabled={loading} style={S.mainBtn}>
-                {loading ? <Icon name="loading" size={18} /> : <Icon name="forward" size={18} />}
+                {loading ? <Icon name="white-loading" size={18} /> : <Icon name="white-arrow-right" size={18} />}
                 <span>{loading ? "Memverifikasi..." : "Lanjutkan"}</span>
               </button>
             </form>

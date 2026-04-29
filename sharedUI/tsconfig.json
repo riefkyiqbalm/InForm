@@ -39,7 +39,7 @@
   "include": [
     "src/**/*",         // Semua file di bawah folder src
     "next-env.d.ts"     // File env Next.js jika diperlukan
-, "src/context/AuthContext.tsx"  ],
+, "src/context/AuthContext.tsx", "src/components/emails/InputNewPassword.tsx"  ],
   "exclude": [
     "node_modules", 
     "dist",

@@ -92,7 +92,7 @@ export function LogInForm({
           disabled={loading}
           rightSlot={
             <span onClick={() => setShowPass(!showPass)} style={S.togglePass}>
-              <Icon name={showPass ? "white-eyeoff" : "white-eye"} size={18} />
+              <Icon name={showPass ? "white-eye-off" : "white-eye"} size={18} />
             </span>
           }
         />

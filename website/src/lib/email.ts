@@ -16,14 +16,14 @@ import PasswordReset          from "@/emails/PasswordReset";
 import PasswordChanges        from "@/emails/PasswordChanges";
 import EmailChanges from "@/emails/EmailChanges";
 
-// ── Singleton ─────────────────────────────────────────────────────────────────
+// ====== Singleton =======
 // Instantiated once per process — not per request.
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 const FROM   = process.env.RESEND_FROM   ?? "InForm <noreply@aotamata.space>";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
-// ── sendVerificationEmail ─────────────────────────────────────────────────────
+// ======= sendVerificationEmail =======
 // Renders the VerificationEmail React component to HTML and sends it via Resend.
 //
 // @param to    - recipient email address
@@ -37,7 +37,7 @@ export async function sendVerificationEmail(
 ): Promise<void> {
   const verifyUrl = `${BASE_URL}/api/auth/register?token=${token}`;
 
-  // render() converts the React component → plain HTML string
+  // -- render() converts the React component to plain HTML string --
   const html = await render(
     VerificationEmail({ name, verifyUrl })
   );
@@ -50,12 +50,12 @@ export async function sendVerificationEmail(
   });
 
   if (error) {
-    // Throw so the calling route can catch and return a 500
+    // --- Throw so the calling route can catch and return a 500 ---
     throw new Error(`[Resend] ${error.message}`);
   }
 }
 
-// ── sendResendVerificationEmail ───────────────────────────────────────────────
+// ===== sendResendVerificationEmail ======
 // Same as above but with a slightly different subject line for resend requests.
 
 export async function sendResendVerificationEmail(
@@ -80,22 +80,14 @@ export async function sendResendVerificationEmail(
     throw new Error(`[Resend] ${error.message}`);
   }
 }
-// lib/email.ts
-// Resend singleton + all email send helpers.
-// Server-only — never imported by client components.
-//
-// Setup:
-//   npm install resend @react-email/components
-//   RESEND_API_KEY=re_...  in .env
-//   RESEND_FROM=InForm <noreply@yourdomain.com>  in .env
 
-// ── Helper ────────────────────────────────────────────────────────────────────
+// ===== Helper =====
 async function send(to: string, subject: string, html: string) {
   const { error } = await resend.emails.send({ from: FROM, to: [to], subject, html });
   if (error) throw new Error(`[Resend] ${error.message}`);
 }
 
-// ── 2. Password reset request ─────────────────────────────────────────────────
+// === 2. Password reset request ===
 export async function sendPasswordResetEmail(
   to: string, name: string, token: string
 ) {
@@ -104,7 +96,7 @@ export async function sendPasswordResetEmail(
   await send(to, "Reset Kata Sandi Akun InForm Anda", html);
 }
 
-// ── 3. Password changed confirmation (security alert) ────────────────────────
+// === 3. Password changed confirmation (security alert) ===
 export async function sendPasswordChangedEmail(
   to: string, name: string
 ) {
@@ -113,7 +105,7 @@ export async function sendPasswordChangedEmail(
   await send(to, "Kata Sandi Akun InForm Anda Telah Diubah", html);
 }
 
-// ── 4. Email change — sent to the NEW address ─────────────────────────────────
+// === 4. Email change — sent to the NEW address ===
 export async function sendEmailChangeVerification(
   toNewEmail: string, name: string, oldEmail: string, token: string
 ) {

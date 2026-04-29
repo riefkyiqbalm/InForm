@@ -19,7 +19,7 @@ interface PasswordChangedEmailProps {
 export default function PasswordChanges({
   name,
   changedAt,
-  supportUrl = "mailto:support@bgai.app",
+  supportUrl = "mailto:support@inform.com",
 }: PasswordChangedEmailProps) {
   const formattedTime = new Date(changedAt).toLocaleString("id-ID", {
     dateStyle: "long",
@@ -39,7 +39,7 @@ export default function PasswordChanges({
           <Section style={S.header}>
             <table width="100%" cellPadding={0} cellSpacing={0}><tr><td align="center">
               <table cellPadding={0} cellSpacing={0}><tr>
-                <td style={S.logoCell}><Text style={S.logoText}>BG</Text></td>
+                <td style={S.logoCell}><Text style={S.logoText}>InForm</Text></td>
                 <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
                   <Text style={S.logoName}>InForm</Text>
                 </td>
