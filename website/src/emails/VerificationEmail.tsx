@@ -55,32 +55,13 @@ export default function VerificationEmail({
                   <table cellPadding={0} cellSpacing={0}>
                     <tr>
                       <td style={logoCell}>
-                        <Text style={logoText}>BG</Text>
+                        <Text style={logoText}>IF</Text>
                       </td>
                       <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
                         <Text style={logoName}>InForm</Text>
                       </td>
                     </tr>
                   </table>
-                </td>
-              </tr>
-            </table>
-          </Section>
-
-          {/* ── Icon ───────────────────────────────────────────────────── */}
-          <Section style={iconSection}>
-            <table width="100%" cellPadding={0} cellSpacing={0}>
-              <tr>
-                <td align="center">
-                  <div style={iconRing}>
-                    {/* SVG envelope — supported by most modern email clients */}
-                    <img
-                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%2300d4c8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22%2C6 12%2C13 2%2C6'/%3E%3C/svg%3E"
-                      width={32}
-                      height={32}
-                      alt=""
-                    />
-                  </div>
                 </td>
               </tr>
             </table>
@@ -96,7 +77,7 @@ export default function VerificationEmail({
 
             <Text style={bodyText}>
               Terima kasih telah mendaftar di <strong style={{ color: "#00d4c8" }}>InForm</strong> —
-              platform AI multimodal pengawasan gizi. Klik tombol di bawah untuk
+              platform AI Pengisian Formulir Digital Otomatis. Klik tombol di bawah untuk
               memverifikasi alamat email Anda dan mengaktifkan akun.
             </Text>
 
@@ -134,7 +115,7 @@ export default function VerificationEmail({
               email ini.
             </Text>
             <Text style={footerText}>
-              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Pengisian Formulir Digital Otomatis.
             </Text>
           </Section>
 

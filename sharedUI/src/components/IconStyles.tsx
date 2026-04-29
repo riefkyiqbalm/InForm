@@ -1,6 +1,7 @@
 // components/ui/Icon.tsx
 'use-client'
 import { ICONS, type IconType } from '@sharedUI/lib/constants/icon';
+import React from 'react';
 
 interface IconProps {
   name: IconType | string;

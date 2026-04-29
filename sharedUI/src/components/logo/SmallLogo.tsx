@@ -1,5 +1,6 @@
 'use-client'
 import { textStyles as T } from "@sharedUI/lib/styles/text";
+import React from "react";
 
 export default function SmallLogo() {
   return (

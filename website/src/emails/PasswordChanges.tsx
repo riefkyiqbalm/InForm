@@ -19,7 +19,7 @@ interface PasswordChangedEmailProps {
 export default function PasswordChanges({
   name,
   changedAt,
-  supportUrl = "mailto:support@inform.com",
+  supportUrl = "mailto:support@aotamata.space",
 }: PasswordChangedEmailProps) {
   const formattedTime = new Date(changedAt).toLocaleString("id-ID", {
     dateStyle: "long",
@@ -39,26 +39,12 @@ export default function PasswordChanges({
           <Section style={S.header}>
             <table width="100%" cellPadding={0} cellSpacing={0}><tr><td align="center">
               <table cellPadding={0} cellSpacing={0}><tr>
-                <td style={S.logoCell}><Text style={S.logoText}>InForm</Text></td>
+                <td style={S.logoCell}><Text style={S.logoText}>IF</Text></td>
                 <td style={{ paddingLeft: 10, verticalAlign: "middle" }}>
                   <Text style={S.logoName}>InForm</Text>
                 </td>
               </tr></table>
             </td></tr></table>
-          </Section>
-
-          {/* Icon — green shield = success */}
-          <Section style={S.iconSection}>
-            <table width="100%" cellPadding={0} cellSpacing={0}><tr>
-              <td align="center">
-                <div style={S.iconRing}>
-                  <img
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 24 24' fill='none' stroke='%233dffa0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'%3E%3C/path%3E%3Cpolyline points='9 12 11 14 15 10'%3E%3C/polyline%3E%3C/svg%3E"
-                    width={30} height={30} alt=""
-                  />
-                </div>
-              </td>
-            </tr></table>
           </Section>
 
           {/* Content */}
@@ -106,7 +92,7 @@ export default function PasswordChanges({
               Email keamanan ini dikirim secara otomatis. Mohon tidak membalas email ini.
             </Text>
             <Text style={S.footerText}>
-              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Pengisian Formulir Digital Otomatis.
             </Text>
           </Section>
 

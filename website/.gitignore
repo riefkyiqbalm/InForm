@@ -116,3 +116,7 @@ JWTsecret.txt
 #Schema-Prisma
 schema.prisma
 prisma.config.ts
+
+#Email
+src/emails/runEmailTest.bat
+src/emails/TestEmail.tsx

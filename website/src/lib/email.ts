@@ -13,31 +13,27 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import VerificationEmail from "@/emails/VerificationEmail";
 import PasswordReset          from "@/emails/PasswordReset";
+import PasswordResetOauth from "@/emails/PasswordResetOauth";
 import PasswordChanges        from "@/emails/PasswordChanges";
 import EmailChanges from "@/emails/EmailChanges";
 
-// ====== Singleton =======
+// ====== URL dan API =======
 // Instantiated once per process — not per request.
 const resend = new Resend(process.env.RESEND_API_KEY!);
-
 const FROM   = process.env.RESEND_FROM   ?? "InForm <noreply@aotamata.space>";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
-// ======= sendVerificationEmail =======
-// Renders the VerificationEmail React component to HTML and sends it via Resend.
-//
-// @param to    - recipient email address
-// @param name  - recipient display name (shown in greeting)
-// @param token - raw verifyToken from the DB (NOT hashed)
+// ======= 1. Mengirim Email Verifikasi =======
+// Melakukan rendering VerificationEmail Komponen React ke HTML dan kirim via Resend.
 
 export async function sendVerificationEmail(
   to: string,
   name: string,
   token: string
 ): Promise<void> {
-  const verifyUrl = `${BASE_URL}/api/auth/register?token=${token}`;
 
-  // -- render() converts the React component to plain HTML string --
+  const verifyUrl = `${BASE_URL}/api/auth/register?token=${token}`;
+  // -- Fungsi render() merubah react komponen jadi HTML --
   const html = await render(
     VerificationEmail({ name, verifyUrl })
   );
@@ -50,13 +46,12 @@ export async function sendVerificationEmail(
   });
 
   if (error) {
-    // --- Throw so the calling route can catch and return a 500 ---
+    // --- Menampilkan eror 500 ---
     throw new Error(`[Resend] ${error.message}`);
   }
 }
 
-// ===== sendResendVerificationEmail ======
-// Same as above but with a slightly different subject line for resend requests.
+// ===== Fungsi Untuk Mengirim Email Kembali (Kedua Kali) Jika Email Verifikasi tidak terkirim. ======
 
 export async function sendResendVerificationEmail(
   to: string,
@@ -81,13 +76,13 @@ export async function sendResendVerificationEmail(
   }
 }
 
-// ===== Helper =====
+// ===== Fungsi Helper =====
 async function send(to: string, subject: string, html: string) {
   const { error } = await resend.emails.send({ from: FROM, to: [to], subject, html });
   if (error) throw new Error(`[Resend] ${error.message}`);
 }
 
-// === 2. Password reset request ===
+// === 2. Perminataan Perubahan Password ===
 export async function sendPasswordResetEmail(
   to: string, name: string, token: string
 ) {
@@ -96,7 +91,7 @@ export async function sendPasswordResetEmail(
   await send(to, "Reset Kata Sandi Akun InForm Anda", html);
 }
 
-// === 3. Password changed confirmation (security alert) ===
+// === 3. Konfirmasi Perubahan Password (Peringatan Keamanan) ===
 export async function sendPasswordChangedEmail(
   to: string, name: string
 ) {
@@ -105,7 +100,7 @@ export async function sendPasswordChangedEmail(
   await send(to, "Kata Sandi Akun InForm Anda Telah Diubah", html);
 }
 
-// === 4. Email change — sent to the NEW address ===
+// === 4. Perubahan Email — Mengirim Ke alamat email baru ===
 export async function sendEmailChangeVerification(
   toNewEmail: string, name: string, oldEmail: string, token: string
 ) {
@@ -116,4 +111,13 @@ export async function sendEmailChangeVerification(
     }) as React.ReactElement
   );
   await send(toNewEmail, "Konfirmasi Perubahan Email Akun InForm Anda", html);
+}
+
+// === 5. Set Password Untuk Akun Google Oauth ===
+export async function setPassForOauth(
+  to: string, name: string, token: string, isOauth: boolean
+) {
+  const resetUrl = `${BASE_URL}/new-password?token=${token}`;
+  const html = await render(PasswordResetOauth({ name, resetUrl }) as React.ReactElement);
+  await send(to, "Buat Kata Sandi Akun InForm Anda", html);
 }

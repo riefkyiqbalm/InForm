@@ -1,35 +1,27 @@
-// emails/EmailChangeVerificationEmail.tsx
-// Sent to the NEW email address when user requests an email change.
-// They must click the link to confirm before the address is switched.
+
 
 import {
   Body, Button, Container, Head, Heading,
   Hr, Html, Link, Preview, Section, Text,
 } from "@react-email/components";
 import type React from "react";
+import Image from 'next/image';
 
-interface EmailChangeVerificationProps {
+interface PasswordResetProps {
   name: string;
-  /** The NEW email address being verified. */
-  newEmail: string;
-  /** The current (old) email address. */
-  oldEmail: string;
-  /** Full URL: BASE_URL/api/auth/change_email?token=... */
-  verifyUrl: string;
+  resetUrl: string;
   expiryLabel?: string;
 }
 
-export default function EmailChanges({
+export default function PasswordResetOauth({
   name,
-  newEmail,
-  oldEmail,
-  verifyUrl,
-  expiryLabel = "24 jam",
-}: EmailChangeVerificationProps) {
+  resetUrl,
+  expiryLabel = "1 jam",
+}: PasswordResetProps) {
   return (
     <Html lang="id" dir="ltr">
       <Head />
-      <Preview>Konfirmasi perubahan email akun InForm Anda</Preview>
+      <Preview>Buat kata sandi akun InFormm Anda</Preview>
 
       <Body style={S.body}>
         <Container style={S.container}>
@@ -48,63 +40,50 @@ export default function EmailChanges({
 
           {/* Content */}
           <Section style={S.content}>
-            <Heading style={S.h1}>Konfirmasi Perubahan Email</Heading>
+            <Heading style={S.h1}>Buat Kata Sandi</Heading>
 
             <Text style={S.greeting}>
               Halo, <strong style={{ color: "#e8eef6" }}>{name}</strong>!
             </Text>
 
             <Text style={S.body2}>
-              Anda telah meminta perubahan alamat email untuk akun{" "}
+              Kami menerima permintaan untuk Membuat kata sandi akun{" "}
               <strong style={{ color: "#00d4c8" }}>InForm</strong> Anda.
-              Klik tombol di bawah untuk mengonfirmasi perubahan ini.
+              Klik tombol di bawah untuk membuat kata sandi baru.
             </Text>
-
-            {/* Email change summary */}
-            <Section style={S.changeBox}>
-              <table width="100%" cellPadding={0} cellSpacing={0}>
-                <tr>
-                  <td style={S.changeRow}>
-                    <Text style={S.changeLabel}>Email Lama</Text>
-                    <Text style={S.changeValue}>{oldEmail}</Text>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "4px 0", textAlign: "center" }}>
-                    <Text style={{ color: "#5a7a99", fontSize: "16px", margin: 0 }}>↓</Text>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={S.changeRow}>
-                    <Text style={S.changeLabel}>Email Baru</Text>
-                    <Text style={{ ...S.changeValue, color: "#00d4c8" }}>{newEmail}</Text>
-                  </td>
-                </tr>
-              </table>
-            </Section>
+   
+            <Text style={S.warningbold}>
+                <strong>PERINGATAN ANDA LOGIN MENGGUNAKAN GOOGLE</strong>
+            </Text>
+            
+            <Text style={S.warningbold}>
+                Jika Anda membuat kata sandi, anda tidak bisa login menggunakan Google.
+            </Text>
+             
 
             <Section style={S.btnSection}>
-              <Button style={S.btn} href={verifyUrl}>
-                ✓ &nbsp; Konfirmasi Email Baru
+              <Button style={S.btn} href={resetUrl}>
+                🔑 &nbsp; Ubah Kata Sandi Anda
               </Button>
             </Section>
 
             <Text style={S.expiry}>
-              Tautan berlaku selama{" "}
+              Tautan ini hanya berlaku selama{" "}
               <strong style={{ color: "#e8eef6" }}>{expiryLabel}</strong>.
             </Text>
 
-            <Text style={S.warning}>
-              Jika Anda tidak meminta perubahan ini, abaikan email ini.
-              Email Anda tidak akan berubah.
+            <Text style={S.warningnorm}>
+              Jika Anda tidak membuat kata sandi, abaikan email ini.
+              Kata sandi Anda tidak akan berubah.
             </Text>
           </Section>
 
           <Hr style={S.divider} />
 
+          {/* Fallback link */}
           <Section style={S.fallback}>
             <Text style={S.fallbackLabel}>Tombol tidak berfungsi? Gunakan tautan ini:</Text>
-            <Link href={verifyUrl} style={S.fallbackLink}>{verifyUrl}</Link>
+            <Link href={resetUrl} style={S.fallbackLink}>{resetUrl}</Link>
           </Section>
 
           <Hr style={S.divider} />
@@ -124,34 +103,31 @@ export default function EmailChanges({
   );
 }
 
-EmailChanges.PreviewProps = {
-  name:      "Budi Santoso",
-  newEmail:  "budi.baru@example.com",
-  oldEmail:  "budi@example.com",
-  verifyUrl: "http://localhost:3000/api/auth/verify?token=preview_token",
-} satisfies EmailChangeVerificationProps;
+PasswordResetOauth.PreviewProps = {
+  name:     "Samuel Santoso",
+  resetUrl: "http://localhost:3000/new-password?token=preview_token",
+} satisfies PasswordResetProps;
 
+// ── Styles ────────────────────────────────────────────────────────────────────
 const S: Record<string, React.CSSProperties> = {
   body:         { backgroundColor: "#060d1a", fontFamily: "'DM Sans','Helvetica Neue',Arial,sans-serif", margin: 0, padding: "40px 0" },
   container:    { backgroundColor: "#0c1828", border: "1px solid #1a3050", borderRadius: "16px", margin: "0 auto", maxWidth: "520px", overflow: "hidden" },
   header:       { backgroundColor: "#0a1520", borderBottom: "1px solid #1a3050", padding: "20px 32px" },
   logoCell:     { backgroundColor: "#00d4c8", borderRadius: "10px", width: "38px", height: "38px", textAlign: "center", verticalAlign: "middle" },
-  logoText:     { color: "#fff", fontSize: "14px", fontWeight: "800", margin: 0, lineHeight: "38px" },
+  logoText:     { color: "#fff", fontSize: "14px", fontWeight: "800", margin: 0, lineHeight: "38px", letterSpacing: "0.5px" },
   logoName:     { color: "#e8eef6", fontSize: "18px", fontWeight: "700", margin: 0, lineHeight: "38px" },
   iconSection:  { padding: "36px 32px 0" },
   iconRing:     { display: "inline-block", width: "68px", height: "68px", backgroundColor: "rgba(0,212,200,0.08)", border: "1px solid rgba(0,212,200,0.2)", borderRadius: "50%", lineHeight: "68px", textAlign: "center", verticalAlign: "middle" },
   content:      { padding: "24px 32px 32px" },
   h1:           { color: "#e8eef6", fontSize: "22px", fontWeight: "800", letterSpacing: "-0.3px", margin: "0 0 16px", textAlign: "center" },
   greeting:     { color: "#94afc8", fontSize: "15px", lineHeight: "1.6", margin: "0 0 12px" },
-  body2:        { color: "#94afc8", fontSize: "14px", lineHeight: "1.7", margin: "0 0 24px" },
-  changeBox:    { backgroundColor: "rgba(0,212,200,0.04)", border: "1px solid rgba(0,212,200,0.12)", borderRadius: "12px", padding: "16px", margin: "0 0 24px" },
-  changeRow:    { padding: "6px 0" },
-  changeLabel:  { color: "#5a7a99", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 4px" },
-  changeValue:  { color: "#e8eef6", fontSize: "14px", fontWeight: "600", margin: 0, wordBreak: "break-all" },
+  body2:        { color: "#94afc8", fontSize: "14px", lineHeight: "1.7", margin: "0 0 28px" },
   btnSection:   { textAlign: "center", margin: "0 0 20px" },
-  btn:          { backgroundColor: "#00d4c8", borderRadius: "12px", color: "#060d1a", display: "inline-block", fontSize: "15px", fontWeight: "700", padding: "14px 32px", textDecoration: "none" },
+  btn:          { backgroundColor: "#f5c842", borderRadius: "12px", color: "#060d1a", display: "inline-block", fontSize: "15px", fontWeight: "700", padding: "14px 32px", textDecoration: "none" },
   expiry:       { color: "#5a7a99", fontSize: "13px", lineHeight: "1.6", margin: "0 0 12px", textAlign: "center" },
-  warning:      { color: "#5a7a99", fontSize: "12px", lineHeight: "1.6", margin: 0, textAlign: "center", fontStyle: "italic" },
+  warningnorm:  { color: "#5a7a99", fontSize: "12px", lineHeight: "1.6", margin: "0", textAlign: "center", fontStyle: "italic" },
+  warning:      { color: "#ff4d6d", fontSize: "12px", lineHeight: "1.6", margin: "0", textAlign: "center", fontStyle: "italic" },
+  warningbold:  { color: "#ff4d6d", fontSize: "14px", lineHeight: "1.7", margin: "0 0 28px", textAlign: "center" },
   divider:      { borderColor: "#1a3050", margin: "0" },
   fallback:     { padding: "20px 32px" },
   fallbackLabel:{ color: "#5a7a99", fontSize: "12px", margin: "0 0 8px" },

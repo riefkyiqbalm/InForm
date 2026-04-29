@@ -26,7 +26,7 @@ SmallLogo: {
     fontSize: '11px',
     fontWeight: 700,
     color: '#fff',
-  },
+  }as React.CSSProperties,
 h1: { fontSize: '26px', fontWeight: 800, margin: 0 } as React.CSSProperties,
 h2: { fontSize: 32, fontWeight: 800, marginBottom: 12 }as React.CSSProperties,
 p: { color: 'var(--muted)', fontSize: 15, lineHeight: 1.6, marginBottom: 30 }as React.CSSProperties,

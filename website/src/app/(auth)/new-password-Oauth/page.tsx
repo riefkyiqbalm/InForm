@@ -12,10 +12,10 @@ export default function forgotPassword() {
         <Card>
           <div>
             <InputPassword 
-             linkMessages     = "Reset"             // Pakai kalimat "Reset" jika user tidak login dari google, pakai kalimat "Password Baru"
-             passwordMessages = "Mengatur Ulang"   // Pakai kalimat "Mengatur Ulang" jika user tidak login dari google, pakai kalimat "Membuat"
-             uiMessages       = "Atur Ulang"        // Pakai kalimat "Atur Ulang" jika user tidak login dari google, pakai kalimat "Pembuatan" Pakai kalimat "diperbarui" jika user tidak login dari google, pakai kalimat "dibuat"
-             uiMessages2      = "diperbarui" />      
+             linkMessages     = "Password Baru"             // Pakai kalimat "Reset" jika user tidak login dari google, pakai kalimat "Password Baru"
+             passwordMessages = "Membuat"                   // Pakai kalimat "Mengatur Ulang" jika user tidak login dari google, pakai kalimat "Membuat"
+             uiMessages       = "Pembuatan"                 // Pakai kalimat "Atur Ulang" jika user tidak login dari google, pakai kalimat "Pembuatan" // Pakai kalimat "diperbarui" jika user tidak login dari google, pakai kalimat "dibuat"
+             uiMessages2      = "dibuat" />                 
           </div>
         </Card>
       </div>

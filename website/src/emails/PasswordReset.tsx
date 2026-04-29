@@ -36,21 +36,7 @@ export default function PasswordReset({
               </tr></table>
             </td></tr></table>
           </Section>
-
-          {/* Icon */}
-          <Section style={S.iconSection}>
-            <table width="100%" cellPadding={0} cellSpacing={0}><tr>
-              <td align="center">
-                <div style={S.iconRing}>
-                  {/* Lock icon */}
-                  <img
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 24 24' fill='none' stroke='%2300d4c8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E"
-                    width={30} height={30} alt=""
-                  />
-                </div>
-              </td>
-            </tr></table>
-          </Section>
+          
 
           {/* Content */}
           <Section style={S.content}>
@@ -68,7 +54,7 @@ export default function PasswordReset({
 
             <Section style={S.btnSection}>
               <Button style={S.btn} href={resetUrl}>
-                🔑 &nbsp; Reset Kata Sandi
+                🔑 &nbsp; Ubah Kata Sandi Anda
               </Button>
             </Section>
 
@@ -98,7 +84,7 @@ export default function PasswordReset({
               Email ini dikirim secara otomatis. Mohon tidak membalas email ini.
             </Text>
             <Text style={S.footerText}>
-              © {new Date().getFullYear()} InForm · Platform AI Multimodal Pengawasan Gizi
+              © {new Date().getFullYear()} InForm · Platform AI Pengisian Formulir Digital Otomatis.
             </Text>
           </Section>
 

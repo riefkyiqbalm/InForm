@@ -7,8 +7,14 @@ import { ErrorBox } from "@sharedUI/components/ErrorBox";
 import BackButton from "@sharedUI/components/buttons/BackButton";
 
 type Step = "reset" | "done";
+interface newPassProps {
+ linkMessages     : string;    // Pakai kalimat "Reset" jika user tidak login dari google, pakai kalimat "Password Baru"
+ passwordMessages : string; // Pakai kalimat "Mengatur Ulang" jika user tidak login dari google, pakai kalimat "Membuat"
+ uiMessages       : string;       // Pakai kalimat "Atur Ulang" jika user tidak login dari google, pakai kalimat "Pembuatan"
+ uiMessages2      : string;       // Pakai kalimat "diperbarui" jika user tidak login dari google, pakai kalimat "dibuat"
+}
 
-export function InputPassword() {
+export function InputPassword({linkMessages, passwordMessages, uiMessages, uiMessages2}:newPassProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -18,15 +24,13 @@ export function InputPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [tokenMissing, setTokenMissing] = useState(false);
-
-  // Get token safely
   const token = searchParams?.get('token');
 
   // Check if token exists on mount
   useEffect(() => {
     if (!token) {
       setTokenMissing(true);
-      setError("Tautan reset tidak valid atau telah kadaluarsa.");
+      setError(`Tautan ${linkMessages} tidak valid atau telah kadaluarsa.`);
     }
   }, [token]);
 
@@ -35,7 +39,7 @@ export function InputPassword() {
     setError("");
     
     if (!token) {
-      setError("Tautan reset tidak ditemukan.");
+      setError(`Tautan ${linkMessages} tidak ditemukan.`);
       return;
     }
 
@@ -55,7 +59,7 @@ export function InputPassword() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message ?? "Gagal mengatur ulang kata sandi.");
+      if (!res.ok) throw new Error(data.message ?? `Gagal ${passwordMessages} kata sandi.`);
       setStep("done");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan.");
@@ -64,13 +68,13 @@ export function InputPassword() {
     }
   };
 
-  // If token is missing, show error immediately but allow rendering
+  // Kalau token hilang, buat pesan error tapi rendering tetap diperbolehkan
   if (tokenMissing && !error) {
      // Fallback if useEffect hasn't run yet
      return (
        <div style={S.pageWrapper}>
          <div style={S.container}>
-           <ErrorBox message="Tautan reset tidak valid." />
+           <ErrorBox message={`Tautan ${linkMessages} tidak valid.`} />
            <button style={S.mainBtn} onClick={() => router.push("/login")}>
              Kembali ke Masuk
            </button>
@@ -87,7 +91,7 @@ export function InputPassword() {
           <div style={S.headerLeft}>
             <Icon name="white-lock" size={20} />
             <h1 style={S.title}>
-              {step === "reset" && "Atur Ulang Kata Sandi"}
+              {step === "reset" && `${uiMessages} Kata Sandi`}
               {step === "done" && "Berhasil!"}
             </h1>
           </div>
@@ -97,7 +101,7 @@ export function InputPassword() {
           {step === "done" ? (
             <div style={S.doneWrap}>
               <div style={S.doneIcon}><Icon name="white-check" size={32} /></div>
-              <p style={S.doneText}>Kata sandi berhasil diperbarui. Silakan masuk kembali.</p>
+              <p style={S.doneText}>Kata sandi berhasil {uiMessages2} . Silakan masuk kembali.</p>
               <button style={S.mainBtn} onClick={() => router.push("/login")}>
                 Kembali ke Masuk
               </button>
@@ -125,7 +129,7 @@ export function InputPassword() {
                 }}
               >
                 {loading ? <Icon name="white-loading" size={18} /> : <Icon name="white-key" size={18} />}
-                <span>{loading ? "Menyimpan..." : "Simpan Kata Sandi Baru"}</span>
+                <span>{loading ? "Menyimpan..." : "Menyimpan Kata Sandi Baru"}</span>
               </button>
             </form>
           )}
