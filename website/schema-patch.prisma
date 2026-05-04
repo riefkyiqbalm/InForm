@@ -1,0 +1,39 @@
+// prisma/schema.prisma — tambahkan field ini ke model User
+//
+// Pilih SALAH SATU strategi (konsisten dengan route.ts):
+//
+// ── Strategi 1: timestamp (direkomendasikan) ─────────────────────────────────
+// Keuntungan: bisa tahu kapan password terakhir diubah, berguna untuk audit.
+
+model User {
+  // ... field yang sudah ada ...
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  name              String
+  image             String?
+  password          String
+  role              String    @default("USER")
+
+  // TAMBAHKAN INI:
+  passwordChangedAt DateTime? // null = masih pakai password random dari OAuth
+                              // diisi saat user berhasil ubah password via:
+                              //   - /api/user/change-password
+                              //   - /api/auth/reset-password (forgot password)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ── Strategi 2: boolean (lebih simpel) ──────────────────────────────────────
+// Gunakan ini jika Anda tidak butuh audit trail kapan password diubah.
+//
+// model User {
+//   ...
+//   hasCustomPassword Boolean @default(false)
+//   ...
+// }
+
+
+// ── Jalankan setelah edit schema ────────────────────────────────────────────
+// npx prisma migrate dev --name add_password_changed_at
+// npx prisma generate

@@ -20,7 +20,7 @@ export default function PasswordReset({
   return (
     <Html lang="id" dir="ltr">
       <Head />
-      <Preview>Reset kata sandi akun InFormm Anda</Preview>
+      <Preview>Reset kata sandi akun InForm Anda</Preview>
 
       <Body style={S.body}>
         <Container style={S.container}>

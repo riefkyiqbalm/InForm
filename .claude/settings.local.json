@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\website\\\\src\\\\app\\\\api\\\\auth\\\\send-login-link\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\website\\\\src\\\\app\\\\api\\\\auth\\\\verify-login-link\")",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(grep -r \"from [@'\\\\\"]*.*lib[@'\\\\\"]*$\\\\|from [@'\\\\\"]*@/lib[@'\\\\\"]*$\" website/src --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(grep -r \"from [@'\\\\\"]*~/lib[@'\\\\\"]*$\" browser-extension --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\sharedUI\\\\src\\\\components\\\\chats\\\\MultiModal.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\sharedUI\\\\src\\\\components\\\\IconNavigation.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\website\\\\src\\\\lib\\\\index.ts\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\website\\\\src\\\\emails\\\\TestEmail.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Asus-Iqbal\\\\Documents\\\\IT-Project\\\\Machine_Learning\\\\InForm\\\\browser-extension\\\\lib\\\\index.ts\" -Force)"
+    ]
+  }
+}

@@ -10,7 +10,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${fontHead.variable} ${fontMono.variable} ${fontBody.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${fontHead.variable} ${fontMono.variable} ${fontBody.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var s=localStorage.getItem('inform-theme');var t=s==='light'||s==='dark'?s:window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';var r=document.documentElement;r.setAttribute('data-theme',t);if(t==='light'){var v={'--bg':'#f0f4f8','--panel':'#e4ecf4','--card':'#ffffff','--border':'#c5d5e8','--teal':'#009b92','--teal-dim':'#00756d','--gold':'#c49a00','--red':'#d63057','--text':'#0d1b2a','--muted':'#4a6580','--glow':'0 0 40px rgba(0,155,146,.12)'};for(var k in v)r.style.setProperty(k,v[k]);}}catch(e){}})();` }} />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>

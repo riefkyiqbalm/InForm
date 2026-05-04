@@ -51,7 +51,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findFirst({
       where:  { resetToken: token },
-      select: { id: true, name: true, email: true, resetTokenExpiry: true },
+      select: { id: true, name: true, email: true, resetTokenExpiry: true, },
     });
 
     if (!user) {
@@ -68,6 +68,7 @@ export async function POST(req: Request) {
         password:         hashed,
         resetToken:       null,
         resetTokenExpiry: null,
+        passwordChangedAt: new Date(),
       },
     });
 

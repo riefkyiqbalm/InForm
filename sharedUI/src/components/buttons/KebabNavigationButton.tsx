@@ -112,10 +112,10 @@ export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
           {NAV_ITEMS.map((item) => (
             <button
               key={item.key}
-              style={{ ...S.item, color: item.danger ? "#ff4d6d" : "#e2e8f0" }}
+              style={{ ...S.item, color: item.danger ? "var(--red)" : "var(--text)" }}
               onClick={() => handleAction(item.key)}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = item.danger ? "rgba(255,77,109,0.1)" : "rgba(255,255,255,0.06)"
+                e.currentTarget.style.background = item.danger ? "rgba(255,77,109,0.1)" : "rgba(128,128,128,0.08)"
               }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "none" }}
             >
@@ -138,50 +138,52 @@ export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
 }
 
 const S: Record<string, React.CSSProperties> = {
-  trigger: { 
-    border: "none", 
-    borderRadius: 6, 
-    padding: "5px 6px", 
-    display: "flex", 
-    alignItems: "center", 
-    justifyContent: "center", 
-    cursor: "pointer", 
-    transition: "background .15s", 
-    color: "#94a3b8" 
+  trigger: {
+    border: "none",
+    borderRadius: 6,
+    padding: "5px 6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "background .15s",
+    color: "var(--muted)",
+    background: "none",
   },
-  panel: { 
-    position: "absolute", 
-    background: "#1a2236", 
-    border: "1px solid rgba(255,255,255,0.1)", 
-    borderRadius: 10, 
-    boxShadow: "0 10px 28px -4px rgba(0,0,0,0.5)", 
-    zIndex: 9999, 
-    minWidth: 160, 
-    padding: "4px", 
-    pointerEvents: "auto" 
+  panel: {
+    position: "absolute",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
+    borderRadius: 10,
+    boxShadow: "0 10px 28px -4px rgba(0,0,0,0.4)",
+    zIndex: 9999,
+    minWidth: 160,
+    padding: "4px",
+    pointerEvents: "auto",
   },
-  item: { 
-    width: "100%", 
-    padding: "9px 12px", 
-    display: "flex", 
-    alignItems: "center", 
-    gap: 10, 
-    background: "none", 
-    border: "none", 
-    cursor: "pointer", 
-    textAlign: "left", 
-    borderRadius: 7, 
-    transition: "background .15s" 
+  item: {
+    width: "100%",
+    padding: "9px 12px",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    textAlign: "left",
+    borderRadius: 7,
+    transition: "background .15s",
+    color: "var(--text)",
   },
-  itemIcon: { 
-    display: "flex", 
-    alignItems: "center", 
-    opacity: 0.85, 
-    flexShrink: 0 
+  itemIcon: {
+    display: "flex",
+    alignItems: "center",
+    opacity: 0.85,
+    flexShrink: 0,
   },
-  itemLabel: { 
-    fontSize: 13, 
-    fontWeight: 500, 
-    whiteSpace: "nowrap" 
+  itemLabel: {
+    fontSize: 13,
+    fontWeight: 500,
+    whiteSpace: "nowrap",
   },
 }

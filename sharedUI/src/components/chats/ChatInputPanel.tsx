@@ -1,6 +1,6 @@
 // components/chats/ChatInputPanel.tsx
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import type { InputMode } from "@sharedUI/types";
 import AttachFile from "@sharedUI/components/buttons/AttachButton";
 import SendButton from "@sharedUI/components/buttons/SendButton";
@@ -123,7 +123,7 @@ export default function ChatInputPanel(props: ChatInputPanelProps) {
 const S: Record<string, React.CSSProperties> = {
   inputAreaWrapper: {
     width: "100%",
-    background: "linear-gradient(to top, var(--bg,#0d1117) 80%, transparent)",
+    background: "linear-gradient(to top, var(--bg) 80%, transparent)",
     display: "flex",
     justifyContent: "center",
     flexShrink: 0,
@@ -148,7 +148,7 @@ const S: Record<string, React.CSSProperties> = {
   },
   chatBox: {
     background: "var(--card)",
-    border: "1px solid var(--border,#30363d)",
+    border: "1px solid var(--border)",
     borderRadius: 16,
     padding: "10px",
     display: "flex",
@@ -160,7 +160,7 @@ const S: Record<string, React.CSSProperties> = {
     border: "none",
     padding: "4px 8px",
     background: "transparent",
-    color: "var(--text,#e6edf3)",
+    color: "var(--text)",
     fontFamily: "var(--font-head)",
     fontSize: 15,
     outline: "none",
@@ -184,7 +184,7 @@ const S: Record<string, React.CSSProperties> = {
   },
   footerHint: {
     marginTop: 12,
-    color: "var(--muted,#8b949e)",
+    color: "var(--muted)",
     fontSize: 12,
     textAlign: "center",
   },

@@ -101,7 +101,7 @@ function RootPage({ onNavigate }: { onNavigate: (p: SettingsPage) => void }) {
     <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
       {ROOT_MENU.map((item) => (
         <button key={item.page} style={S.menuRow} onClick={() => onNavigate(item.page)}
-          onMouseEnter={(e) => (e.currentTarget.style.background="rgba(255,255,255,0.05)")}
+          onMouseEnter={(e) => (e.currentTarget.style.background="var(--card)")}
           onMouseLeave={(e) => (e.currentTarget.style.background="transparent")}>
           <div style={S.menuRowIcon}><Icon name={item.icon} size={20} invert={false} /></div>
           <div style={{ flex:1, textAlign:"left" }}>
@@ -122,7 +122,7 @@ function AIModelPage() {
     <div>
       <p style={S.sectionDesc}>
         Pilih model AI yang digunakan. Model berjalan lokal via LM Studio.<br />
-        <span style={{ color:"#5a6a7a" }}>Select the AI model. Models run locally via LM Studio.</span>
+        <span style={{ color:"var(--muted)" }}>Select the AI model. Models run locally via LM Studio.</span>
       </p>
       <div style={{ display:"flex", flexDirection:"column", gap:6, marginTop:16 }}>
         {AI_MODELS.map((m) => (
@@ -295,21 +295,21 @@ function MemoryPage() {
     <div>
       <p style={S.sectionDesc}>
         Unggah dokumen referensi untuk InForm saat menjawab atau mengisi form.<br />
-        <span style={{ color:"#5a6a7a" }}>Upload reference documents for InForm to use when answering or filling forms.</span>
+        <span style={{ color:"var(--muted)" }}>Upload reference documents for InForm to use when answering or filling forms.</span>
       </p>
 
       <button style={{ ...S.uploadBtn, opacity: uploading ? 0.6 : 1 }}
         onClick={() => !uploading && fileInputRef.current?.click()}
-        onMouseEnter={(e) => (e.currentTarget.style.borderColor="var(--teal,#00d4c8)")}
-        onMouseLeave={(e) => (e.currentTarget.style.borderColor="rgba(255,255,255,0.12)")}>
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor="var(--teal)")}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor="var(--border)")}>
         {uploading
-          ? <div style={{ width:18, height:18, border:"2px solid #30363d", borderTop:"2px solid #00d4c8", borderRadius:"50%", animation:"spin .7s linear infinite", flexShrink:0 }} />
+          ? <div style={{ width:18, height:18, border:"2px solid var(--border)", borderTop:"2px solid var(--teal)", borderRadius:"50%", animation:"spin .7s linear infinite", flexShrink:0 }} />
           : <Icon name="white-upload" size={18} invert={false} />}
         <div>
-          <div style={{ fontSize:13, fontWeight:600, color:"var(--text,#e6edf3)" }}>
+          <div style={{ fontSize:13, fontWeight:600, color:"var(--text)" }}>
             {uploading ? "Mengunggah..." : "Unggah Dokumen / Upload Document"}
           </div>
-          <div style={{ fontSize:11, color:"var(--muted,#8b949e)", marginTop:2 }}>
+          <div style={{ fontSize:11, color:"var(--muted)", marginTop:2 }}>
             PDF, DOCX, XLSX, PPT, MP4, MP3, JSON, Kode, Gambar...
           </div>
         </div>
@@ -329,7 +329,7 @@ function MemoryPage() {
               </div>
               <button style={S.removeBtn} onClick={() => removeDoc(i)} title="Hapus / Remove"
                 onMouseEnter={(e) => (e.currentTarget.style.color="#ff4d6d")}
-                onMouseLeave={(e) => (e.currentTarget.style.color="#5a6a7a")}>
+                onMouseLeave={(e) => (e.currentTarget.style.color="var(--muted)")}>
                 <Icon name="red-trash" size={18} invert={false} />
               </button>
             </div>
@@ -358,31 +358,31 @@ function formatSize(bytes: number): string {
 
 const S: Record<string, React.CSSProperties> = {
   overlay:     { position:"fixed", inset:0, zIndex:10000, background:"rgba(0,0,0,0.6)", display:"flex", alignItems:"center", justifyContent:"center", padding:16 },
-  modal:       { background:"var(--bg2,#161b22)", border:"1px solid var(--border,#30363d)", borderRadius:16, width:"100%", maxWidth:380, maxHeight:"85vh", display:"flex", flexDirection:"column", overflow:"hidden" },
-  header:      { display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 16px", borderBottom:"1px solid var(--border,#30363d)", flexShrink:0 },
-  headerTitle: { fontSize:14, fontWeight:600, color:"var(--text,#e6edf3)", flex:1, textAlign:"center" },
-  iconBtn:     { background:"none", border:"none", cursor:"pointer", padding:6, borderRadius:6, display:"flex", alignItems:"center", color:"var(--muted,#8b949e)", width:32, justifyContent:"center" },
+  modal:       { background:"var(--panel)", border:"1px solid var(--border)", borderRadius:16, width:"100%", maxWidth:380, maxHeight:"85vh", display:"flex", flexDirection:"column", overflow:"hidden" },
+  header:      { display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 16px", borderBottom:"1px solid var(--border)", flexShrink:0 },
+  headerTitle: { fontSize:14, fontWeight:600, color:"var(--text)", flex:1, textAlign:"center" },
+  iconBtn:     { background:"none", border:"none", cursor:"pointer", padding:6, borderRadius:6, display:"flex", alignItems:"center", color:"var(--muted)", width:32, justifyContent:"center" },
   body:        { flex:1, overflowY:"auto", padding:"16px" },
   menuRow:     { display:"flex", alignItems:"center", gap:14, width:"100%", padding:"12px 10px", background:"transparent", border:"none", borderRadius:10, cursor:"pointer", transition:"background .15s" },
-  menuRowIcon: { width:40, height:40, borderRadius:10, background:"rgba(255,255,255,0.05)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 },
-  menuRowTitle:{ fontSize:14, fontWeight:600, color:"var(--text,#e6edf3)", marginBottom:2 },
-  menuRowSub:  { fontSize:11, color:"var(--muted,#8b949e)", lineHeight:1.4 },
-  sectionDesc: { fontSize:12, color:"var(--muted,#8b949e)", lineHeight:1.6, margin:0 },
+  menuRowIcon: { width:40, height:40, borderRadius:10, background:"var(--card)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 },
+  menuRowTitle:{ fontSize:14, fontWeight:600, color:"var(--text)", marginBottom:2 },
+  menuRowSub:  { fontSize:11, color:"var(--muted)", lineHeight:1.4 },
+  sectionDesc: { fontSize:12, color:"var(--muted)", lineHeight:1.6, margin:0 },
   modelRow:    { display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 14px", borderRadius:10, cursor:"pointer", transition:"background .15s", width:"100%" },
-  modelName:   { fontSize:13, fontWeight:600, color:"var(--text,#e6edf3)" },
-  modelDesc:   { fontSize:11, color:"var(--muted,#8b949e)", marginTop:2 },
+  modelName:   { fontSize:13, fontWeight:600, color:"var(--text)" },
+  modelDesc:   { fontSize:11, color:"var(--muted)", marginTop:2 },
   toggleRow:   { display:"flex", alignItems:"flex-start", gap:14 },
-  toggleTitle: { fontSize:13, fontWeight:600, color:"var(--text,#e6edf3)", marginBottom:4 },
-  toggleDesc:  { fontSize:11, color:"var(--muted,#8b949e)", lineHeight:1.5 },
+  toggleTitle: { fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:4 },
+  toggleDesc:  { fontSize:11, color:"var(--muted)", lineHeight:1.5 },
   toggle:      { width:42, height:24, borderRadius:99, border:"none", cursor:"pointer", position:"relative", transition:"background .2s", flexShrink:0, marginTop:2, padding:0 },
   toggleThumb: { position:"absolute", top:2, width:20, height:20, borderRadius:"50%", background:"#fff", transition:"transform .2s" },
-  divider:     { height:1, background:"var(--border,#30363d)", margin:"20px 0" },
+  divider:     { height:1, background:"var(--border)", margin:"20px 0" },
   dangerZone:  { background:"rgba(255,77,109,0.06)", border:"1px solid rgba(255,77,109,0.15)", borderRadius:10, padding:"14px" },
-  dangerBtn:   { marginTop:12, display:"flex", alignItems:"center", gap:8, background:"rgba(255,77,109,0.1)", border:"1px solid rgba(255,77,109,0.25)", borderRadius:8, color:"#ff4d6d", fontSize:12, fontWeight:600, padding:"8px 14px", cursor:"pointer", transition:"background .15s" },
-  uploadBtn:   { display:"flex", alignItems:"center", gap:14, width:"100%", padding:"14px", background:"rgba(255,255,255,0.03)", border:"1px dashed rgba(255,255,255,0.12)", borderRadius:10, cursor:"pointer", transition:"border-color .15s", marginTop:12 },
-  docRow:      { display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8 },
-  docName:     { fontSize:12, fontWeight:500, color:"var(--text,#e6edf3)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
-  docMeta:     { fontSize:10, color:"var(--muted,#8b949e)" },
-  removeBtn:   { background:"none", border:"none", cursor:"pointer", padding:4, color:"#5a6a7a", display:"flex", transition:"color .15s" },
-  emptyState:  { display:"flex", flexDirection:"column", alignItems:"center", padding:"32px 0", color:"var(--muted,#8b949e)" },
+  dangerBtn:   { marginTop:12, display:"flex", alignItems:"center", gap:8, background:"rgba(255,77,109,0.1)", border:"1px solid rgba(255,77,109,0.25)", borderRadius:8, color:"var(--red)", fontSize:12, fontWeight:600, padding:"8px 14px", cursor:"pointer", transition:"background .15s" },
+  uploadBtn:   { display:"flex", alignItems:"center", gap:14, width:"100%", padding:"14px", background:"var(--card)", border:"1px dashed var(--border)", borderRadius:10, cursor:"pointer", transition:"border-color .15s", marginTop:12 },
+  docRow:      { display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"var(--card)", border:"1px solid var(--border)", borderRadius:8 },
+  docName:     { fontSize:12, fontWeight:500, color:"var(--text)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
+  docMeta:     { fontSize:10, color:"var(--muted)" },
+  removeBtn:   { background:"none", border:"none", cursor:"pointer", padding:4, color:"var(--muted)", display:"flex", transition:"color .15s" },
+  emptyState:  { display:"flex", flexDirection:"column", alignItems:"center", padding:"32px 0", color:"var(--muted)" },
 }

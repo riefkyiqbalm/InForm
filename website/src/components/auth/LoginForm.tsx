@@ -4,155 +4,109 @@ import Icon from "@sharedUI/components/IconStyles";
 import { FormInput } from "@sharedUI/components/FormInput";
 import { ErrorBox } from "@sharedUI/components/ErrorBox";
 import OauthButton from "@/components/auth/OauthButton";
-import { useRouter } from "next/navigation";
 
 interface LogInFormProps {
-  onSubmit: (email: string, password: string) => Promise<void>;
   loading: boolean;
   error: string;
   onError: (msg: string) => void;
 }
 
-export function LogInForm({
-  onSubmit,
-  loading,
-  error,
-  onError,
-}: LogInFormProps) {
+export function LogInForm({ loading, error, onError }: LogInFormProps) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
   const [animateMail, setAnimateMail] = useState(false);
-  const [animatePass, setAnimatePass] = useState(false);
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    onError("");
-    await onSubmit(email, password);
-  };
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const fAnimateMail = (e: React.AnimationEvent<HTMLInputElement>) => {
     if (e.animationName === "onAutofillStart") setAnimateMail(false);
   };
 
-  const fAnimatePass = (e: React.AnimationEvent<HTMLInputElement>) => {
-    if (e.animationName === "onAutofillStart") setAnimatePass(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    onError("");
+    setSending(true);
+    try {
+      const res = await fetch("/api/auth/send-login-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal mengirim tautan");
+      setSent(true);
+    } catch (err: unknown) {
+      onError(err instanceof Error ? err.message : "Gagal mengirim tautan. Coba lagi.");
+    } finally {
+      setSending(false);
+    }
   };
 
-  return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <ErrorBox message={error} />
-
-        {/* Google Button */}
-        <OauthButton />
-
-        <div style={S.container}>
-          {/* Garis horizontal di belakang teks */}
-          <div style={S.lineStyle}></div>
-
-          {/* Teks di tengah */}
-          <span style={S.textStyle}>Or continue with email</span>
-        </div>
-
-        {/* Email */}
-        <FormInput
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => {
-            const v = e.target.value;
-            setEmail(v);
-            if (v === "") setAnimateMail(true);
-          }}
-          onAnimationStart={fAnimateMail}
-          placeholder="Masukkan email"
-          iconName="email"
-          iconInvert={!animateMail}
-          required
-          disabled={loading}
-        />
-
-        {/* Password */}
-        <FormInput
-          label="Kata Sandi"
-          type={showPass ? "text" : "password"}
-          value={password}
-          onChange={(e) => {
-            const v = e.target.value;
-            setPassword(v);
-            if (v === "") setAnimatePass(true);
-          }}
-          onAnimationStart={fAnimatePass}
-          placeholder="Masukkan kata sandi"
-          iconName="lock"
-          iconInvert={!animatePass}
-          required
-          disabled={loading}
-          rightSlot={
-            <span onClick={() => setShowPass(!showPass)} style={S.togglePass}>
-              <Icon name={showPass ? "white-eye-off" : "white-eye"} size={18} />
-            </span>
-          }
-        />
-
-        {/* Forgot password link */}
-        <div style={S.forgotRow}>
-          <button
-            type="button"
-            style={S.forgotLink}
-            onClick={() => router.push("/forgot-password")}
-          >
-            Lupa kata sandi?
-          </button>
-        </div>
-        {/* <ForgotPassword/> */}
-        <button type="submit" disabled={loading} style={S.mainBtn}>
-          {loading ? (
-            <>
-              <Icon name="white-loading" size={18} />
-              <span>Memproses…</span>
-            </>
-          ) : (
-            <>
-              <Icon name="white-arrow-right" size={18} />
-              <span>Masuk ke InForm</span>
-            </>
-          )}
+  if (sent) {
+    return (
+      <div style={S.sentBox}>
+        <div style={S.sentIcon}>✉</div>
+        <p style={S.sentTitle}>Cek Email Anda</p>
+        <p style={S.sentBody}>
+          Tautan login telah dikirim ke <strong style={{ color: "var(--teal)" }}>{email}</strong>.
+          Tautan berlaku selama <strong>30 menit</strong>.
+        </p>
+        <button
+          type="button"
+          style={S.resendBtn}
+          onClick={() => { setSent(false); onError(""); }}
+        >
+          Kirim ulang / ganti email
         </button>
-      </form>
+      </div>
+    );
+  }
 
-      {/* Forgot password modal */}
-      {/* {showForgot && <ForgotPassword onClose={() => setShowForgot(false)} />} */}
-    </>
+  return (
+    <form onSubmit={handleSubmit}>
+      <ErrorBox message={error} />
+
+      <OauthButton />
+
+      <div style={S.divider}>
+        <div style={S.dividerLine} />
+        <span style={S.dividerText}>Atau lanjutkan dengan email</span>
+      </div>
+
+      <FormInput
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => {
+          const v = e.target.value;
+          setEmail(v);
+          if (v === "") setAnimateMail(true);
+        }}
+        onAnimationStart={fAnimateMail}
+        placeholder="Masukkan email"
+        iconName="email"
+        iconInvert={!animateMail}
+        required
+        disabled={loading || sending}
+      />
+
+      <button type="submit" disabled={loading || sending} style={S.mainBtn}>
+        {sending ? (
+          <>
+            <Icon name="white-loading" size={18} />
+            <span>Mengirim…</span>
+          </>
+        ) : (
+          <>
+            <Icon name="white-arrow-right" size={18} />
+            <span>Kirim Tautan Login</span>
+          </>
+        )}
+      </button>
+    </form>
   );
 }
 
 const S: Record<string, React.CSSProperties> = {
-  togglePass: {
-    cursor: "pointer",
-    opacity: 0.7,
-    display: "flex",
-    alignItems: "center",
-  },
-  forgotRow: {
-    display: "flex",
-    justifyContent: "flex-end",
-    marginTop: "-12px",
-    marginBottom: "20px",
-  },
-  forgotLink: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    color: "var(--teal)",
-    fontSize: "12px",
-    fontWeight: 600,
-    padding: 0,
-    textDecoration: "none",
-    transition: "opacity 0.2s",
-  },
   mainBtn: {
     width: "100%",
     padding: "14px",
@@ -169,30 +123,64 @@ const S: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "center",
     gap: "8px",
+    marginTop: "8px",
   },
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    margin: '20px 0',
-    position: 'relative'
+  divider: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    margin: "20px 0",
+    position: "relative",
   },
-  lineStyle: {
-    position: 'absolute',
-    width: '100%',
-    height: '1px',
-    backgroundColor: 'var(--muted)', // Gray-200
-    zIndex: 0
+  dividerLine: {
+    position: "absolute",
+    width: "100%",
+    height: "1px",
+    backgroundColor: "var(--muted)",
+    zIndex: 0,
   },
-   textStyle:  {
-    paddingLeft: '8px',
-    paddingRight: '8px',
-    backgroundColor: 'var(--panel)', // Putih
-    color: 'var(--teal)',          // Gray-500
-    fontSize: '18px',
-    position: 'relative',
-    font:"message-box",
-    zIndex: 1
-  }
+  dividerText: {
+    paddingLeft: "8px",
+    paddingRight: "8px",
+    backgroundColor: "var(--panel)",
+    color: "var(--teal)",
+    fontSize: "14px",
+    position: "relative",
+    zIndex: 1,
+  },
+  sentBox: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "24px 8px",
+    gap: "12px",
+    textAlign: "center",
+  },
+  sentIcon: {
+    fontSize: "40px",
+    lineHeight: 1,
+  },
+  sentTitle: {
+    color: "var(--text)",
+    fontSize: "18px",
+    fontWeight: 700,
+    margin: 0,
+  },
+  sentBody: {
+    color: "var(--muted)",
+    fontSize: "14px",
+    lineHeight: 1.6,
+    margin: 0,
+  },
+  resendBtn: {
+    background: "none",
+    border: "none",
+    color: "var(--teal)",
+    fontSize: "13px",
+    fontWeight: 600,
+    cursor: "pointer",
+    padding: 0,
+    marginTop: "4px",
+  },
 };

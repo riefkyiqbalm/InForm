@@ -1,9 +1,10 @@
-'use-client'
+'use client'
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@sharedUI/context/SharedAuthContext";
+import { ThemeToggle } from "@sharedUI/context/ThemeContext";
 import HamburgerIcon from "@sharedUI/components/chats/HamburgerIcon";
 import NewChatButton from "@sharedUI/components/buttons/NewButton";
-import ChatList from "@sharedUI/components/chats/ChatList"; 
+import ChatList from "@sharedUI/components/chats/ChatList";
 
 interface LeftPanelProps {
   isOpen: boolean;
@@ -23,40 +24,41 @@ export default function LeftPanel({ isOpen, setIsOpen, onClose }: LeftPanelProps
 
   return (
     <aside style={{
-      ...S.sidebar, 
-      width: isOpen ? 280 : 0, // Diubah ke 0 atau 70 sesuai preferensi
-      opacity: isOpen ? 1 : 0,  // Tambahkan efek fade agar lebih halus
+      ...S.sidebar,
+      width: isOpen ? 280 : 0,
+      opacity: isOpen ? 1 : 0,
       visibility: isOpen ? "visible" : "hidden",
     }}>
-      <div style={{...S.container, width: 280}}>
+      <div style={{ ...S.container, width: 280 }}>
         {/* Header */}
         <div style={S.header}>
-          <HamburgerIcon 
-            isOpen={isOpen} 
-            onClick={() => setIsOpen(false)} 
-            
-          />
+          <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(false)} />
           <div style={{
-            ...S.titleContainer, 
+            ...S.titleContainer,
             opacity: isOpen ? 1 : 0,
             transform: isOpen ? "translateX(0)" : "translateX(-10px)",
           }}>
-            <div style={S.title}>InFormm</div>
+            <div style={S.title}>InForm</div>
             <div style={S.subtitle}>{user?.name || "Guest"}</div>
           </div>
         </div>
 
         {/* Konten Utama */}
-        <div style={{ 
-          opacity: isOpen ? 1 : 0, 
+        <div style={{
+          opacity: isOpen ? 1 : 0,
           transition: "opacity 0.2s ease-in-out",
           display: "flex",
           flexDirection: "column",
           flex: 1,
-          overflow: "hidden" // Mencegah konten meluber saat transisi width
+          overflow: "hidden",
         }}>
           <NewChatButton isOpen={isOpen} />
           <ChatList isOpen={isOpen} />
+        </div>
+
+        {/* Footer — theme toggle */}
+        <div style={S.footer}>
+          <ThemeToggle />
         </div>
       </div>
     </aside>
@@ -65,22 +67,21 @@ export default function LeftPanel({ isOpen, setIsOpen, onClose }: LeftPanelProps
 
 const S: Record<string, React.CSSProperties> = {
   sidebar: {
-    background: "rgb(15, 23, 42)",
-    color: "white",
+    background: "var(--panel)",
+    color: "var(--text)",
     height: "100vh",
-    borderRight: "1px solid rgb(55, 65, 81)",
+    borderRight: "1px solid var(--border)",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    position: "absolute", // Agar melayang (overlay) di atas chat
+    position: "absolute",
     left: 0,
     top: 0,
-    zIndex: 100, // Supaya di atas elemen lain
+    zIndex: 100,
   },
   container: {
-    padding: '10px 16px',
+    padding: "10px 16px",
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    // Jangan set width fixed di sini agar mengikuti lebar parent saat animasi
   },
   header: {
     display: "flex",
@@ -94,12 +95,13 @@ const S: Record<string, React.CSSProperties> = {
     transition: "all 0.3s ease-in-out",
     whiteSpace: "nowrap",
   },
-  title: { 
-    fontWeight: "bold", 
-    fontSize: 18 
-  },
-  subtitle: { 
-    fontSize: 14, 
-    color: "rgb(148, 163, 184)" 
+  title: { fontWeight: "bold", fontSize: 18, color: "var(--text)" },
+  subtitle: { fontSize: 14, color: "var(--muted)" },
+  footer: {
+    paddingTop: 12,
+    borderTop: "1px solid var(--border)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
 };

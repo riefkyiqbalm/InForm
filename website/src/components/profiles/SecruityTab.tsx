@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@sharedUI/context/ToastContext";
 import Icon from "@sharedUI/components/IconStyles";
 import SaveButton from "@sharedUI/components/buttons/SaveButton";
+import Cookies from "js-cookie";
 
 export default function SecurityTab() {
   const { changePassword, logout } = useAuth();
@@ -28,25 +29,49 @@ export default function SecurityTab() {
       toast("Kata sandi minimal 6 karakter", "error");
       return;
     }
-
+ 
     setLoading(true);
     try {
-      await changePassword(currentPassword, newPassword);
+
+      const token = Cookies.get("_auth_token");
+      const res = await fetch("/api/profile/edit_pass", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+ 
+      const data = await res.json().catch(() => ({})) as { error?: string };
+ 
+      if (!res.ok) {
+        toast(data.error ?? "Gagal mengubah kata sandi", "error");
+        return;
+      }
+ 
       toast("Kata sandi berhasil diubah", "success");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (err: any) {
-      toast(err.message || "Gagal mengubah kata sandi", "error");
+    } catch {
+      toast("Terjadi kesalahan jaringan", "error");
     } finally {
       setLoading(false);
     }
   };
-
-  const handleLogoutOthers = () => {
-    // In a real app, this would call an API to revoke other sessions
-    toast("Semua sesi lain telah dikeluarkan (Simulasi)", "success");
-    logout();
+ 
+  const handleLogoutOthers = async () => {
+    try {
+      const token = Cookies.get("_auth_token");
+      await fetch("/api/user/revoke", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      toast("Semua sesi lain telah dikeluarkan", "success");
+    } catch {
+      toast("Gagal mencabut sesi lain", "error");
+    }
   };
 
   return (

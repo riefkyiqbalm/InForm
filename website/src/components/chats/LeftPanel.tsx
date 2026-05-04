@@ -59,16 +59,15 @@ export default function LeftPanel() {
   );
 }
 
-// Styles tetap sama (hanya sedikit cleanup)
 const S: Record<string, React.CSSProperties> = {
   sidebar: {
-    background: "rgb(15, 23, 42)",
-    color: "white",
+    background: "var(--panel)",
+    color: "var(--text)",
     height: "100vh",
-    borderRight: "1px solid rgb(55, 65, 81)",
+    borderRight: "1px solid var(--border)",
     transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
     position: "relative",
-    overflow: "hidden",           // lebih aman
+    overflow: "hidden",
   },
   container: {
     padding: 16,
@@ -89,12 +88,6 @@ const S: Record<string, React.CSSProperties> = {
     transition: "all 0.3s ease-in-out",
     whiteSpace: "nowrap",
   },
-  title: { 
-    fontWeight: "bold", 
-    fontSize: 18 
-  },
-  subtitle: { 
-    fontSize: 14, 
-    color: "rgb(148, 163, 184)" 
-  },
+  title: { fontWeight: "bold", fontSize: 18, color: "var(--text)" },
+  subtitle: { fontSize: 14, color: "var(--muted)" },
 };

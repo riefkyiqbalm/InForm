@@ -3,34 +3,66 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@sharedUI/context/SharedAuthContext";
 import { parseErrorMessage } from "@/lib/errors";
+import { useSearchParams } from "next/navigation";
 
-// ── keep your existing components ────────────────────────────────────────────
 import Background  from "@sharedUI/components/Background";
 import Welcome     from "@sharedUI/components/Welcome";
-
-// ── new broken-down components ────────────────────────────────────────────────
 import { Card }           from "@sharedUI/components/Cards";
 import { TabButtons }     from "@sharedUI/components/Tabbutons";
 import { LogInForm }      from "@/components/auth/LoginForm";
 import { RegisterForm }   from "@/components/auth/RegisterForm";
+import { ErrorBox } from "@sharedUI/components/ErrorBox";
 
 type Panel = "login" | "register";
 
-export default function AuthPanel() {
-  const { login, register, loading, user } = useAuth();
-  const router = useRouter();
+export function useAuthError() {
+  const params = useSearchParams();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    const err = params.get("error");
+
+    if (err === "AccountHasPassword") {
+      setErrorMsg("Akun ini sudah menggunakan password. Silakan login dengan email dan password anda atau Ubah email google di browser anda.");
+      return;
+    }
+    if (err === "OAuthAccountNotLinked") {
+      setErrorMsg("Email ini terdaftar dengan metode login lain.");
+      return;
+    }
+    if (err === "AccessDenied") {
+      setErrorMsg("Akses ditolak. Silakan coba lagi.");
+      return;
+    }
+    if (err === "ExpiredLink") {
+      setErrorMsg("Tautan login telah kedaluwarsa. Silakan minta tautan baru.");
+      return;
+    }
+    if (err === "InvalidLink") {
+      setErrorMsg("Tautan login tidak valid. Silakan minta tautan baru.");
+      return;
+    }
+    if (err) {
+      setErrorMsg("Terjadi kesalahan saat login. Silakan coba lagi.");
+    }
+  }, [params]);
+
+  return errorMsg;
+}
+
+export default function AuthPanel() {
+  const { register, loading, user } = useAuth();
+  const router = useRouter();
   const [activePanel, setActivePanel] = useState<Panel>("login");
   const [error,       setError]       = useState("");
+  const errorMsg                      = useAuthError();
 
-  // Wait for session resolution before redirecting (avoids /chat/undefined flash)
   useEffect(() => {
     if (!loading && user?.id) {
       router.replace(`/chat/${user.id}`);
     }
   }, [user, loading, router]);
 
-  // Show blank bg while session resolves
   if (loading) {
     return (
       <div style={{ ...S.root, justifyContent: "center" }}>
@@ -39,19 +71,9 @@ export default function AuthPanel() {
     );
   }
 
-  // ── login handler ──────────────────────────────────────────────────────────
-  const handleLogin = async (email: string, password: string) => {
+  const handleRegister = async (email: string, password: string, username: string) => {
     try {
-      await login(email, password);
-    } catch (err: unknown) {
-      setError(parseErrorMessage(err, "Login gagal. Periksa kembali akun Anda."));
-    }
-  };
-
-  // ── register handler ───────────────────────────────────────────────────────
-  const handleRegister = async ( email: string, password: string, username: string ) => {
-    try {
-      await register( email, password, username );
+      await register(email, password, username);
     } catch (err: unknown) {
       setError(parseErrorMessage(err, "Pendaftaran gagal."));
     }
@@ -61,9 +83,9 @@ export default function AuthPanel() {
     <div style={S.root}>
       <div style={S.container}>
         <Background />
+        {errorMsg && <ErrorBox message={errorMsg} />}
         <Welcome />
         <Card>
-          {/* Tab switcher */}
           <TabButtons
             active={activePanel}
             onChange={(panel) => {
@@ -72,10 +94,8 @@ export default function AuthPanel() {
             }}
           />
 
-          {/* Active form */}
           {activePanel === "login" ? (
             <LogInForm
-              onSubmit={handleLogin}
               loading={loading}
               error={error}
               onError={setError}
@@ -89,7 +109,6 @@ export default function AuthPanel() {
             />
           )}
 
-          {/* Footer */}
           <div style={S.footer}>
             Dengan melanjutkan, Anda menyetujui{" "}
             <a href="/terms" style={S.link}>

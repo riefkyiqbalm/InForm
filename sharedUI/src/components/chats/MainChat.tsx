@@ -210,7 +210,7 @@ export default function MainChat() {
 }
 
 const S: Record<string, React.CSSProperties> = {
-  root: { display: "flex", height: "100vh", background: "var(--bg,#0d1117)", color: "var(--text,#e6edf3)", overflow: "hidden", position: "relative" },
+  root: { display: "flex", height: "100vh", background: "var(--bg)", color: "var(--text)", overflow: "hidden", position: "relative" },
   main: { flex: 1, display: "flex", flexDirection: "column", minWidth: 0, position: "relative" },
   backdrop: { position: "absolute", inset: 0, zIndex: 99, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(1px)", cursor: "pointer" },
 };

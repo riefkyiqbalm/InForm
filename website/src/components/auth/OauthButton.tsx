@@ -23,15 +23,16 @@ export default function OAuthButton() {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={isConnecting}
       style={{
         width: "100%",
         padding: "12px",
         marginBottom: "16px",
-        background: isConnecting ? "linear-gradient(135deg, var(--teal), #0080cc)" : "#ffffff",
-        color: "black",
-        border: "none",
+        background: isConnecting ? "linear-gradient(135deg, var(--teal), #0080cc)" : "var(--card)",
+        color: isConnecting ? "#fff" : "var(--text)",
+        border: "1px solid var(--border)",
         borderRadius: "8px",
         fontSize: "14px",
         fontWeight: "600",
@@ -40,24 +41,23 @@ export default function OAuthButton() {
         alignItems: "center",
         justifyContent: "center",
         gap: "8px",
-        transition: "background 0.2s",
+        transition: "background 0.2s, color 0.2s",
       }}
       onMouseEnter={(e) => {
-        // PERBAIKAN: Gunakan kurung kurawal agar kedua baris dieksekusi
         if (!isConnecting) {
           e.currentTarget.style.background = "linear-gradient(135deg, var(--teal), #0080cc)";
-          e.currentTarget.style.color = "white";
+          e.currentTarget.style.color = "#fff";
         }
       }}
       onMouseLeave={(e) => {
         if (!isConnecting) {
-          e.currentTarget.style.background = "#ffffff";
-          e.currentTarget.style.color = "black";
+          e.currentTarget.style.background = "var(--card)";
+          e.currentTarget.style.color = "var(--text)";
         }
       }}
     >
       {isConnecting ? (
-        <span style={{color:'white'}}>Connecting...</span>
+        <span>Connecting...</span>
       ) : (
         <>
           {/* Google Icon */}

@@ -1,52 +1,55 @@
+/* ── Dark theme (default) ──────────────────────────── */
 :root {
-  --bg: #060d1a;
-  --panel: #0c1828;
-  --card: #0f2035;
-  --border: #1a3050;
-  --teal: #00d4c8;
-  --teal-dim: #00897f;
-  --gold: #f5c842;
-  --red: #ff4d6d;
-  --text: #e8eef6;
-  --muted: #5a7a99;
+  --bg:        #060d1a;
+  --panel:     #0c1828;
+  --card:      #0f2035;
+  --border:    #1a3050;
+  --teal:      #00d4c8;
+  --teal-dim:  #00897f;
+  --gold:      #f5c842;
+  --red:       #ff4d6d;
+  --text:      #e8eef6;
+  --muted:     #5a7a99;
   --font-head: 'Syne', sans-serif;
   --font-mono: 'Space Mono', monospace;
   --font-body: 'DM Sans', sans-serif;
-  --glow: 0 0 40px rgba(0,212,200,.15);
+  --glow:      0 0 40px rgba(0,212,200,.15);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ── Light theme ───────────────────────────────────── */
+[data-theme="light"] {
+  --bg:       #f0f4f8;
+  --panel:    #e4ecf4;
+  --card:     #ffffff;
+  --border:   #c5d5e8;
+  --teal:     #009b92;
+  --teal-dim: #00756d;
+  --gold:     #c49a00;
+  --red:      #d63057;
+  --text:     #0d1b2a;
+  --muted:    #4a6580;
+  --glow:     0 0 40px rgba(0,155,146,.12);
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
+  background:  var(--bg);
+  color:       var(--text);
   font-family: var(--font-body);
 }
 
-/* Target semua elemen di aplikasi */
-*::-webkit-scrollbar {
-  width: 6px;
-}
+/* ── Scrollbar ─────────────────────────────────────── */
+*::-webkit-scrollbar          { width: 6px; }
+*::-webkit-scrollbar-track    { background: transparent; }
+*::-webkit-scrollbar-thumb    { background-color: rgba(0,212,200,.2); border-radius: 10px; }
+*::-webkit-scrollbar-thumb:hover { background-color: rgba(0,212,200,.5); }
+*  { scrollbar-width: thin; scrollbar-color: rgba(0,212,200,.2) transparent; }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 212, 200, 0.2); 
-  border-radius: 10px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 212, 200, 0.5);
-}
-
-/* Untuk Firefox (Global) */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 212, 200, 0.2) transparent;
-}
+/* ── Animations ────────────────────────────────────── */
+@keyframes floatOrb  { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.05)} }
+@keyframes fadeUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes slideUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes onAutofillStart { from{} to{} }
+input:-webkit-autofill { animation-name: onAutofillStart; }

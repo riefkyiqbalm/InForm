@@ -40,8 +40,8 @@ const S: Record<string, React.CSSProperties> = {
   topbar: {
     height:       60,
     minHeight:    60,
-    background:   "var(--panel, #161b22)",
-    borderBottom: "1px solid var(--border, #30363d)",
+    background:   "var(--panel)",
+    borderBottom: "1px solid var(--border)",
     display:      "flex",
     alignItems:   "center",
     padding:      "0 16px",
@@ -53,7 +53,7 @@ const S: Record<string, React.CSSProperties> = {
   sessionTitle: {
     flex:         1,
     fontSize:     12,
-    color:        "var(--muted, #8b949e)",
+    color:        "var(--muted)",
     fontFamily:   "var(--font-mono, monospace)",
     whiteSpace:   "nowrap",
     overflow:     "hidden",

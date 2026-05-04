@@ -302,6 +302,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ChatSession, InterruptedMessage, SendMessageArgs, ChatContextType, ChatMessage } from "../types";
 import Cookies from "js-cookie";
+import { useAuth } from "./SharedAuthContext";
 
 const KEY_TOKEN = "_auth_token";
 // Determine environment
@@ -361,16 +362,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [abortedMessage, setAbortedMessage] = useState<InterruptedMessage | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-
   const clearError = useCallback(() => setError(null), []);
   const clearAborted = useCallback(() => setAbortedMessage(null), []);
+  const { isAuthenticated, user } = useAuth();
 
-  // ── Load sessions on mount & sync with URL ──────────────────────────────────
+  // ── Load sessions when auth is ready ───────────────────────────────────────
   useEffect(() => {
+    if (!isAuthenticated || !user) {
+      setSessions([]);
+      return;
+    }
+
     const initFromURLAndFetch = async () => {
       const token = await getToken();
-      
+
       // Baca session ID dari URL jika ada (untuk website)
       let urlSessionId: string | null = null;
       if (typeof window !== "undefined" && !IS_EXTENSION) {
@@ -384,26 +389,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           const data = await res.json() as { sessions?: ChatSession[] };
           const sorted = sortSessions(data.sessions ?? []);
           setSessions(sorted);
-          
-          // Prioritaskan session ID dari URL, lalu load detail session tersebut
+
           if (urlSessionId && sorted.some(s => s.id === urlSessionId)) {
             setActiveSessionId(urlSessionId);
-            // Load full session dengan messages dari DB
             await loadSession(urlSessionId);
           } else if (sorted.length > 0) {
-            // Jika tidak ada URL session, gunakan session pertama
             setActiveSessionId(sorted[0].id);
             await loadSession(sorted[0].id);
           }
         }
       } catch (err) {
         console.error("[ChatContext] fetchSessions:", err);
-      } finally {
-        setIsInitialized(true);
       }
     };
     initFromURLAndFetch();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user?.id]);
 
   // ── loadSession ────────────────────────────────────────────────────────────
   const loadSession = useCallback(async (id: string) => {

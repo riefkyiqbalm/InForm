@@ -12,6 +12,7 @@
 import { Resend } from "resend";
 import { render } from "@react-email/components";
 import VerificationEmail from "@/emails/VerificationEmail";
+import LoginLinkEmail from "@/emails/LoginLinkEmail";
 import PasswordReset          from "@/emails/PasswordReset";
 import PasswordResetOauth from "@/emails/PasswordResetOauth";
 import PasswordChanges        from "@/emails/PasswordChanges";
@@ -115,9 +116,18 @@ export async function sendEmailChangeVerification(
 
 // === 5. Set Password Untuk Akun Google Oauth ===
 export async function setPassForOauth(
-  to: string, name: string, token: string, isOauth: boolean
+  to: string, name: string, token: string
 ) {
   const resetUrl = `${BASE_URL}/new-password?token=${token}`;
   const html = await render(PasswordResetOauth({ name, resetUrl }) as React.ReactElement);
   await send(to, "Buat Kata Sandi Akun InForm Anda", html);
+}
+
+// === 6. Kirim Magic Link Login ===
+export async function sendLoginLinkEmail(
+  to: string, name: string, token: string
+) {
+  const loginUrl = `${BASE_URL}/api/auth/verify-login-link?token=${token}`;
+  const html = await render(LoginLinkEmail({ name, loginUrl }) as React.ReactElement);
+  await send(to, "Tautan Login InForm Anda", html);
 }

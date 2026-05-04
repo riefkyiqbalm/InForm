@@ -10,7 +10,7 @@ export function ErrorBox({ message }: ErrorBoxProps) {
   if (!message) return null;
   return (
     <div style={S.errorBox}>
-      <Icon name="white-warning" size={18} invert={false} />
+      <Icon name="red-warning" size={18} invert={false} />
       {" "}{message}
     </div>
   );
@@ -18,9 +18,9 @@ export function ErrorBox({ message }: ErrorBoxProps) {
 
 const S: Record<string, React.CSSProperties> = {
   errorBox: {
-    background: "rgba(255,77,109,.1)",
-    border: "1px solid rgba(255,77,109,.3)",
-    color: "#ff4d6d",
+    background: "rgba(255,77,109,.08)",
+    border: "1px solid var(--red)",
+    color: "var(--red)",
     borderRadius: "10px",
     padding: "12px",
     fontSize: "13px",

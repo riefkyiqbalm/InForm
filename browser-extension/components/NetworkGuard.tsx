@@ -6,6 +6,7 @@
 import React, { useCallback, useEffect, useState } from "react"
 import Icon from "../../sharedUI/src/components/IconStyles"
 import StatusDot from "../../sharedUI/src/components/StatusDot"
+import { ThemeToggle } from "../../sharedUI/src/context/ThemeContext"
 
 type Status = "checking" | "online" | "offline"
 
@@ -92,6 +93,9 @@ export default function NetworkGuard({
 
   return (
     <div style={S.root}>
+      <div style={{ position: "absolute", top: 12, right: 12 }}>
+        <ThemeToggle />
+      </div>
       {status === "checking" && <CheckingState />}
       {status === "offline"  && (
         <OfflineState
@@ -151,7 +155,7 @@ function OfflineState({
       >
         {isRetrying ? (
           <>
-            <Spinner size={14} color="#00d4c8" />
+            <Spinner size={14} color="var(--teal)" />
             <span>Mencoba lagi...</span>
           </>
         ) : (
@@ -253,11 +257,11 @@ function NewWindowIcon() {
   )
 }
 
-function Spinner({ size = 20, color = "#8b949e" }: { size?: number; color?: string }) {
+function Spinner({ size = 20, color = "var(--muted)" }: { size?: number; color?: string }) {
   return (
     <div style={{
       width: size, height: size,
-      border: `2px solid ${color}22`,
+      border: `2px solid var(--border)`,
       borderTop: `2px solid ${color}`,
       borderRadius: "50%",
       animation: "ng-spin 0.75s linear infinite",
@@ -273,12 +277,12 @@ const S: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "center",
     minHeight: "100vh",
-    background: "var(--bg, #0d1117)",
+    background: "var(--bg)",
     padding: 24,
   },
   card: {
-    background: "var(--bg2, #161b22)",
-    border: "1px solid var(--border, #30363d)",
+    background: "var(--panel)",
+    border: "1px solid var(--border)",
     borderRadius: 16,
     padding: "32px 28px",
     width: "100%",
@@ -293,40 +297,40 @@ const S: Record<string, React.CSSProperties> = {
     width: 64,
     height: 64,
     borderRadius: "50%",
-    background: "#1e293b",
+    background: "var(--card)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "#8b949e",
+    color: "var(--muted)",
     marginBottom: 20,
     flexShrink: 0,
   },
   iconOffline: {
     background: "rgba(255, 77, 109, 0.1)",
-    color: "#ff4d6d",
+    color: "var(--red)",
   },
   iconOnline: {
     background: "rgba(0, 212, 200, 0.1)",
-    color: "#00d4c8",
+    color: "var(--teal)",
   },
   title: {
     fontSize: 15,
     fontWeight: 600,
-    color: "var(--text, #e6edf3)",
+    color: "var(--text)",
     margin: "0 0 8px",
     lineHeight: 1.4,
     fontFamily: "var(--font-head, 'DM Sans', system-ui, sans-serif)",
   },
   subtitle: {
     fontSize: 12,
-    color: "var(--muted, #8b949e)",
+    color: "var(--muted)",
     margin: "0 0 20px",
     lineHeight: 1.6,
     fontFamily: "var(--font-head, 'DM Sans', system-ui, sans-serif)",
   },
   retryBadge: {
     fontSize: 11,
-    color: "#f5c842",
+    color: "var(--gold)",
     background: "rgba(245, 200, 66, 0.1)",
     border: "1px solid rgba(245, 200, 66, 0.2)",
     borderRadius: 99,
@@ -351,12 +355,12 @@ const S: Record<string, React.CSSProperties> = {
   },
   btnRetry: {
     background: "rgba(0, 212, 200, 0.12)",
-    color: "#00d4c8",
+    color: "var(--teal)",
     border: "1px solid rgba(0, 212, 200, 0.3)",
   },
   btnLogin: {
-    background: "#00d4c8",
-    color: "#0d1117",
+    background: "var(--teal)",
+    color: "var(--bg)",
   },
   btnDisabled: {
     opacity: 0.6,
@@ -379,7 +383,7 @@ const S: Record<string, React.CSSProperties> = {
   },
   hint: {
     fontSize: 11,
-    color: "var(--muted, #8b949e)",
+    color: "var(--muted)",
     margin: "10px 0 0",
     opacity: 0.7,
     fontFamily: "var(--font-head, 'DM Sans', system-ui, sans-serif)",
