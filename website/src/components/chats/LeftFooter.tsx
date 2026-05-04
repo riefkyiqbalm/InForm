@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useAuth } from "@sharedUI/context/SharedAuthContext";
-import { ThemeToggle } from "@sharedUI/context/ThemeContext";
 import React from "react";
 
 export default function SidebarFooter({ isOpen }: { isOpen: boolean }) {
@@ -28,9 +27,6 @@ export default function SidebarFooter({ isOpen }: { isOpen: boolean }) {
             </div>
           </div>
         </Link>
-      </div>
-      <div style={S.themeRow}>
-        <ThemeToggle />
       </div>
     </div>
   );

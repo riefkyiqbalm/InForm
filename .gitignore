@@ -137,6 +137,7 @@ yarn-error.log*
 *REFACTORING_SUMMARY.md
 *BACKEND_SETUP.md
 *SPESIFICATION.md
+*ARCHITECTURE.md
 
 #--- Command Line Scripts ---
 start.bat

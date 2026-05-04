@@ -1,11 +1,12 @@
 'use-client'
 import React from 'react';
 import Icon from '../IconStyles';
+import SmallLogo from '../logo/SmallLogo';
 
 export default function TypingIndicator() {
   return (
     <div style={S.typingRow} className="animate-fade-in">
-      <div style={S.typingAvatar}><Icon name='white-loading'/></div>
+      <div style={S.typingAvatar}><SmallLogo/></div>
       <div style={S.typingBubble}>
         <span className="dot-blink" />
         <span className="dot-blink" style={{ animationDelay: '0.2s' }} />

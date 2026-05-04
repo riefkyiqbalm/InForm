@@ -22,6 +22,6 @@ export default function Toast({ message, type = 'info' }: ToastProps) {
   const border = type === 'success' ? '1px solid var(--teal-dim)' : type === 'error' ? '1px solid rgba(255,77,109,.2)' : '1px solid var(--border)';
 
   return (
-    <div style={{ ...BASE, background: 'var(--card)', border, color }}>{message}</div>
+    <div style={{ background: 'var(--card)', border, color }}>{message}</div>
   );
 }

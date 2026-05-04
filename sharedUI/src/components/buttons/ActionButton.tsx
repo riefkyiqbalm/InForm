@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import Icon from "../IconStyles";
-import {type ActionType } from "@sharedUI/types";
+import { type ActionType } from "@sharedUI/types";
+import { useTheme } from "@sharedUI/context/ThemeContext"; // Pastikan path ini sesuai lokasi file Anda
 
 interface DropDownProps {
   onAction: (type: ActionType) => void;
@@ -12,13 +13,12 @@ interface DropDownProps {
   disabled?: boolean;
 }
 
-
 const DEFAULT_LABELS: Record<ActionType, string> = {
-  copy: "Copy",
-  delete: "Delete",
-  pin: "Pin",
-  rename: "Rename",
-  unpin: "Unpin"
+  copy: "Salin",
+  delete: "Hapus",
+  pin: "Sematkan",
+  rename: "Ubah Nama",
+  unpin: "Lepas Sematan"
 };
 
 export default function DropDown({
@@ -28,10 +28,21 @@ export default function DropDown({
   actionLabels = {},
   disabled = false,
 }: DropDownProps) {
+  const { theme } = useTheme(); // Ambil tema saat ini
   const [isOpen, setIsOpen] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Tentukan apakah harus invert berdasarkan tema
+  // Default: Invert jika dark mode (agar icon hitam jadi putih)
+  // Pengecualian: Jika nama icon mengandung 'red', jangan pernah invert
+  const shouldInvertDefault = theme === "dark";
+
+  const checkInvert = (iconName: string) => {
+    if (iconName.includes("red")) return false; // Jangan invert icon merah
+    return shouldInvertDefault;
+  };
 
   // Position calculation
   const updateCoords = () => {
@@ -54,14 +65,12 @@ export default function DropDown({
     if (!isOpen) return;
 
     const handleEvents = (e: MouseEvent | WheelEvent | Event) => {
-      // Close if clicking outside the dropdown AND the trigger
       if (
         dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
         triggerRef.current && !triggerRef.current.contains(e.target as Node)
       ) {
         setIsOpen(false);
       }
-      // Reposition on scroll/resize
       updateCoords();
     };
 
@@ -84,12 +93,15 @@ export default function DropDown({
         disabled={disabled}
         style={{
           ...S.kebabBtn,
-          background: isOpen ? "rgba(255,255,255,0.1)" : "none",
+          // Gunakan variabel CSS untuk konsistensi tema
+          background: isOpen ? "var(--card)" : "transparent", 
+          color: "var(--muted)",
           opacity: disabled ? 0.4 : 1,
           cursor: disabled ? "not-allowed" : "pointer",
         }}
       >
-        <Icon name="white-menu-kebab" size={16} invert={true} />
+        {/* Hapus invert hardcoded, biarkan logic di dalam Icon atau pass dynamic */}
+        <Icon name="white-menu-kebab" size={16} invert={shouldInvertDefault} />
       </button>
 
       {isOpen && createPortal(
@@ -99,30 +111,39 @@ export default function DropDown({
             ...S.dropdown,
             top: coords.top + 5,
             left: coords.left,
+            // Update style dropdown agar responsif terhadap tema
+            background: "var(--panel)",
+            border: "1px solid var(--border)",
           }}
         >
           {actions.map((type) => {
             const label = actionLabels[type] ?? DEFAULT_LABELS[type];
             const isDelete = type === "delete";
-            const isUnpinning = type === "pin" && label === "Unpin";
-            const iconName = isUnpinning ? "white-unpin" : `white-${type}`;
+            const isUnpinning = type === "unpin" || (type === "pin" && label === "Unpin");
+            
+            // Logika penamaan ikon
+            let iconName = `white-${type}`;
+            if (isDelete) iconName = "red-trash"; // Pastikan pakai icon merah khusus
+            if (isUnpinning) iconName = "white-unpin";
+
             return (
               <button
                 key={type}
                 onClick={() => { onAction(type); setIsOpen(false); }}
                 style={{
                   ...S.menuItem,
-                  color: type === "delete" ? "#ff4d4d" : "#e2e8f0",
+                  color: isDelete ? "var(--red)" : "var(--text)",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(128,128,128,0.1)")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
               >
-                <span style={S.iconWrapper}><Icon 
-          name={iconName} 
-          size={16} 
-          // Unpin biasanya tidak perlu di-invert jika SVG-nya sudah berwarna
-          invert={isDelete ? false : true} 
-        /></span>
+                <span style={S.iconWrapper}>
+                  <Icon 
+                    name={iconName} 
+                    size={16} 
+                    invert={checkInvert(iconName)} 
+                  />
+                </span>
                 <span style={{ fontSize: "13px", fontWeight: 500 }}>{label}</span>
               </button>
             );
@@ -136,9 +157,7 @@ export default function DropDown({
 
 const S: Record<string, React.CSSProperties> = {
   kebabBtn: {
-    background: "none",
     border: "none",
-    color: "#94a3b8",
     padding: "6px",
     borderRadius: "6px",
     display: "flex",
@@ -147,15 +166,12 @@ const S: Record<string, React.CSSProperties> = {
     transition: "all 0.2s ease",
   },
   dropdown: {
-    position: "absolute", // Fixed or absolute both work inside body portal
-    background: "#1a2236",
-    border: "1px solid rgba(255,255,255,0.1)",
+    position: "absolute",
     borderRadius: "10px",
     boxShadow: "0 10px 25px -5px rgba(0,0,0,0.4)",
     zIndex: 9999,
     minWidth: "140px",
     padding: "4px",
-    backdropFilter: "blur(8px)",
     pointerEvents: "auto",
   },
   menuItem: {

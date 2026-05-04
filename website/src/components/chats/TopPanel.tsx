@@ -5,6 +5,7 @@ import { useChat } from "@sharedUI/context/ChatContext";
 import TopBarLogo from "../logo/TopBarLogo";
 import Profile from "../Profile";
 import KebabNavDropDown from "@sharedUI/components/buttons/KebabNavigationButton"
+import { ThemeToggle } from "@sharedUI/context/ThemeContext";
 
 interface TopPanelProps {
   isLeftPanelOpen:   boolean
@@ -33,6 +34,9 @@ export default function TopPanel({ isLeftPanelOpen, onToggleLeftPanel }: TopPane
         {/* <StatusDot showLabel={false} /> */}
         {/* NavDropDown owns all navigation logic internally */}
         <KebabNavDropDown onToggleLeftPanel={onToggleLeftPanel} />
+      </div>
+      <div style={S.themeRow}>
+        <ThemeToggle />
       </div>
 
     </div>

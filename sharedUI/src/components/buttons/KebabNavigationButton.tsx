@@ -1,29 +1,24 @@
-'use-client'
+'use client'
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-
-/**
- * PENTING: Jika alias @sharedUI tidak terdeteksi di lingkungan lokal,
- * pastikan tsconfig.json atau webpack/vite config sudah memiliki alias tersebut.
- * Di sini kita tetap menggunakan alias sesuai permintaan awal.
- */
 import Icon from "@sharedUI/components/IconStyles"
 import SettingsModal from "@sharedUI/components/SettingsModal"
 import { useAuth } from "@sharedUI/context/SharedAuthContext"
+import { useTheme } from "@sharedUI/context/ThemeContext" // Import hook tema
 
 const NEXTJS_BASE = process.env.PLASMO_PUBLIC_NEXTJS_BASE ?? "http://localhost:3000"
 
 interface NavItem {
-  key:     "pengaturan" | "keluar"
-  icon:    string
-  label:   string
+  key:   "pengaturan" | "keluar"
+  icon:  string
+  label: string
   danger?: boolean
-  invertIcon: boolean
+  // invertIcon dihapus karena sekarang dihitung secara dinamis
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "pengaturan",    icon: "white-gear",   label: "Pengaturan",  invertIcon: true },
-  { key: "keluar",        icon: "red-logout",   label: "Keluar",      danger: true, invertIcon: false },
+  { key: "pengaturan",  icon: "white-gear",   label: "Pengaturan" },
+  { key: "keluar",      icon: "red-logout",   label: "Keluar",     danger: true },
 ]
 
 interface NavDropDownProps {
@@ -31,8 +26,8 @@ interface NavDropDownProps {
 }
 
 export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
-  // Hook useAuth sekarang bersifat universal (bisa digunakan di Web & Extension)
   const { logout } = useAuth()
+  const { theme } = useTheme() // Ambil tema saat ini (dark/light)
 
   const [isOpen, setIsOpen] = useState(false)
   const [coords, setCoords] = useState({ top: 0, left: 0 })
@@ -41,7 +36,6 @@ export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
   const triggerRef  = useRef<HTMLButtonElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Menghitung posisi dropdown agar tepat di bawah tombol trigger
   const updateCoords = () => {
     if (!triggerRef.current) return
     const rect = triggerRef.current.getBoundingClientRect()
@@ -97,11 +91,13 @@ export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
         onClick={() => setIsOpen((o) => !o)}
         style={{
           ...S.trigger,
+          // Background berubah sesuai state isOpen
           background: isOpen ? "rgba(255,255,255,0.08)" : "none",
         }}
         title="Menu"
       >
-        <Icon name="white-menu-kebab" size={16} />
+        {/* Ikon kebab juga mengikuti tema */}
+        <Icon name="white-menu-kebab" size={16} invert={theme === 'dark'} />
       </button>
 
       {isOpen && createPortal(
@@ -109,22 +105,36 @@ export default function NavDropDown({ onToggleLeftPanel }: NavDropDownProps) {
           ref={dropdownRef} 
           style={{ ...S.panel, top: coords.top, left: coords.left }}
         >
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              style={{ ...S.item, color: item.danger ? "var(--red)" : "var(--text)" }}
-              onClick={() => handleAction(item.key)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = item.danger ? "rgba(255,77,109,0.1)" : "rgba(128,128,128,0.08)"
-              }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "none" }}
-            >
-              <span style={S.itemIcon}>
-                <Icon name={item.icon} size={14} invert={item.invertIcon} />
-              </span>
-              <span style={S.itemLabel}>{item.label}</span>
-            </button>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            // LOGIKA UTAMA DI SINI:
+            // 1. Jika ikon adalah 'red-...', jangan pernah di-invert (tetap merah).
+            // 2. Jika bukan merah, ikuti tema: Dark Mode = Invert (Jadi Putih), Light Mode = No Invert (Jadi Hitam).
+            const shouldInvert = item.icon.includes('red-') ? false : (theme === 'dark');
+
+            return (
+              <button
+                key={item.key}
+                style={{ 
+                  ...S.item, 
+                  color: item.danger ? "var(--red)" : "var(--text)" 
+                }}
+                onClick={() => handleAction(item.key)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = item.danger ? "rgba(255,77,109,0.1)" : "rgba(128,128,128,0.08)"
+                }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "none" }}
+              >
+                <span style={S.itemIcon}>
+                  <Icon 
+                    name={item.icon} 
+                    size={14} 
+                    invert={shouldInvert} 
+                  />
+                </span>
+                <span style={S.itemLabel}>{item.label}</span>
+              </button>
+            );
+          })}
         </div>,
         document.body
       )}

@@ -1,19 +1,24 @@
-// components/ui/Icon.tsx
-'use-client'
+'use client';
 import { ICONS, type IconType } from '@sharedUI/lib/constants/icon';
 import React from 'react';
+import { useTheme } from '../context/ThemeContext'; // Ensure this path matches your file structure
 
 interface IconProps {
   name: IconType | string;
   size?: number;
-  invert?: boolean;
+  invert?: boolean; // Optional override
 }
 
 export default function Icon({
   name,
   size = 20,
-  invert = true ,// Default ke false agar warna asli muncul
+  invert, 
 }: IconProps) {
+  const { theme } = useTheme();
+
+  // - Dark Theme -> Need White Icon -> Invert Black to White (true)
+  // - Light Theme -> Need Black Icon -> Keep Original (false)
+  const shouldInvert = invert !== undefined ? invert : (theme === 'dark');
 
   const src = ICONS[name as IconType];
 
@@ -29,9 +34,9 @@ export default function Icon({
       width={size}
       height={size}
       style={{
-        filter: invert ? 'invert(1)' : 'none',
+        filter: shouldInvert ? 'invert(1)' : 'none',
         display: 'inline-block',
-        flexShrink: 0, // Mencegah ikon gepeng dalam flexbox
+        flexShrink: 0,
       }}
     />
   );

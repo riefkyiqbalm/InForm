@@ -11,6 +11,7 @@
 import React, { useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import Icon from "./IconStyles"
+import ModelSelector from "./ModelSelector"
 import { useToast } from "../context/ToastContext"
 
 type SettingsPage = "root" | "ai-model" | "privacy" | "memory"
@@ -44,15 +45,6 @@ export function loadDocs(): StoredDoc[] {
 export function saveDocs(list: StoredDoc[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
 }
-
-const AI_MODELS = [
-  { id: "qwen3-4b",       label: "Qwen3 4B",      desc: "Fast · Local"      },
-  { id: "qwen3-8b",       label: "Qwen3 8B",       desc: "Balanced · Local"  },
-  { id: "qwen3-14b",      label: "Qwen3 14B",      desc: "Smart · Local"     },
-  { id: "llama-3.1-8b",  label: "Llama 3.1 8B",   desc: "Fast · Local"      },
-  { id: "mistral-7b",     label: "Mistral 7B",     desc: "Efficient · Local" },
-  { id: "deepseek-r1-7b", label: "DeepSeek R1 7B", desc: "Reasoning · Local" },
-]
 
 const ACCEPTED_TYPES =
   ".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.txt,.md,.json," +
@@ -116,30 +108,14 @@ function RootPage({ onNavigate }: { onNavigate: (p: SettingsPage) => void }) {
 }
 
 function AIModelPage() {
-  const [selected, setSelected] = useState(() => localStorage.getItem("InForm_ai_model") ?? "qwen3-4b")
-  const choose = (id: string) => { setSelected(id); localStorage.setItem("InForm_ai_model", id) }
   return (
     <div>
       <p style={S.sectionDesc}>
         Pilih model AI yang digunakan. Model berjalan lokal via LM Studio.<br />
-        <span style={{ color:"var(--muted)" }}>Select the AI model. Models run locally via LM Studio.</span>
+        <span style={{ color: "var(--muted)" }}>Select the AI model. Models run locally via LM Studio.</span>
       </p>
-      <div style={{ display:"flex", flexDirection:"column", gap:6, marginTop:16 }}>
-        {AI_MODELS.map((m) => (
-          <button key={m.id} style={{
-            ...S.modelRow,
-            border: selected===m.id ? "1px solid var(--teal,#00d4c8)" : "1px solid rgba(255,255,255,0.08)",
-            background: selected===m.id ? "rgba(0,212,200,0.07)" : "transparent",
-          }} onClick={() => choose(m.id)}
-            onMouseEnter={(e) => { if (selected!==m.id) e.currentTarget.style.background="rgba(255,255,255,0.04)" }}
-            onMouseLeave={(e) => { if (selected!==m.id) e.currentTarget.style.background="transparent" }}>
-            <div style={{ textAlign:"left" }}>
-              <div style={S.modelName}>{m.label}</div>
-              <div style={S.modelDesc}>{m.desc}</div>
-            </div>
-            {selected===m.id && <Icon name="white-check" size={16} invert={false} />}
-          </button>
-        ))}
+      <div style={{ marginTop: 16 }}>
+        <ModelSelector variant="compact" />
       </div>
     </div>
   )
@@ -292,7 +268,12 @@ function MemoryPage() {
   }
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Model selection — surfaced on Memory page so users see model + uploads together */}
+      <ModelSelector variant="compact" />
+
+      <div style={S.divider} />
+
       <p style={S.sectionDesc}>
         Unggah dokumen referensi untuk InForm saat menjawab atau mengisi form.<br />
         <span style={{ color:"var(--muted)" }}>Upload reference documents for InForm to use when answering or filling forms.</span>
@@ -368,9 +349,6 @@ const S: Record<string, React.CSSProperties> = {
   menuRowTitle:{ fontSize:14, fontWeight:600, color:"var(--text)", marginBottom:2 },
   menuRowSub:  { fontSize:11, color:"var(--muted)", lineHeight:1.4 },
   sectionDesc: { fontSize:12, color:"var(--muted)", lineHeight:1.6, margin:0 },
-  modelRow:    { display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 14px", borderRadius:10, cursor:"pointer", transition:"background .15s", width:"100%" },
-  modelName:   { fontSize:13, fontWeight:600, color:"var(--text)" },
-  modelDesc:   { fontSize:11, color:"var(--muted)", marginTop:2 },
   toggleRow:   { display:"flex", alignItems:"flex-start", gap:14 },
   toggleTitle: { fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:4 },
   toggleDesc:  { fontSize:11, color:"var(--muted)", lineHeight:1.5 },

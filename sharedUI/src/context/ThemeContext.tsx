@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import Icon from "@sharedUI/components/IconStyles";
 
 export type Theme = "dark" | "light";
 
@@ -16,7 +17,9 @@ const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
 });
 
+
 const STORAGE_KEY = "inform-theme";
+
 
 const THEME_VARS: Record<Theme, Record<string, string>> = {
   dark: {
@@ -92,6 +95,7 @@ export function useTheme(): ThemeContextType {
 
 export function ThemeToggle({ style }: { style?: React.CSSProperties }) {
   const { theme, toggleTheme } = useTheme();
+  const iconName = theme === "dark" ? "white-bright" : "white-dark"
 
   return (
     <button
@@ -115,7 +119,7 @@ export function ThemeToggle({ style }: { style?: React.CSSProperties }) {
         ...style,
       }}
     >
-      {theme === "dark" ? "☀" : "☾"}
+      <Icon name={iconName} size={18} />
     </button>
   );
 }

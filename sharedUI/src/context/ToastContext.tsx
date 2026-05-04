@@ -1,6 +1,5 @@
 "use client";
 // src/context/ToastContext.tsx
-
 import {
   createContext,
   useContext,
@@ -9,6 +8,7 @@ import {
   
 } from "react";
 import type{ReactNode} from "react";
+import Icon from "@sharedUI/components/IconStyles";
 
 // ── Types ────────────────────────────────────────────────────
 export type ToastType = "info" | "success" | "warn" | "error";
@@ -62,7 +62,7 @@ const TOAST_STYLES: Record<ToastType, React.CSSProperties> = {
 };
 
 const TOAST_ICON: Record<ToastType, string> = {
-  info: "i", success: "v", warn: "!", error: "x",
+  info: "red-warning", success: "white-check", warn: "red-warning", error: "x",
 };
 
 function ToastStack({ toasts }: { toasts: Toast[] }) {
@@ -83,7 +83,7 @@ function ToastStack({ toasts }: { toasts: Toast[] }) {
           maxWidth: 340, animation: "fadeUp .3s ease",
         }}>
           <span style={{ fontSize: 14, flexShrink: 0, fontWeight: 700 }}>
-            {TOAST_ICON[t.type]}
+            <Icon name={TOAST_ICON[t.type]} size={20}/>
           </span>
           <span>{t.message}</span>
         </div>
